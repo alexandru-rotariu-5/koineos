@@ -3,13 +3,13 @@ package com.koineos.app.data.content
 import android.content.Context
 import com.koineos.app.data.content.dto.LetterDto
 import com.koineos.app.data.content.dto.LettersResponse
-import com.koineos.app.data.utils.StorageUtils
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
-import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,28 +30,21 @@ class LetterJsonManager @Inject constructor(
     /**
      * Retrieves all letters from the letters.json file
      */
-    suspend fun getAllLetters(): Result<LettersResponse> = withContext(Dispatchers.IO) {
-        StorageUtils.tryExecuteLocalRequest(TAG) {
+    fun getAllLetters(): Flow<LettersResponse> = flow {
+        withContext(Dispatchers.IO) {
             val jsonString = context.assets.open("letters.json").bufferedReader().use { it.readText() }
             val adapter = moshi.adapter(LettersResponse::class.java)
             val lettersResponse = adapter.fromJson(jsonString)
-
-            if (lettersResponse != null) {
-                Result.success(lettersResponse)
-            } else {
-                Result.failure(IOException("Failed to parse letters.json"))
-            }
-        }
+            lettersResponse
+        }?.let { emit(it) }
     }
 
     /**
      * Retrieves a single letter by its ID
      */
-    suspend fun getLetterById(id: String): Result<LetterDto?> {
-        return StorageUtils.tryExecuteLocalRequest("$TAG-getLetterById") {
-            getAllLetters().map { response ->
-                response.letters.find { it.id == id }
-            }
+    fun getLetterById(id: String): Flow<LetterDto?> = flow {
+        getAllLetters().collect { response ->
+            emit(response.letters.find { it.id == id })
         }
     }
 
@@ -60,13 +53,13 @@ class LetterJsonManager @Inject constructor(
      * @param fromOrder Starting position (inclusive)
      * @param toOrder Ending position (inclusive)
      */
-    suspend fun getLettersByRange(fromOrder: Int, toOrder: Int): Result<List<LetterDto>> {
-        return StorageUtils.tryExecuteLocalRequest("$TAG-getLettersByRange") {
-            getAllLetters().map { response ->
+    fun getLettersByRange(fromOrder: Int, toOrder: Int): Flow<List<LetterDto>> = flow {
+        getAllLetters().collect { response ->
+            emit(
                 response.letters.filter {
                     it.order in fromOrder..toOrder
                 }.sortedBy { it.order }
-            }
+            )
         }
     }
 }

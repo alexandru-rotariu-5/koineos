@@ -1,10 +1,11 @@
-package com.koineos.app.di.modules
+package com.koineos.app.di
 
 import android.content.Context
 import com.koineos.app.data.content.LetterJsonManager
-import com.koineos.app.data.content.mapper.LetterMapper
 import com.koineos.app.data.datastore.LetterMasteryDataStore
+import com.koineos.app.data.repository.DefaultLetterMasteryRepository
 import com.koineos.app.data.repository.DefaultLetterRepository
+import com.koineos.app.domain.repository.LetterMasteryRepository
 import com.koineos.app.domain.repository.LetterRepository
 import com.koineos.app.domain.usecase.GetAllLettersUseCase
 import com.koineos.app.domain.usecase.GetLetterByIdUseCase
@@ -39,49 +40,48 @@ object AlphabetModule {
 
     @Provides
     @Singleton
-    fun provideLetterMapper(): LetterMapper {
-        return LetterMapper()
+    fun provideLetterRepository(
+        letterJsonManager: LetterJsonManager
+    ): LetterRepository {
+        return DefaultLetterRepository(letterJsonManager)
     }
 
     @Provides
     @Singleton
-    fun provideLetterRepository(
-        letterJsonManager: LetterJsonManager,
-        letterMasteryDataStore: LetterMasteryDataStore,
-        letterMapper: LetterMapper
-    ): LetterRepository {
-        return DefaultLetterRepository(
-            letterJsonManager = letterJsonManager,
-            letterMasteryDataStore = letterMasteryDataStore,
-            letterMapper = letterMapper
-        )
+    fun provideLetterMasteryRepository(
+        letterMasteryDataStore: LetterMasteryDataStore
+    ): LetterMasteryRepository {
+        return DefaultLetterMasteryRepository(letterMasteryDataStore)
     }
 
     @Provides
     fun provideGetAllLettersUseCase(
-        letterRepository: LetterRepository
+        letterRepository: LetterRepository,
+        letterMasteryRepository: LetterMasteryRepository
     ): GetAllLettersUseCase {
-        return GetAllLettersUseCase(letterRepository)
+        return GetAllLettersUseCase(letterRepository, letterMasteryRepository)
     }
 
     @Provides
     fun provideGetLetterByIdUseCase(
-        letterRepository: LetterRepository
+        letterRepository: LetterRepository,
+        letterMasteryRepository: LetterMasteryRepository
     ): GetLetterByIdUseCase {
-        return GetLetterByIdUseCase(letterRepository)
+        return GetLetterByIdUseCase(letterRepository, letterMasteryRepository)
     }
 
     @Provides
     fun provideGetLettersByRangeUseCase(
-        letterRepository: LetterRepository
+        letterRepository: LetterRepository,
+        letterMasteryRepository: LetterMasteryRepository
     ): GetLettersByRangeUseCase {
-        return GetLettersByRangeUseCase(letterRepository)
+        return GetLettersByRangeUseCase(letterRepository, letterMasteryRepository)
     }
 
     @Provides
     fun provideUpdateLetterMasteryUseCase(
-        letterRepository: LetterRepository
+        letterMasteryRepository: LetterMasteryRepository
     ): UpdateLetterMasteryUseCase {
-        return UpdateLetterMasteryUseCase(letterRepository)
+        return UpdateLetterMasteryUseCase(letterMasteryRepository)
     }
 }

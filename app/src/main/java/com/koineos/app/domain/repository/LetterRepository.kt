@@ -9,22 +9,23 @@ import kotlinx.coroutines.flow.Flow
 interface LetterRepository {
 
     /**
-     * Gets all Koine Greek alphabet letters with their mastery levels
+     * Gets all Koine Greek alphabet letters
+     *
+     * @return Result wrapping Flow of Domain Letters
      */
-    fun getAllLetters(): Flow<List<Letter>>
+    suspend fun getAllLetters(): Result<Flow<List<Letter>>>
 
     /**
-     * Gets a specific letter by ID with its mastery level
+     * Gets a specific letter by ID
+     *
+     * @return Result wrapping Flow of Domain Letter
      */
-    fun getLetterById(id: String): Flow<Letter?>
+    suspend fun getLetterById(id: String): Result<Flow<Letter?>>
 
     /**
      * Gets letters within a range (for progressive learning)
+     *
+     * @return Result wrapping Flow of Domain Letters
      */
-    fun getLettersByRange(fromOrder: Int, toOrder: Int): Flow<List<Letter>>
-
-    /**
-     * Updates mastery level for a specific letter
-     */
-    suspend fun updateLetterMastery(letterId: String, newMasteryLevel: Float): Result<Unit>
+    suspend fun getLettersByRange(fromOrder: Int, toOrder: Int): Result<Flow<List<Letter>>>
 }

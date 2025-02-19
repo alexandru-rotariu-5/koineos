@@ -1,90 +1,51 @@
 package com.koineos.app.data.repository
 
 import com.koineos.app.data.content.LetterJsonManager
-import com.koineos.app.data.content.mapper.LetterMapper
-import com.koineos.app.data.datastore.LetterMasteryDataStore
+import com.koineos.app.data.content.mapper.toDomainModel
 import com.koineos.app.data.utils.StorageUtils
 import com.koineos.app.domain.model.Letter
 import com.koineos.app.domain.repository.LetterRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Implementation of LetterRepository that combines data from JSON and user mastery progress
+ * Implementation of [LetterRepository] that retrieves data from JSON
+ *
+ * @property letterJsonManager Manager responsible for retrieving letter data from JSON files
  */
 @Singleton
 class DefaultLetterRepository @Inject constructor(
-    private val letterJsonManager: LetterJsonManager,
-    private val letterMasteryDataStore: LetterMasteryDataStore,
-    private val letterMapper: LetterMapper
+    private val letterJsonManager: LetterJsonManager
 ) : LetterRepository {
 
     private val TAG = "DefaultLetterRepository"
 
-    override fun getAllLetters(): Flow<List<Letter>> {
-        val lettersFlow = flow {
-            val result = letterJsonManager.getAllLetters()
-            if (result.isSuccess) {
-                emit(result.getOrNull()?.letters ?: emptyList())
-            } else {
-                emit(emptyList())
+    override suspend fun getAllLetters(): Result<Flow<List<Letter>>> {
+        return StorageUtils.tryExecuteLocalRequest("$TAG-getAllLetters") {
+            val letters = letterJsonManager.getAllLetters().map { response ->
+                response.letters.map { it.toDomainModel() }
             }
-        }
-
-        return lettersFlow.combine(letterMasteryDataStore.getAllLetterMasteryLevels()) { letters, masteryMap ->
-            letters.map { letterDto ->
-                letterMapper.mapToDomain(
-                    letterDto = letterDto,
-                    masteryLevel = masteryMap[letterDto.id] ?: 0f
-                )
-            }.sortedBy { it.order }
+            Result.success(letters)
         }
     }
 
-    override fun getLetterById(id: String): Flow<Letter?> {
-        val letterFlow = flow {
-            val result = letterJsonManager.getLetterById(id)
-            emit(result.getOrNull())
-        }
-
-        return letterFlow.combine(letterMasteryDataStore.getLetterMasteryLevel(id)) { letterDto, masteryLevel ->
-            letterDto?.let {
-                letterMapper.mapToDomain(it, masteryLevel)
+    override suspend fun getLetterById(id: String): Result<Flow<Letter?>> {
+        return StorageUtils.tryExecuteLocalRequest("$TAG-getLetterById") {
+            val letter = letterJsonManager.getLetterById(id).map { letterDto ->
+                letterDto?.toDomainModel()
             }
+            Result.success(letter)
         }
     }
 
-    override fun getLettersByRange(fromOrder: Int, toOrder: Int): Flow<List<Letter>> {
-        val lettersFlow = flow {
-            val result = letterJsonManager.getLettersByRange(fromOrder, toOrder)
-            if (result.isSuccess) {
-                emit(result.getOrNull() ?: emptyList())
-            } else {
-                emit(emptyList())
+    override suspend fun getLettersByRange(fromOrder: Int, toOrder: Int): Result<Flow<List<Letter>>> {
+        return StorageUtils.tryExecuteLocalRequest("$TAG-getLettersByRange") {
+            val letters = letterJsonManager.getLettersByRange(fromOrder, toOrder).map { letters ->
+                letters.map { it.toDomainModel() }
             }
-        }
-
-        return lettersFlow.combine(letterMasteryDataStore.getAllLetterMasteryLevels()) { letters, masteryMap ->
-            letters.map { letterDto ->
-                letterMapper.mapToDomain(
-                    letterDto = letterDto,
-                    masteryLevel = masteryMap[letterDto.id] ?: 0f
-                )
-            }.sortedBy { it.order }
-        }
-    }
-
-    override suspend fun updateLetterMastery(
-        letterId: String,
-        newMasteryLevel: Float
-    ): Result<Unit> {
-        return StorageUtils.tryExecuteLocalRequest("$TAG-updateLetterMastery") {
-            val clampedLevel = newMasteryLevel.coerceIn(0f, 1f)
-            letterMasteryDataStore.updateLetterMasteryLevel(letterId, clampedLevel)
-            Result.success(Unit)
+            Result.success(letters)
         }
     }
 }
