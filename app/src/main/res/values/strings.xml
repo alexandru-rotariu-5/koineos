@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Koineos</string>
+
+    <!-- Bottom Nav Bar -->
+    <string name="bottom_nav_bar_home">Home</string>
+    <string name="bottom_nav_bar_learn">Learn</string>
+    <string name="bottom_nav_bar_handbook">Handbook</string>
+    <string name="bottom_nav_bar_read">Read</string>
+    <string name="bottom_nav_bar_more">More</string>
 </resources>
