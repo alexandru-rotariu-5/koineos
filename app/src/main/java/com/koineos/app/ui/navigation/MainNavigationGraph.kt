@@ -3,9 +3,10 @@ package com.koineos.app.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.navigation
-import com.koineos.app.ui.screens.HomeScreen
+import com.koineos.app.ui.navigation.home.homeGraph
+import com.koineos.app.ui.navigation.learn.learnGraph
+import com.koineos.app.ui.navigation.handbook.handbookGraph
+import com.koineos.app.ui.navigation.read.readGraph
 import com.koineos.app.ui.utils.AnimationUtils
 
 /**
@@ -14,7 +15,7 @@ import com.koineos.app.ui.utils.AnimationUtils
 @Composable
 fun MainNavigationGraph(
     navController: NavHostController,
-    startDestination: String = AppDestination.HomeRoot.route
+    startDestination: String = RootDestination.HomeRoot.route
 ) {
     NavHost(
         navController = navController,
@@ -22,44 +23,16 @@ fun MainNavigationGraph(
         enterTransition = AnimationUtils.defaultEnterTransition,
         exitTransition = AnimationUtils.defaultExitTransition
     ) {
-        // Home section
-        navigation(
-            startDestination = AppDestination.Home.route,
-            route = AppDestination.HomeRoot.route
-        ) {
-            composable(AppDestination.Home.route) {
-                HomeScreen()
-            }
-        }
+        // Home section graph
+        homeGraph(navController)
 
-        // Learn section
-        navigation(
-            startDestination = AppDestination.Learn.route,
-            route = AppDestination.LearnRoot.route
-        ) {
-            composable(AppDestination.Learn.route) {
+        // Learn section graph
+        learnGraph(navController)
 
-            }
-        }
+        // Handbook section graph
+        handbookGraph(navController)
 
-        // Handbook section
-        navigation(
-            startDestination = AppDestination.Handbook.route,
-            route = AppDestination.HandbookRoot.route
-        ) {
-            composable(AppDestination.Handbook.route) {
-
-            }
-        }
-
-        // Read section
-        navigation(
-            startDestination = AppDestination.Read.route,
-            route = AppDestination.ReadRoot.route
-        ) {
-            composable(AppDestination.Read.route) {
-
-            }
-        }
+        // Read section graph
+        readGraph(navController)
     }
 }

@@ -5,7 +5,10 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.navigation.NavBackStackEntry
-import com.koineos.app.ui.navigation.AppDestination
+import com.koineos.app.ui.navigation.handbook.HandbookDestination
+import com.koineos.app.ui.navigation.home.HomeDestination
+import com.koineos.app.ui.navigation.learn.LearnDestination
+import com.koineos.app.ui.navigation.read.ReadDestination
 
 object AnimationUtils {
     private const val DEFAULT_ANIMATION_DURATION = 300
@@ -51,10 +54,10 @@ object AnimationUtils {
      */
     private fun isRootDestination(navBackStackEntry: NavBackStackEntry?): Boolean {
         val rootRoutes = setOf(
-            AppDestination.Home.route,
-            AppDestination.Learn.route,
-            AppDestination.Handbook.route,
-            AppDestination.Read.route,
+            HomeDestination.HomeScreen.route,
+            LearnDestination.LearnHome.route,
+            ReadDestination.ReadHome.route,
+            HandbookDestination.HandbookHome.route
         )
         return navBackStackEntry?.destination?.route in rootRoutes
     }

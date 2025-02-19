@@ -30,35 +30,39 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.koineos.app.R
 import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.components.core.IconComponent
+import com.koineos.app.ui.navigation.handbook.HandbookDestination
+import com.koineos.app.ui.navigation.home.HomeDestination
+import com.koineos.app.ui.navigation.learn.LearnDestination
+import com.koineos.app.ui.navigation.read.ReadDestination
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.utils.AndroidStringProvider
 
 sealed class BottomNavItem(
-    val rootDestination: AppDestination,
+    val rootDestination: RootDestination,
     val icon: AppIcon,
     @StringRes val labelResId: Int
 ) {
     data object Home : BottomNavItem(
-        rootDestination = AppDestination.HomeRoot,
+        rootDestination = RootDestination.HomeRoot,
         icon = AppIcon.Home,
         labelResId = R.string.bottom_nav_bar_home
     )
 
     data object Learn : BottomNavItem(
-        rootDestination = AppDestination.LearnRoot,
+        rootDestination = RootDestination.LearnRoot,
         icon = AppIcon.Learn,
         labelResId = R.string.bottom_nav_bar_learn
     )
 
     data object Read : BottomNavItem(
-        rootDestination = AppDestination.ReadRoot,
+        rootDestination = RootDestination.ReadRoot,
         icon = AppIcon.Read,
         labelResId = R.string.bottom_nav_bar_read
     )
 
     data object Handbook : BottomNavItem(
-        rootDestination = AppDestination.HandbookRoot,
+        rootDestination = RootDestination.HandbookRoot,
         icon = AppIcon.Handbook,
         labelResId = R.string.bottom_nav_bar_handbook
     )
@@ -75,10 +79,10 @@ fun BottomNavBar(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
 
     when (navBackStackEntry?.destination?.route) {
-        AppDestination.Home.route,
-        AppDestination.Learn.route,
-        AppDestination.Read.route,
-        AppDestination.Handbook.route -> {
+        HomeDestination.HomeScreen.route,
+        LearnDestination.LearnHome.route,
+        ReadDestination.ReadHome.route,
+        HandbookDestination.HandbookHome.route -> {
             bottomBarState.value = true
         }
 

@@ -32,6 +32,7 @@ sealed class AppIcon(val unselectedDrawableId: Int, val selectedDrawableId: Int)
 
 @Composable
 fun IconComponent(
+    modifier: Modifier = Modifier,
     icon: AppIcon,
     size: Dp = 24.dp,
     contentDescription: String? = "",
@@ -39,7 +40,7 @@ fun IconComponent(
     tint: Color = LocalContentColor.current
 ) {
     Icon(
-        modifier = Modifier.size(size),
+        modifier = modifier.size(size),
         painter = painterResource(id = if (isSelected) icon.selectedDrawableId else icon.unselectedDrawableId),
         contentDescription = contentDescription,
         tint = tint
