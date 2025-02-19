@@ -22,15 +22,6 @@ sealed interface AppDestination {
         override val route = "learn"
     }
 
-    data object HandbookRoot : AppDestination {
-        override val route = "handbook_root"
-    }
-
-    data object Handbook : AppDestination {
-
-        override val route = "handbook"
-    }
-
     data object ReadRoot : AppDestination {
         override val route = "read_root"
     }
@@ -38,5 +29,14 @@ sealed interface AppDestination {
     data object Read : AppDestination {
 
         override val route = "read"
+    }
+
+    data object HandbookRoot : AppDestination {
+        override val route = "handbook_root"
+    }
+
+    data object Handbook : AppDestination {
+
+        override val route = "handbook"
     }
 }

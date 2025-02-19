@@ -67,9 +67,9 @@ object Colors {
     val TextPrimaryDark = Color(0xFFE3E3E3)
     val TextSecondaryDark = Color(0xFFABADAF)
 
-    val BottomNavBarSelectedIconColor = Primary
-    val BottomNavBarSelectedTextColor = TextPrimary
-    val BottomNavBarSelectedIndicatorColor = Color(0xFFD9E1EF)
+    val BottomNavBarSelectedIconColor = PrimaryDark
+    val BottomNavBarSelectedTextColor = PrimaryDark
     val BottomNavBarUnselectedIconColor = BlackSecondary
     val BottomNavBarUnselectedTextColor = TextSecondary
+    val BottomNavBarSelectedIndicatorColor = Color(0xFFD9E1EF)
 }

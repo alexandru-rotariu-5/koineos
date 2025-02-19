@@ -51,16 +51,16 @@ sealed class BottomNavItem(
         labelResId = R.string.bottom_nav_bar_learn
     )
 
-    data object Handbook : BottomNavItem(
-        rootDestination = AppDestination.HandbookRoot,
-        icon = AppIcon.Handbook,
-        labelResId = R.string.bottom_nav_bar_handbook
-    )
-
     data object Read : BottomNavItem(
         rootDestination = AppDestination.ReadRoot,
         icon = AppIcon.Read,
         labelResId = R.string.bottom_nav_bar_read
+    )
+
+    data object Handbook : BottomNavItem(
+        rootDestination = AppDestination.HandbookRoot,
+        icon = AppIcon.Handbook,
+        labelResId = R.string.bottom_nav_bar_handbook
     )
 }
 
@@ -77,8 +77,8 @@ fun BottomNavBar(
     when (navBackStackEntry?.destination?.route) {
         AppDestination.Home.route,
         AppDestination.Learn.route,
-        AppDestination.Handbook.route,
-        AppDestination.Read.route -> {
+        AppDestination.Read.route,
+        AppDestination.Handbook.route -> {
             bottomBarState.value = true
         }
 
@@ -90,8 +90,8 @@ fun BottomNavBar(
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Learn,
-        BottomNavItem.Handbook,
         BottomNavItem.Read,
+        BottomNavItem.Handbook,
     )
 
     AnimatedVisibility(
