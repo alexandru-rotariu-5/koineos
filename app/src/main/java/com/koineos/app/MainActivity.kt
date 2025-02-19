@@ -16,9 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
+import com.koineos.app.ui.navigation.BottomNavBar
 import com.koineos.app.ui.navigation.MainNavigationGraph
+import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.KoineosTheme
-import com.koineos.app.ui.utils.BottomNavBar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,13 +46,13 @@ fun AppContainer() {
             BottomNavBar(navController)
         },
         contentWindowInsets = WindowInsets(0.dp),
-        containerColor = MaterialTheme.colorScheme.surface
+        containerColor = Colors.Surface
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface)
+                .background(Colors.Surface)
         ) {
             MainNavigationGraph(navController = navController)
         }

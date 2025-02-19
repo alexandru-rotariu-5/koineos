@@ -1,4 +1,4 @@
-package com.koineos.app.ui.utils
+package com.koineos.app.ui.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -31,9 +30,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.koineos.app.R
 import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.components.core.IconComponent
-import com.koineos.app.ui.navigation.AppDestination
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.KoineosTheme
+import com.koineos.app.ui.utils.AndroidStringProvider
 
 sealed class BottomNavItem(
     val rootDestination: AppDestination,
@@ -101,8 +100,8 @@ fun BottomNavBar(
         exit = slideOutVertically(targetOffsetY = { it }),
         content = {
             Column {
-                HorizontalDivider(thickness = 1.dp, color = Colors.Outline)
-                NavigationBar(containerColor = MaterialTheme.colorScheme.surface) {
+                HorizontalDivider(thickness = 0.5.dp, color = Colors.Outline)
+                NavigationBar(containerColor = Colors.Surface) {
                     val currentDestination = navBackStackEntry?.destination
 
                     items.forEach { item ->
@@ -165,7 +164,7 @@ private fun BottomNavBarPreview() {
                 modifier = Modifier
                     .padding(innerPadding)
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(Colors.Surface)
             ) {}
         }
     }

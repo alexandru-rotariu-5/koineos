@@ -5,6 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.koineos.app.ui.screens.HomeScreen
 import com.koineos.app.ui.utils.AnimationUtils
 
 /**
@@ -27,7 +28,7 @@ fun MainNavigationGraph(
             route = AppDestination.HomeRoot.route
         ) {
             composable(AppDestination.Home.route) {
-
+                HomeScreen()
             }
         }
 
