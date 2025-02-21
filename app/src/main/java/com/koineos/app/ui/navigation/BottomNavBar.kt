@@ -4,24 +4,18 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -35,7 +29,6 @@ import com.koineos.app.ui.navigation.home.HomeDestination
 import com.koineos.app.ui.navigation.learn.LearnDestination
 import com.koineos.app.ui.navigation.read.ReadDestination
 import com.koineos.app.ui.theme.Colors
-import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.utils.AndroidStringProvider
 
 sealed class BottomNavItem(
@@ -49,16 +42,16 @@ sealed class BottomNavItem(
         labelResId = R.string.bottom_nav_bar_home
     )
 
-    data object Alphabet : BottomNavItem(
-        rootDestination = RootDestination.AlphabetRoot,
-        icon = AppIcon.Alphabet,
-        labelResId = R.string.bottom_nav_bar_alphabet
-    )
-
     data object Learn : BottomNavItem(
         rootDestination = RootDestination.LearnRoot,
         icon = AppIcon.Learn,
         labelResId = R.string.bottom_nav_bar_learn
+    )
+
+    data object Alphabet : BottomNavItem(
+        rootDestination = RootDestination.AlphabetRoot,
+        icon = AppIcon.Alphabet,
+        labelResId = R.string.bottom_nav_bar_alphabet
     )
 
     data object Read : BottomNavItem(
@@ -80,8 +73,8 @@ fun BottomNavBar(
 
     when (navBackStackEntry?.destination?.route) {
         HomeDestination.HomeScreen.route,
-        AlphabetDestination.AlphabetHome.route,
         LearnDestination.LearnHome.route,
+        AlphabetDestination.AlphabetHome.route,
         ReadDestination.ReadHome.route -> {
             bottomBarState.value = true
         }
@@ -93,8 +86,8 @@ fun BottomNavBar(
 
     val items = listOf(
         BottomNavItem.Home,
-        BottomNavItem.Alphabet,
         BottomNavItem.Learn,
+        BottomNavItem.Alphabet,
         BottomNavItem.Read
     )
 
@@ -151,25 +144,4 @@ fun BottomNavBar(
             }
         }
     )
-}
-
-@Preview
-@Composable
-private fun BottomNavBarPreview() {
-    KoineosTheme {
-        Scaffold(
-            bottomBar = {
-                BottomNavBar(
-                    navController = NavHostController(LocalContext.current)
-                )
-            }
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize()
-                    .background(Colors.Surface)
-            ) {}
-        }
-    }
 }

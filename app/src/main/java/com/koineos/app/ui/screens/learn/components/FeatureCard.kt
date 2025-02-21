@@ -109,7 +109,7 @@ private fun FeatureCardPreview() {
         FeatureCard(
             title = "Alphabet",
             description = "Learn the Koine Greek alphabet and its pronunciation",
-            icon = AppIcon.Alphabet,
+            icon = AppIcon.Alphabet2,
             progress = 0f,
             onClick = {},
             modifier = Modifier.padding(Dimensions.paddingMedium)
@@ -124,7 +124,7 @@ private fun FeatureCardWithProgressPreview() {
         FeatureCard(
             title = "Alphabet",
             description = "Learn the Koine Greek alphabet and its pronunciation",
-            icon = AppIcon.Alphabet,
+            icon = AppIcon.Alphabet2,
             progress = 0.45f,
             onClick = {},
             modifier = Modifier.padding(Dimensions.paddingMedium)

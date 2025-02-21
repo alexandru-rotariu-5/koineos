@@ -34,6 +34,7 @@ sealed class AppIcon(val unselectedDrawableId: Int, val selectedDrawableId: Int)
     // Learn
     data object Alphabet : AppIcon(R.drawable.ic_alphabet, R.drawable.ic_alphabet)
     data object Alphabet2 : AppIcon(R.drawable.ic_alphabet_2, R.drawable.ic_alphabet_2)
+    data object Alphabet3 : AppIcon(R.drawable.ic_alphabet_3, R.drawable.ic_alphabet_3)
     data object Vocabulary : AppIcon(R.drawable.ic_vocabulary, R.drawable.ic_vocabulary_filled)
     data object Practice : AppIcon(R.drawable.ic_practice, R.drawable.ic_practice)
     data object Path : AppIcon(R.drawable.ic_path, R.drawable.ic_path)
