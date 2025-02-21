@@ -31,34 +31,40 @@ fun NavGraphBuilder.learnGraph(
             exitTransition = { ExitTransition.None }
         ) {
             LearnScreen(
-                alphabetProgress = 0f,
-                vocabularyProgress = 0f,
                 coursesProgress = 0f,
-                onNavigateToAlphabet = { navController.navigate(LearnDestination.Alphabet.route) },
+                onNavigateToCourses = { navController.navigate(LearnDestination.Courses.route) },
                 onNavigateToVocabulary = { navController.navigate(LearnDestination.Vocabulary.route) },
-                onNavigateToCourses = { navController.navigate(LearnDestination.Courses.route) }
+                onNavigateToPractice = { navController.navigate(LearnDestination.Practice.route) },
+                onNavigateToHandbook = { navController.navigate(LearnDestination.Handbook.route) }
             )
         }
 
-        // Alphabet screen
+        // Courses screen
         composable(
-            route = LearnDestination.Alphabet.route,
+            route = LearnDestination.Courses.route,
             enterTransition = enterTransition,
             exitTransition = exitTransition
         ) {}
 
-        // Vocabulary screen - placeholder for future implementation
+        // Vocabulary screen
         composable(
             route = LearnDestination.Vocabulary.route,
             enterTransition = enterTransition,
             exitTransition = exitTransition
         ) {}
 
-        // Courses screen - placeholder for future implementation
+        // Practice screen
         composable(
-            route = LearnDestination.Courses.route,
+            route = LearnDestination.Practice.route,
             enterTransition = enterTransition,
-            exitTransition = exitTransition
+            exitTransition = exitTransition,
+        ) {}
+
+        // Handbook screen
+        composable(
+            route = LearnDestination.Handbook.route,
+            enterTransition = enterTransition,
+            exitTransition = exitTransition,
         ) {}
     }
 }

@@ -30,7 +30,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.koineos.app.R
 import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.components.core.IconComponent
-import com.koineos.app.ui.navigation.handbook.HandbookDestination
+import com.koineos.app.ui.navigation.alphabet.AlphabetDestination
 import com.koineos.app.ui.navigation.home.HomeDestination
 import com.koineos.app.ui.navigation.learn.LearnDestination
 import com.koineos.app.ui.navigation.read.ReadDestination
@@ -49,6 +49,12 @@ sealed class BottomNavItem(
         labelResId = R.string.bottom_nav_bar_home
     )
 
+    data object Alphabet : BottomNavItem(
+        rootDestination = RootDestination.AlphabetRoot,
+        icon = AppIcon.Alphabet,
+        labelResId = R.string.bottom_nav_bar_alphabet
+    )
+
     data object Learn : BottomNavItem(
         rootDestination = RootDestination.LearnRoot,
         icon = AppIcon.Learn,
@@ -59,12 +65,6 @@ sealed class BottomNavItem(
         rootDestination = RootDestination.ReadRoot,
         icon = AppIcon.Read,
         labelResId = R.string.bottom_nav_bar_read
-    )
-
-    data object Handbook : BottomNavItem(
-        rootDestination = RootDestination.HandbookRoot,
-        icon = AppIcon.Handbook,
-        labelResId = R.string.bottom_nav_bar_handbook
     )
 }
 
@@ -80,9 +80,9 @@ fun BottomNavBar(
 
     when (navBackStackEntry?.destination?.route) {
         HomeDestination.HomeScreen.route,
+        AlphabetDestination.AlphabetHome.route,
         LearnDestination.LearnHome.route,
-        ReadDestination.ReadHome.route,
-        HandbookDestination.HandbookHome.route -> {
+        ReadDestination.ReadHome.route -> {
             bottomBarState.value = true
         }
 
@@ -93,9 +93,9 @@ fun BottomNavBar(
 
     val items = listOf(
         BottomNavItem.Home,
+        BottomNavItem.Alphabet,
         BottomNavItem.Learn,
-        BottomNavItem.Read,
-        BottomNavItem.Handbook,
+        BottomNavItem.Read
     )
 
     AnimatedVisibility(

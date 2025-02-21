@@ -14,6 +14,13 @@ sealed interface RootDestination {
     }
 
     /**
+     * Alphabet section root
+     */
+    data object AlphabetRoot : RootDestination {
+        override val route = "alphabet_root"
+    }
+
+    /**
      * Learn section root
      */
     data object LearnRoot : RootDestination {
@@ -25,12 +32,5 @@ sealed interface RootDestination {
      */
     data object ReadRoot : RootDestination {
         override val route = "read_root"
-    }
-
-    /**
-     * Handbook section root
-     */
-    data object HandbookRoot : RootDestination {
-        override val route = "handbook_root"
     }
 }

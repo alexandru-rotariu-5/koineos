@@ -5,7 +5,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.koineos.app.ui.navigation.home.homeGraph
 import com.koineos.app.ui.navigation.learn.learnGraph
-import com.koineos.app.ui.navigation.handbook.handbookGraph
+import com.koineos.app.ui.navigation.alphabet.alphabetGraph
 import com.koineos.app.ui.navigation.read.readGraph
 import com.koineos.app.ui.utils.AnimationUtils
 
@@ -26,11 +26,11 @@ fun MainNavigationGraph(
         // Home section graph
         homeGraph(navController)
 
+        // Alphabet section graph
+        alphabetGraph(navController)
+
         // Learn section graph
         learnGraph(navController)
-
-        // Handbook section graph
-        handbookGraph(navController)
 
         // Read section graph
         readGraph(navController)

@@ -10,9 +10,9 @@ sealed class LearnDestination(val route: String) {
     data object LearnHome : LearnDestination("learn")
 
     /**
-     * Alphabet learning screen
+     * Progressive courses screen
      */
-    data object Alphabet : LearnDestination("alphabet")
+    data object Courses : LearnDestination("courses")
 
     /**
      * Vocabulary learning screen
@@ -20,7 +20,12 @@ sealed class LearnDestination(val route: String) {
     data object Vocabulary : LearnDestination("vocabulary")
 
     /**
-     * Progressive courses screen
+     * Practice screen
      */
-    data object Courses : LearnDestination("courses")
+    data object Practice : LearnDestination("practice")
+
+    /**
+     * Handbook screen
+     */
+    data object Handbook : LearnDestination("handbook")
 }

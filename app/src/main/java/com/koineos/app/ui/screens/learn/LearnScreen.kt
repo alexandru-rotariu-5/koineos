@@ -3,6 +3,7 @@ package com.koineos.app.ui.screens.learn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,19 +19,18 @@ import androidx.compose.ui.unit.dp
 import com.koineos.app.R
 import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.components.topbar.MainTopBar
-import com.koineos.app.ui.screens.learn.components.FeatureCard
+import com.koineos.app.ui.screens.learn.components.GridFeatureCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineosTheme
 
 @Composable
 fun LearnScreen(
-    alphabetProgress: Float,
-    vocabularyProgress: Float,
     coursesProgress: Float,
-    onNavigateToAlphabet: () -> Unit,
+    onNavigateToCourses: () -> Unit,
     onNavigateToVocabulary: () -> Unit,
-    onNavigateToCourses: () -> Unit
+    onNavigateToPractice: () -> Unit,
+    onNavigateToHandbook: () -> Unit
 ) {
     Scaffold(
         topBar = { MainTopBar() },
@@ -38,12 +38,11 @@ fun LearnScreen(
         contentWindowInsets = WindowInsets(0.dp)
     ) { paddingValues ->
         LearnScreenContent(
-            alphabetProgress = alphabetProgress,
-            vocabularyProgress = vocabularyProgress,
             coursesProgress = coursesProgress,
-            onNavigateToAlphabet = onNavigateToAlphabet,
             onNavigateToVocabulary = onNavigateToVocabulary,
             onNavigateToCourses = onNavigateToCourses,
+            onNavigateToPractice = onNavigateToPractice,
+            onNavigateToHandbook = onNavigateToHandbook,
             contentPadding = paddingValues
         )
     }
@@ -51,12 +50,11 @@ fun LearnScreen(
 
 @Composable
 private fun LearnScreenContent(
-    alphabetProgress: Float,
-    vocabularyProgress: Float,
     coursesProgress: Float,
-    onNavigateToAlphabet: () -> Unit,
     onNavigateToVocabulary: () -> Unit,
     onNavigateToCourses: () -> Unit,
+    onNavigateToPractice: () -> Unit,
+    onNavigateToHandbook: () -> Unit,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
@@ -65,69 +63,90 @@ private fun LearnScreenContent(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(contentPadding)
-            .padding(Dimensions.paddingLarge),
-        verticalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
+            .padding(Dimensions.paddingLarge)
     ) {
-        // Alphabet Feature Card
-        FeatureCard(
-            title = stringResource(R.string.learn_feature_alphabet_title),
-            description = stringResource(R.string.learn_feature_alphabet_description),
-            icon = AppIcon.Alphabet,
-            progress = 0.4f,
-            onClick = onNavigateToAlphabet,
-            modifier = Modifier.fillMaxWidth()
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
+            ) {
+                // Courses Card
+                GridFeatureCard(
+                    title = stringResource(R.string.learn_feature_courses_title),
+                    description = stringResource(R.string.learn_feature_courses_description),
+                    icon = AppIcon.Path,
+                    progress = coursesProgress,
+                    onClick = onNavigateToCourses,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        // Vocabulary Feature Card
-        FeatureCard(
-            title = stringResource(R.string.learn_feature_vocabulary_title),
-            description = stringResource(R.string.learn_feature_vocabulary_description),
-            icon = AppIcon.Vocabulary,
-            progress = vocabularyProgress,
-            onClick = onNavigateToVocabulary,
-            enabled = false,
-            modifier = Modifier.fillMaxWidth()
-        )
+                // Practice Card
+                GridFeatureCard(
+                    title = stringResource(R.string.learn_feature_practice_title),
+                    description = stringResource(R.string.learn_feature_practice_description),
+                    icon = AppIcon.Practice,
+                    progress = 0f,
+                    onClick = onNavigateToPractice,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
-        // Courses Feature Card
-        FeatureCard(
-            title = stringResource(R.string.learn_feature_courses_title),
-            description = stringResource(R.string.learn_feature_courses_description),
-            icon = AppIcon.Path,
-            progress = coursesProgress,
-            onClick = onNavigateToCourses,
-            enabled = false,
-            modifier = Modifier.fillMaxWidth()
-        )
+            // Second column
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
+            ) {
+                // Vocabulary Card
+                GridFeatureCard(
+                    title = stringResource(R.string.learn_feature_vocabulary_title),
+                    description = stringResource(R.string.learn_feature_vocabulary_description),
+                    icon = AppIcon.Vocabulary,
+                    progress = 0f,
+                    onClick = onNavigateToVocabulary,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                // Handbook Card
+                GridFeatureCard(
+                    title = stringResource(R.string.learn_feature_handbook_title),
+                    description = stringResource(R.string.learn_feature_handbook_description),
+                    icon = AppIcon.Handbook,
+                    progress = 0f,
+                    onClick = onNavigateToHandbook,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        }
     }
 }
 
-@Preview(name = "Learn Screen - No Progress")
+@Preview
 @Composable
 private fun LearnScreenPreview() {
     KoineosTheme {
         LearnScreen(
-            alphabetProgress = 0f,
-            vocabularyProgress = 0f,
             coursesProgress = 0f,
-            onNavigateToAlphabet = {},
             onNavigateToVocabulary = {},
-            onNavigateToCourses = {}
+            onNavigateToCourses = {},
+            onNavigateToPractice = {},
+            onNavigateToHandbook = {}
         )
     }
 }
 
-@Preview(name = "Learn Screen - With Progress")
+@Preview
 @Composable
-private fun LearnScreenWithProgressPreview() {
+private fun LearnScreenProgressPreview() {
     KoineosTheme {
         LearnScreen(
-            alphabetProgress = 0.45f,
-            vocabularyProgress = 0.3f,
-            coursesProgress = 0.1f,
-            onNavigateToAlphabet = {},
+            coursesProgress = 0.45f,
             onNavigateToVocabulary = {},
-            onNavigateToCourses = {}
+            onNavigateToCourses = {},
+            onNavigateToPractice = {},
+            onNavigateToHandbook = {}
         )
     }
 }

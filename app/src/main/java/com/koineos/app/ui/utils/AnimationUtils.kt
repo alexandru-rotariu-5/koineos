@@ -5,7 +5,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.navigation.NavBackStackEntry
-import com.koineos.app.ui.navigation.handbook.HandbookDestination
+import com.koineos.app.ui.navigation.alphabet.AlphabetDestination
 import com.koineos.app.ui.navigation.home.HomeDestination
 import com.koineos.app.ui.navigation.learn.LearnDestination
 import com.koineos.app.ui.navigation.read.ReadDestination
@@ -57,7 +57,7 @@ object AnimationUtils {
             HomeDestination.HomeScreen.route,
             LearnDestination.LearnHome.route,
             ReadDestination.ReadHome.route,
-            HandbookDestination.HandbookHome.route
+            AlphabetDestination.AlphabetHome.route
         )
         return navBackStackEntry?.destination?.route in rootRoutes
     }

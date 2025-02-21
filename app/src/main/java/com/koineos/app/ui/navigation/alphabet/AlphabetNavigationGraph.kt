@@ -1,4 +1,4 @@
-package com.koineos.app.ui.navigation.handbook
+package com.koineos.app.ui.navigation.alphabet
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
@@ -12,20 +12,20 @@ import com.koineos.app.ui.navigation.RootDestination
 import com.koineos.app.ui.utils.AnimationUtils
 
 /**
- * Navigation graph for the Handbook section
+ * Navigation graph for the Alphabet section
  */
-fun NavGraphBuilder.handbookGraph(
+fun NavGraphBuilder.alphabetGraph(
     navController: NavHostController,
     enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = AnimationUtils.defaultEnterTransition,
     exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = AnimationUtils.defaultExitTransition
 ) {
     navigation(
-        startDestination = HandbookDestination.HandbookHome.route,
-        route = RootDestination.HandbookRoot.route
+        startDestination = AlphabetDestination.AlphabetHome.route,
+        route = RootDestination.AlphabetRoot.route
     ) {
-        // Main Handbook screen
+        // Main Alphabet screen
         composable(
-            route = HandbookDestination.HandbookHome.route,
+            route = AlphabetDestination.AlphabetHome.route,
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None }
         ) {}
