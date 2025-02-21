@@ -26,11 +26,11 @@ fun MainNavigationGraph(
         // Home section graph
         homeGraph(navController)
 
-        // Alphabet section graph
-        alphabetGraph(navController)
-
         // Learn section graph
         learnGraph(navController)
+
+        // Alphabet section graph
+        alphabetGraph(navController)
 
         // Read section graph
         readGraph(navController)

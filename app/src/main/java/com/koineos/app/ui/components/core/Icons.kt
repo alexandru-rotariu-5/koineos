@@ -15,8 +15,8 @@ sealed class AppIcon(val unselectedDrawableId: Int, val selectedDrawableId: Int)
 
     // Bottom Navigation Bar
     data object Home : AppIcon(R.drawable.ic_home, R.drawable.ic_home_filled)
-    data object Learn : AppIcon(R.drawable.ic_learn, R.drawable.ic_learn_filled)
-    data object Handbook : AppIcon(R.drawable.ic_book, R.drawable.ic_book_filled)
+    data object Learn : AppIcon(R.drawable.ic_book, R.drawable.ic_open_book_filled)
+    data object Alphabet : AppIcon(R.drawable.ic_alphabet, R.drawable.ic_alphabet)
     data object Read : AppIcon(R.drawable.ic_read, R.drawable.ic_read_filled)
 
     // General
@@ -32,13 +32,14 @@ sealed class AppIcon(val unselectedDrawableId: Int, val selectedDrawableId: Int)
     data object Check : AppIcon(R.drawable.ic_check, R.drawable.ic_check)
 
     // Learn
-    data object Alphabet : AppIcon(R.drawable.ic_alphabet, R.drawable.ic_alphabet)
-    data object Alphabet2 : AppIcon(R.drawable.ic_alphabet_2, R.drawable.ic_alphabet_2)
-    data object Alphabet3 : AppIcon(R.drawable.ic_alphabet_3, R.drawable.ic_alphabet_3)
+    data object Path : AppIcon(R.drawable.ic_path, R.drawable.ic_path)
     data object Vocabulary : AppIcon(R.drawable.ic_vocabulary, R.drawable.ic_vocabulary_filled)
     data object Practice : AppIcon(R.drawable.ic_practice, R.drawable.ic_practice)
-    data object Path : AppIcon(R.drawable.ic_path, R.drawable.ic_path)
+    data object Book : AppIcon(R.drawable.ic_book, R.drawable.ic_book_filled)
 
+    // Alphabet
+    data object Alphabet2 : AppIcon(R.drawable.ic_alphabet_2, R.drawable.ic_alphabet_2)
+    data object Alphabet3 : AppIcon(R.drawable.ic_alphabet_3, R.drawable.ic_alphabet_3)
 }
 
 @Composable

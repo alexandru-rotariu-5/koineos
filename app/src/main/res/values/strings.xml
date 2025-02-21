@@ -20,7 +20,7 @@
     <string name="learn_feature_vocabulary_title">Vocabulary</string>
     <string name="learn_feature_vocabulary_description">Build your knowledge of Koine Greek words</string>
     <string name="learn_feature_practice_title">Practice</string>
-    <string name="learn_feature_practice_description">Test your knowledge with mixed exercises</string>
+    <string name="learn_feature_practice_description">Strengthen your knowledge with mixed exercises.</string>
     <string name="learn_feature_handbook_title">Handbook</string>
     <string name="learn_feature_handbook_description">Access complete reference materials</string>
 </resources>

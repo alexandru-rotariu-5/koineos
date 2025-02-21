@@ -14,17 +14,17 @@ sealed interface RootDestination {
     }
 
     /**
-     * Alphabet section root
-     */
-    data object AlphabetRoot : RootDestination {
-        override val route = "alphabet_root"
-    }
-
-    /**
      * Learn section root
      */
     data object LearnRoot : RootDestination {
         override val route = "learn_root"
+    }
+
+    /**
+     * Alphabet section root
+     */
+    data object AlphabetRoot : RootDestination {
+        override val route = "alphabet_root"
     }
 
     /**

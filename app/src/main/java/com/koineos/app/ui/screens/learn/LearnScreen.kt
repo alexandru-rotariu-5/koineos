@@ -113,7 +113,7 @@ private fun LearnScreenContent(
                 GridFeatureCard(
                     title = stringResource(R.string.learn_feature_handbook_title),
                     description = stringResource(R.string.learn_feature_handbook_description),
-                    icon = AppIcon.Handbook,
+                    icon = AppIcon.Book,
                     progress = 0f,
                     onClick = onNavigateToHandbook,
                     modifier = Modifier.fillMaxWidth()

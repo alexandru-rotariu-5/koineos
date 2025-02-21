@@ -20,7 +20,9 @@ import com.koineos.app.ui.navigation.BottomNavBar
 import com.koineos.app.ui.navigation.MainNavigationGraph
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.KoineosTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
