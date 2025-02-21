@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.koineos.app.ui.navigation.RootDestination
-import com.koineos.app.ui.screens.LearnScreen
+import com.koineos.app.ui.screens.learn.LearnScreen
 import com.koineos.app.ui.utils.AnimationUtils
 
 /**
@@ -30,7 +30,14 @@ fun NavGraphBuilder.learnGraph(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None }
         ) {
-            LearnScreen(navController = navController)
+            LearnScreen(
+                alphabetProgress = 0f,
+                vocabularyProgress = 0f,
+                coursesProgress = 0f,
+                onNavigateToAlphabet = { navController.navigate(LearnDestination.Alphabet.route) },
+                onNavigateToVocabulary = { navController.navigate(LearnDestination.Vocabulary.route) },
+                onNavigateToCourses = { navController.navigate(LearnDestination.Courses.route) }
+            )
         }
 
         // Alphabet screen

@@ -8,17 +8,18 @@
     <string name="bottom_nav_bar_read">Read</string>
     <string name="bottom_nav_bar_more">More</string>
 
+    <!-- Feature Card -->
+    <string name="feature_progress_percentage">%1$d%% completed</string>
+
     <!-- Learn Screen -->
     <string name="learn_screen_title">Learn</string>
     <string name="learn_introduction">Choose a learning path to master Koine Greek. Start with the alphabet, explore vocabulary, or dive into structured courses.</string>
 
     <!-- Learn Feature Cards -->
-    <string name="learn_alphabet_title">Alphabet</string>
-    <string name="learn_alphabet_description">Master the 24 letters of the Koine Greek alphabet - the foundation for reading ancient texts</string>
-
-    <string name="learn_vocabulary_title">Vocabulary</string>
-    <string name="learn_vocabulary_description">Build your knowledge of Koine Greek words organized by frequency in biblical texts</string>
-
-    <string name="learn_courses_title">Courses</string>
-    <string name="learn_courses_description">Progress through structured lessons from beginner to advanced levels</string>
+    <string name="learn_feature_alphabet_title">Alphabet</string>
+    <string name="learn_feature_alphabet_description">Learn the Koine Greek alphabet</string>
+    <string name="learn_feature_vocabulary_title">Vocabulary</string>
+    <string name="learn_feature_vocabulary_description">Build your knowledge of Koine Greek words</string>
+    <string name="learn_feature_courses_title">Courses</string>
+    <string name="learn_feature_courses_description">Progress through structured lessons from beginner to advanced</string>
 </resources>

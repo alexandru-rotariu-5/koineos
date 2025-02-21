@@ -1,7 +1,8 @@
-package com.koineos.app.ui.components.core
+package com.koineos.app.ui.components.topbar
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.KoineosTheme
 
@@ -33,7 +34,7 @@ fun MainTopBar() {
             )
         ),
         backgroundColor = Colors.Surface,
-        showDivider = false
+        showDivider = true
     )
 }
 

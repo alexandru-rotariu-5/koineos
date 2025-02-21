@@ -1,4 +1,4 @@
-package com.koineos.app.ui.components.core
+package com.koineos.app.ui.components.topbar
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.koineos.app.R
+import com.koineos.app.ui.components.core.AppIcon
+import com.koineos.app.ui.components.core.IconComponent
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.KoineosTheme
 

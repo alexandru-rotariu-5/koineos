@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.koineos.app.ui.components.core.MainTopBar
+import com.koineos.app.ui.components.topbar.MainTopBar
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
