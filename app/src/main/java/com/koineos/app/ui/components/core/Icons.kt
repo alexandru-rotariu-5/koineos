@@ -20,7 +20,9 @@ sealed class AppIcon(val unselectedDrawableId: Int, val selectedDrawableId: Int)
     data object Read : AppIcon(R.drawable.ic_read, R.drawable.ic_read_filled)
 
     // General
-    data object MoreHorizontal : AppIcon(R.drawable.ic_more_horizontal, R.drawable.ic_more_horizontal)
+    data object MoreHorizontal :
+        AppIcon(R.drawable.ic_more_horizontal, R.drawable.ic_more_horizontal)
+
     data object MoreVertical : AppIcon(R.drawable.ic_more_vertical, R.drawable.ic_more_vertical)
     data object Search : AppIcon(R.drawable.ic_search, R.drawable.ic_search)
     data object Back : AppIcon(R.drawable.ic_back, R.drawable.ic_back)
@@ -28,6 +30,14 @@ sealed class AppIcon(val unselectedDrawableId: Int, val selectedDrawableId: Int)
     data object Add : AppIcon(R.drawable.ic_add, R.drawable.ic_add)
     data object Close : AppIcon(R.drawable.ic_close, R.drawable.ic_close)
     data object Check : AppIcon(R.drawable.ic_check, R.drawable.ic_check)
+
+    // Learn
+    data object Alphabet : AppIcon(R.drawable.ic_alphabet, R.drawable.ic_alphabet)
+    data object Alphabet2 : AppIcon(R.drawable.ic_alphabet_2, R.drawable.ic_alphabet_2)
+    data object Vocabulary : AppIcon(R.drawable.ic_vocabulary, R.drawable.ic_vocabulary_filled)
+    data object Practice : AppIcon(R.drawable.ic_practice, R.drawable.ic_practice)
+    data object Path : AppIcon(R.drawable.ic_path, R.drawable.ic_path)
+
 }
 
 @Composable
