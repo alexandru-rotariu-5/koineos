@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -62,12 +61,12 @@ fun AlphabetScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
         ) {
-            // Fixed header
-            HeaderContent({})
-
-            // Scrollable content
+            HeaderContent(
+                onLearnClick = {},
+                modifier = Modifier
+                    .padding(top = paddingValues.calculateTopPadding())
+            )
             when (uiState) {
                 is AlphabetUiState.Loaded -> {
                     val categories = (uiState as AlphabetUiState.Loaded).categories
@@ -91,7 +90,7 @@ private fun HeaderContent(
             .fillMaxWidth()
             .background(Colors.Surface)
             .padding(horizontal = Dimensions.paddingLarge)
-            .padding(top = Dimensions.paddingLarge)
+            .padding(top = Dimensions.paddingLarge, bottom = Dimensions.paddingMediumLarge)
     ) {
         Text(
             text = stringResource(R.string.alphabet_screen_title),
@@ -129,21 +128,22 @@ private fun AlphabetContent(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        contentPadding = PaddingValues(bottom = Dimensions.paddingLarge)
     ) {
-        categories.forEachIndexed { index, category ->
-            if (index > 0) {
-                item(key = "divider_$index") {
+        categories.forEachIndexed { categoryIndex, category ->
+            if (categoryIndex > 0) {
+                item(key = "divider_$categoryIndex") {
                     CategoryDivider()
                 }
             }
 
-            item(key = "category_header_$index") {
-                if (index > 0) { // Don't show title for letters section
+            // Category Header
+            if (categoryIndex > 0) {
+                item(key = "header_$categoryIndex") {
                     Text(
                         text = category.title,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = MaterialTheme.typography.titleMedium,
                         color = Colors.TextPrimary,
                         modifier = Modifier.padding(
                             horizontal = Dimensions.paddingLarge,
@@ -153,55 +153,74 @@ private fun AlphabetContent(
                 }
             }
 
-            // Grid items for the category
-            item(key = "category_grid_$index") {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(4),
-                    contentPadding = PaddingValues(
-                        top = Dimensions.paddingMedium,
-                        bottom = if (index > 0) Dimensions.paddingLarge else Dimensions.paddingXLarge,
-                        start = Dimensions.paddingLarge,
-                        end = Dimensions.paddingLarge
-                    ),
-                    horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
-                    verticalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
-                    // Disable grid scrolling since parent LazyColumn handles it
-                    userScrollEnabled = false,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        // Calculate height based on number of items and grid configuration
-                        .height(
-                            with(LocalDensity.current) {
-                                val rows = (category.entities.size + 3) / 4 // Round up division
-                                val itemHeight = 120.dp // Approximate height of each item
-                                val spacing = Dimensions.spacingGrid * (rows - 1)
-                                (itemHeight * rows + spacing).toPx().toDp()
-                            }
-                        )
+            // Calculate rows for the grid (4 items per row)
+            val itemRows = category.entities.chunked(4)
+
+            itemRows.forEachIndexed { rowIndex, rowItems ->
+                item(
+                    key = "category_${categoryIndex}_row_$rowIndex",
+                    contentType = "grid_row"
                 ) {
-                    items(category.entities) { entity ->
-                        when (entity) {
-                            is LetterUiState -> LetterCard(
-                                letter = entity,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                horizontal = Dimensions.paddingLarge,
+                                vertical = if (rowIndex == 0) Dimensions.paddingMedium else 0.dp
+                            ),
+                        horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid)
+                    ) {
+                        rowItems.forEach { entity ->
+                            Box(
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                when (entity) {
+                                    is LetterUiState -> LetterCard(
+                                        letter = entity,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        onClick = {}
+                                    )
 
-                            is DiphthongUiState -> DiphthongCard(
-                                diphthong = entity,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                                    is DiphthongUiState -> DiphthongCard(
+                                        diphthong = entity,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        onClick = {}
+                                    )
 
-                            is ImproperDiphthongUiState -> ImproperDiphthongCard(
-                                diphthong = entity,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                                    is ImproperDiphthongUiState -> ImproperDiphthongCard(
+                                        improperDiphthong = entity,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        onClick = {}
+                                    )
 
-                            is BreathingMarkUiState -> BreathingMarkCard(
-                                breathingMark = entity,
-                                modifier = Modifier.fillMaxWidth()
-                            )
+                                    is BreathingMarkUiState -> BreathingMarkCard(
+                                        breathingMark = entity,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        onClick = {}
+                                    )
+                                }
+                            }
+                        }
+
+                        // Add empty boxes to fill the row if needed
+                        repeat(4 - rowItems.size) {
+                            Box(modifier = Modifier.weight(1f))
                         }
                     }
+                }
+
+                // Add spacing between rows
+                if (rowIndex < itemRows.size - 1) {
+                    item(key = "spacing_${categoryIndex}_$rowIndex") {
+                        Spacer(modifier = Modifier.height(Dimensions.spacingGrid))
+                    }
+                }
+            }
+
+            // Add bottom padding for the category
+            if (categoryIndex < categories.size - 1) {
+                item(key = "bottom_padding_$categoryIndex") {
+                    Spacer(modifier = Modifier.height(Dimensions.paddingLarge))
                 }
             }
         }
@@ -210,12 +229,13 @@ private fun AlphabetContent(
 
 @Composable
 private fun CategoryDivider() {
-    Spacer(modifier = Modifier.height(Dimensions.spacingLarge))
+    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
     HorizontalDivider(
         modifier = Modifier.padding(horizontal = Dimensions.paddingLarge),
         thickness = 1.dp,
         color = Colors.Outline
     )
+    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 }
 
 @Composable
@@ -265,12 +285,7 @@ private fun LoadingState() {
                         AlphabetEntityShimmerCard(
                             modifier = Modifier.fillMaxWidth(),
                             showSecondaryText = categoryIndex != 3,
-                            symbolHeight = if (categoryIndex == 3) 32 else 24,
-                            tertiaryTextWidth = when (categoryIndex) {
-                                0, 1 -> 0.4f
-                                2 -> 0.3f
-                                else -> 0.2f
-                            }
+                            symbolHeight = if (categoryIndex == 3) 32 else 24
                         )
                     }
                 }

@@ -3,11 +3,12 @@ package com.koineos.app.ui.screens.alphabet.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -33,26 +34,49 @@ import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.utils.rememberShimmerBrush
 
 /**
- * Base composable for all alphabet entity cards with common features
+ * A generic card component for displaying alphabet entities (letters, diphthongs, etc.)
  */
 @Composable
-private fun AlphabetEntityCard(
+fun AlphabetEntityCard(
     modifier: Modifier = Modifier,
+    primaryText: String,
+    secondaryText: String,
     isMastered: Boolean,
     masteryLevel: Float,
-    content: @Composable ColumnScope.() -> Unit
+    onClick: (() -> Unit)? = null,
 ) {
     RegularCard(
         modifier = modifier,
         backgroundColor = if (isMastered) Colors.PrimaryContainer else Colors.Surface,
         contentPadding = CardPadding.Large,
-        specialTopPadding = CardPadding.Medium
+        specialTopPadding = CardPadding.Medium,
+        onClick = onClick ?: {},
+        enabled = onClick != null
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.fillMaxWidth()
         ) {
-            content()
+            // Primary Text (Greek symbols)
+            Text(
+                text = primaryText,
+                style = AlphabetEntityTextStyle,
+                color = if (isMastered) Colors.Primary else Colors.OnSurface,
+                textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(Dimensions.spacingSmall))
+
+            // Secondary Text (transliteration/pronunciation)
+            Text(
+                text = secondaryText,
+                style = MaterialTheme.typography.bodyMedium,
+                color = if (isMastered)
+                    Colors.Primary.copy(alpha = 0.7f)
+                else
+                    Colors.OnSurface.copy(alpha = 0.7f),
+                textAlign = TextAlign.Center
+            )
 
             Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
@@ -60,7 +84,7 @@ private fun AlphabetEntityCard(
             LinearProgressIndicator(
                 progress = { masteryLevel },
                 modifier = Modifier.fillMaxWidth(),
-                color = if (isMastered) Colors.Primary else Colors.Primary,
+                color = Colors.Primary,
                 trackColor = if (isMastered)
                     Colors.Primary.copy(alpha = 0.2f)
                 else
@@ -71,14 +95,24 @@ private fun AlphabetEntityCard(
 }
 
 /**
- * Base shimmer card for alphabet entities
+ * Predefined text style for alphabet cards
+ */
+val AlphabetEntityTextStyle = TextStyle(
+    fontFamily = KoineFont,
+    fontWeight = FontWeight.Normal,
+    fontSize = 20.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
+
+/**
+ * Shimmer loading state for alphabet entity cards
  */
 @Composable
 fun AlphabetEntityShimmerCard(
     modifier: Modifier = Modifier,
     symbolHeight: Int = 24,
-    showSecondaryText: Boolean = true,
-    tertiaryTextWidth: Float = 0.4f
+    showSecondaryText: Boolean = true
 ) {
     val shimmerBrush = rememberShimmerBrush()
 
@@ -119,17 +153,6 @@ fun AlphabetEntityShimmerCard(
                 Spacer(modifier = Modifier.height(2.dp))
             }
 
-            // Tertiary text placeholder
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth(tertiaryTextWidth)
-                    .height(16.dp)
-                    .background(
-                        brush = shimmerBrush,
-                        shape = RoundedCornerShape(4.dp)
-                    )
-            )
-
             Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
             // Progress bar placeholder
@@ -149,185 +172,83 @@ fun AlphabetEntityShimmerCard(
 @Composable
 fun LetterCard(
     modifier: Modifier = Modifier,
-    letter: LetterUiState
+    letter: LetterUiState,
+    onClick: (() -> Unit)? = null
 ) {
+    val primaryText = buildString {
+        append(letter.uppercase)
+        append(" ")
+        append(letter.lowercase)
+        if (letter.hasAlternateLowercase) {
+            append(" ")
+            append(letter.alternateLowercase)
+        }
+    }
+
     AlphabetEntityCard(
         modifier = modifier,
+        primaryText = primaryText,
+        secondaryText = letter.transliteration,
         isMastered = letter.isMastered,
-        masteryLevel = letter.masteryLevel
-    ) {
-        // Greek letters
-        Text(
-            text = buildString {
-                append(letter.uppercase)
-                append(" ")
-                append(letter.lowercase)
-                if (letter.hasAlternateLowercase) {
-                    append(" ")
-                    append(letter.alternateLowercase)
-                }
-            },
-            style = TextStyle(
-                fontFamily = KoineFont,
-                fontWeight = FontWeight.Normal,
-                fontSize = 20.sp,
-                lineHeight = 24.sp,
-                letterSpacing = 0.5.sp
-            ),
-            color = if (letter.isMastered) Colors.Primary else Colors.OnSurface,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.spacingSmall))
-
-        // Transliteration
-        Text(
-            text = letter.transliteration,
-            style = MaterialTheme.typography.bodyMedium,
-            color = if (letter.isMastered)
-                Colors.Primary.copy(alpha = 0.7f)
-            else
-                Colors.OnSurface.copy(alpha = 0.7f),
-            textAlign = TextAlign.Center
-        )
-    }
+        masteryLevel = letter.masteryLevel,
+        onClick = onClick
+    )
 }
 
 @Composable
 fun DiphthongCard(
     modifier: Modifier = Modifier,
-    diphthong: DiphthongUiState
+    diphthong: DiphthongUiState,
+    onClick: (() -> Unit)? = null
 ) {
     AlphabetEntityCard(
         modifier = modifier,
+        primaryText = diphthong.symbol,
+        secondaryText = diphthong.transliteration,
         isMastered = diphthong.isMastered,
-        masteryLevel = diphthong.masteryLevel
-    ) {
-        // Symbol
-        Text(
-            text = diphthong.symbol,
-            style = TextStyle(
-                fontFamily = KoineFont,
-                fontWeight = FontWeight.Normal,
-                fontSize = 20.sp,
-                lineHeight = 24.sp,
-                letterSpacing = 0.5.sp
-            ),
-            color = if (diphthong.isMastered) Colors.Primary else Colors.OnSurface,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.spacingSmall))
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Text(
-                text = diphthong.transliteration,
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (diphthong.isMastered)
-                    Colors.Primary.copy(alpha = 0.7f)
-                else
-                    Colors.OnSurface.copy(alpha = 0.7f),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
+        masteryLevel = diphthong.masteryLevel,
+        onClick = onClick
+    )
 }
 
 @Composable
 fun ImproperDiphthongCard(
     modifier: Modifier = Modifier,
-    diphthong: ImproperDiphthongUiState
+    improperDiphthong: ImproperDiphthongUiState,
+    onClick: (() -> Unit)? = null
 ) {
     AlphabetEntityCard(
         modifier = modifier,
-        isMastered = diphthong.isMastered,
-        masteryLevel = diphthong.masteryLevel
-    ) {
-        // Symbol
-        Text(
-            text = diphthong.symbol,
-            style = TextStyle(
-                fontFamily = KoineFont,
-                fontWeight = FontWeight.Normal,
-                fontSize = 20.sp,
-                lineHeight = 24.sp,
-                letterSpacing = 0.5.sp
-            ),
-            color = if (diphthong.isMastered) Colors.Primary else Colors.OnSurface,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.spacingSmall))
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Text(
-                text = diphthong.transliteration,
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (diphthong.isMastered)
-                    Colors.Primary.copy(alpha = 0.7f)
-                else
-                    Colors.OnSurface.copy(alpha = 0.7f),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
+        primaryText = improperDiphthong.symbol,
+        secondaryText = improperDiphthong.transliteration,
+        isMastered = improperDiphthong.isMastered,
+        masteryLevel = improperDiphthong.masteryLevel,
+        onClick = onClick
+    )
 }
 
 @Composable
 fun BreathingMarkCard(
     modifier: Modifier = Modifier,
     breathingMark: BreathingMarkUiState,
+    onClick: (() -> Unit)? = null
 ) {
     AlphabetEntityCard(
         modifier = modifier,
+        primaryText = breathingMark.symbol,
+        secondaryText = breathingMark.pronunciation,
         isMastered = breathingMark.isMastered,
-        masteryLevel = breathingMark.masteryLevel
-    ) {
-        // Symbol
-        Text(
-            text = breathingMark.symbol,
-            style = TextStyle(
-                fontFamily = KoineFont,
-                fontWeight = FontWeight.Normal,
-                fontSize = 24.sp,
-                lineHeight = 32.sp,
-                letterSpacing = 0.5.sp
-            ),
-            color = if (breathingMark.isMastered) Colors.Primary else Colors.OnSurface,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.spacingSmall))
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            Text(
-                text = breathingMark.pronunciation,
-                style = MaterialTheme.typography.bodyMedium,
-                color = if (breathingMark.isMastered)
-                    Colors.Primary.copy(alpha = 0.7f)
-                else
-                    Colors.OnSurface.copy(alpha = 0.7f),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
+        masteryLevel = breathingMark.masteryLevel,
+        onClick = onClick
+    )
 }
 
-@Preview(showBackground = true)
+@Preview(name = "Letter Card - Default")
 @Composable
-private fun AlphabetCardsPreview() {
+private fun LetterCardPreview() {
     Column(
         modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         LetterCard(
             letter = LetterUiState(
@@ -336,10 +257,43 @@ private fun AlphabetCardsPreview() {
                 uppercase = "Α",
                 lowercase = "α",
                 transliteration = "a",
-                masteryLevel = 0.7f
+                masteryLevel = 0.3f
             )
         )
 
+        LetterCard(
+            letter = LetterUiState(
+                id = "sigma",
+                order = 18,
+                uppercase = "Σ",
+                lowercase = "σ",
+                transliteration = "s",
+                masteryLevel = 0.7f,
+                hasAlternateLowercase = true,
+                alternateLowercase = "ς"
+            )
+        )
+
+        LetterCard(
+            letter = LetterUiState(
+                id = "omega",
+                order = 24,
+                uppercase = "Ω",
+                lowercase = "ω",
+                transliteration = "ō",
+                masteryLevel = 1.0f
+            )
+        )
+    }
+}
+
+@Preview(name = "Diphthong Card - Default")
+@Composable
+private fun DiphthongCardPreview() {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         DiphthongCard(
             diphthong = DiphthongUiState(
                 id = "diphthong_1",
@@ -347,12 +301,43 @@ private fun AlphabetCardsPreview() {
                 symbol = "αι",
                 transliteration = "ai",
                 pronunciation = "eye",
-                masteryLevel = 0.5f
+                masteryLevel = 0.3f
             )
         )
 
+        DiphthongCard(
+            diphthong = DiphthongUiState(
+                id = "diphthong_2",
+                order = 2,
+                symbol = "ει",
+                transliteration = "ei",
+                pronunciation = "ay",
+                masteryLevel = 0.7f
+            )
+        )
+
+        DiphthongCard(
+            diphthong = DiphthongUiState(
+                id = "diphthong_3",
+                order = 3,
+                symbol = "οι",
+                transliteration = "oi",
+                pronunciation = "oy",
+                masteryLevel = 1.0f
+            )
+        )
+    }
+}
+
+@Preview(name = "Improper Diphthong Card - Default")
+@Composable
+private fun ImproperDiphthongCardPreview() {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         ImproperDiphthongCard(
-            diphthong = ImproperDiphthongUiState(
+            improperDiphthong = ImproperDiphthongUiState(
                 id = "improper_1",
                 order = 1,
                 symbol = "ᾳ",
@@ -362,15 +347,120 @@ private fun AlphabetCardsPreview() {
             )
         )
 
+        ImproperDiphthongCard(
+            improperDiphthong = ImproperDiphthongUiState(
+                id = "improper_2",
+                order = 2,
+                symbol = "ῃ",
+                transliteration = "ēi",
+                pronunciation = "ay",
+                masteryLevel = 0.7f
+            )
+        )
+
+        ImproperDiphthongCard(
+            improperDiphthong = ImproperDiphthongUiState(
+                id = "improper_3",
+                order = 3,
+                symbol = "ῳ",
+                transliteration = "ōi",
+                pronunciation = "oh",
+                masteryLevel = 1.0f
+            )
+        )
+    }
+}
+
+@Preview(name = "Breathing Mark Card - Default")
+@Composable
+private fun BreathingMarkCardPreview() {
+    Column(
+        modifier = Modifier.padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         BreathingMarkCard(
             breathingMark = BreathingMarkUiState(
                 id = "breathing_1",
                 order = 1,
+                name = "smooth",
+                symbol = "᾿",
+                pronunciation = "-",
+                masteryLevel = 0.3f
+            )
+        )
+
+        BreathingMarkCard(
+            breathingMark = BreathingMarkUiState(
+                id = "breathing_2",
+                order = 2,
                 name = "rough",
                 symbol = "῾",
                 pronunciation = "h-",
                 masteryLevel = 1.0f
             )
         )
+    }
+}
+
+@Preview(name = "Mixed Alphabet Entities", widthDp = 400)
+@Composable
+private fun MixedAlphabetEntitiesPreview() {
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(4),
+        modifier = Modifier.padding(16.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        item {
+            LetterCard(
+                letter = LetterUiState(
+                    id = "alpha",
+                    order = 1,
+                    uppercase = "Α",
+                    lowercase = "α",
+                    transliteration = "a",
+                    masteryLevel = 0.3f
+                )
+            )
+        }
+
+        item {
+            DiphthongCard(
+                diphthong = DiphthongUiState(
+                    id = "diphthong_1",
+                    order = 1,
+                    symbol = "αι",
+                    transliteration = "ai",
+                    pronunciation = "eye",
+                    masteryLevel = 0.7f
+                )
+            )
+        }
+
+        item {
+            ImproperDiphthongCard(
+                improperDiphthong = ImproperDiphthongUiState(
+                    id = "improper_1",
+                    order = 1,
+                    symbol = "ᾳ",
+                    transliteration = "āi",
+                    pronunciation = "ay",
+                    masteryLevel = 0.5f
+                )
+            )
+        }
+
+        item {
+            BreathingMarkCard(
+                breathingMark = BreathingMarkUiState(
+                    id = "breathing_1",
+                    order = 1,
+                    name = "rough",
+                    symbol = "῾",
+                    pronunciation = "h-",
+                    masteryLevel = 1.0f
+                )
+            )
+        }
     }
 }
