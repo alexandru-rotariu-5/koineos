@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,12 +19,14 @@ import com.koineos.app.ui.theme.Typography
 
 @Composable
 fun HomeScreen() {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        MainTopBar()
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { MainTopBar() },
+    ) { paddingValues ->
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
             verticalArrangement = Arrangement.Center
         ) {
             Text(

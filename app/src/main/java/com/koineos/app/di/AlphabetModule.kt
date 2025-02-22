@@ -1,7 +1,7 @@
 package com.koineos.app.di
 
 import android.content.Context
-import com.koineos.app.data.content.LetterJsonManager
+import com.koineos.app.data.content.LettersLocalDataSource
 import com.koineos.app.data.datastore.LetterMasteryDataStore
 import com.koineos.app.data.repository.DefaultLetterMasteryRepository
 import com.koineos.app.data.repository.DefaultLetterRepository
@@ -24,10 +24,8 @@ object AlphabetModule {
 
     @Provides
     @Singleton
-    fun provideLetterJsonManager(
-        @ApplicationContext context: Context
-    ): LetterJsonManager {
-        return LetterJsonManager(context)
+    fun provideLettersLocalDataSource(): LettersLocalDataSource {
+        return LettersLocalDataSource()
     }
 
     @Provides
@@ -41,9 +39,9 @@ object AlphabetModule {
     @Provides
     @Singleton
     fun provideLetterRepository(
-        letterJsonManager: LetterJsonManager
+        lettersLocalDataSource: LettersLocalDataSource
     ): LetterRepository {
-        return DefaultLetterRepository(letterJsonManager)
+        return DefaultLetterRepository(lettersLocalDataSource)
     }
 
     @Provides

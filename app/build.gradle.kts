@@ -89,4 +89,7 @@ dependencies {
 
     // Data Store
     implementation(libs.androidx.datastore.preferences)
+
+    // Google Fonts
+    implementation(libs.androidx.ui.text.google.fonts)
 }

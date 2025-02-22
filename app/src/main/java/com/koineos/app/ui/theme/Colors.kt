@@ -72,4 +72,6 @@ object Colors {
     val BottomNavBarUnselectedIconColor = BlackSecondary
     val BottomNavBarUnselectedTextColor = TextSecondary
     val BottomNavBarSelectedIndicatorColor = Color(0xFFD9E1EF)
+
+    val ShimmerGrey = Color(0xFFD3D3D3)
 }

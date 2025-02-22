@@ -15,6 +15,8 @@ import javax.inject.Singleton
 
 /**
  * Manager responsible for retrieving letter data from JSON files
+ *
+ * CURRENTLY NOT USED
  */
 @Singleton
 class LetterJsonManager @Inject constructor(

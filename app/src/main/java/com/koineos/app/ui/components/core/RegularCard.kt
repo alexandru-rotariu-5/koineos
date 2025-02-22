@@ -34,6 +34,7 @@ import com.koineos.app.ui.theme.Dimensions
  * @param enabled Whether the card is enabled
  * @param borderless Whether the card should have a border
  * @param contentPadding Padding to be applied to the content
+ * @param specialTopPadding Padding to be applied to the top of the card
  * @param backgroundColor Background color of the card
  * @param content Content to be displayed inside the card
  */
@@ -44,6 +45,7 @@ fun RegularCard(
     enabled: Boolean = true,
     borderless: Boolean = false,
     contentPadding: CardPadding = CardPadding.Medium,
+    specialTopPadding: CardPadding = contentPadding,
     backgroundColor: Color = Colors.Surface,
     content: @Composable BoxScope.() -> Unit
 ) {
@@ -72,7 +74,8 @@ fun RegularCard(
         Box(
             modifier = Modifier
                 .background(backgroundColor)
-                .padding(contentPadding.value)
+                .padding(horizontal = contentPadding.value)
+                .padding(bottom = contentPadding.value, top = specialTopPadding.value)
         ) {
             content()
         }
