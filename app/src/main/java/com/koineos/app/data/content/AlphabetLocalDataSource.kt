@@ -1,14 +1,17 @@
 package com.koineos.app.data.content
 
+import com.koineos.app.data.content.dto.AlphabetResponse
+import com.koineos.app.data.content.dto.BreathingMarkDto
+import com.koineos.app.data.content.dto.DiphthongDto
+import com.koineos.app.data.content.dto.ImproperDiphthongDto
 import com.koineos.app.data.content.dto.LetterDto
-import com.koineos.app.data.content.dto.LettersResponse
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
 @Singleton
-class LettersLocalDataSource @Inject constructor() {
+class AlphabetLocalDataSource @Inject constructor() {
 
     private val letters = listOf(
         LetterDto(
@@ -238,11 +241,112 @@ class LettersLocalDataSource @Inject constructor() {
         )
     )
 
-    fun getAllLetters(): Flow<LettersResponse> = flowOf(LettersResponse(letters))
+    private val diphthongs = listOf(
+        DiphthongDto(
+            id = "diphthong_0",
+            order = 1,
+            lowercase = "αι",
+            transliteration = "ai",
+            pronunciation = "eye"
+        ),
+        DiphthongDto(
+            id = "diphthong_1",
+            order = 2,
+            lowercase = "ει",
+            transliteration = "ei",
+            pronunciation = "ay"
+        ),
+        DiphthongDto(
+            id = "diphthong_2",
+            order = 3,
+            lowercase = "οι",
+            transliteration = "oi",
+            pronunciation = "oy"
+        ),
+        DiphthongDto(
+            id = "diphthong_3",
+            order = 4,
+            lowercase = "υι",
+            transliteration = "ui",
+            pronunciation = "ui"
+        ),
+        DiphthongDto(
+            id = "diphthong_4",
+            order = 5,
+            lowercase = "αυ",
+            transliteration = "au",
+            pronunciation = "ow"
+        ),
+        DiphthongDto(
+            id = "diphthong_5",
+            order = 6,
+            lowercase = "ευ",
+            transliteration = "eu",
+            pronunciation = "eh-oo"
+        ),
+        DiphthongDto(
+            id = "diphthong_6",
+            order = 7,
+            lowercase = "ηυ",
+            transliteration = "ēu",
+            pronunciation = "ay-oo"
+        ),
+        DiphthongDto(
+            id = "diphthong_7",
+            order = 8,
+            lowercase = "ου",
+            transliteration = "ou",
+            pronunciation = "oo"
+        )
+    )
 
-    fun getLetterById(id: String): Flow<LetterDto?> =
-        flowOf(letters.find { it.id == id })
+    private val improperDiphthongs = listOf(
+        ImproperDiphthongDto(
+            id = "improper_diphthong_0",
+            order = 1,
+            lowercase = "ᾳ",
+            transliteration = "āi",
+            pronunciation = "a"
+        ),
+        ImproperDiphthongDto(
+            id = "improper_diphthong_1",
+            order = 2,
+            lowercase = "ῃ",
+            transliteration = "ēi",
+            pronunciation = "e"
+        ),
+        ImproperDiphthongDto(
+            id = "improper_diphthong_2",
+            order = 3,
+            lowercase = "ῳ",
+            transliteration = "ōi",
+            pronunciation = "o"
+        )
+    )
 
-    fun getLettersByRange(fromOrder: Int, toOrder: Int): Flow<List<LetterDto>> =
-        flowOf(letters.filter { it.order in fromOrder..toOrder }.sortedBy { it.order })
+    private val breathingMarks = listOf(
+        BreathingMarkDto(
+            id = "breathing_0",
+            order = 1,
+            name = "rough",
+            symbol = "῾",
+            pronunciation = "h-"
+        ),
+        BreathingMarkDto(
+            id = "breathing_1",
+            order = 2,
+            name = "smooth",
+            symbol = "᾽",
+            pronunciation = "-"
+        )
+    )
+
+    fun getAlphabetContent(): Flow<AlphabetResponse> = flowOf(
+        AlphabetResponse(
+            letters = letters,
+            diphthongs = diphthongs,
+            improperDiphthongs = improperDiphthongs,
+            breathingMarks = breathingMarks
+        )
+    )
 }
