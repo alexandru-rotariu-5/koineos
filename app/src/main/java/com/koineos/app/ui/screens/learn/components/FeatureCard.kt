@@ -24,6 +24,7 @@ import com.koineos.app.ui.components.core.IconComponent
 import com.koineos.app.ui.components.core.RegularCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
+import com.koineos.app.ui.theme.Typography
 
 @Composable
 fun FeatureCard(
@@ -52,13 +53,13 @@ fun FeatureCard(
                 ) {
                     Text(
                         text = title,
-                        style = MaterialTheme.typography.titleLarge,
+                        style = Typography.titleLarge,
                         color = Colors.OnSurface,
                     )
                     Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
                     Text(
                         text = description,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = Typography.bodyMedium,
                         color = Colors.OnSurfaceVariant,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
@@ -93,7 +94,7 @@ fun FeatureCard(
                         id = R.string.feature_progress_percentage,
                         (progress * 100).toInt()
                     ),
-                    style = MaterialTheme.typography.labelMedium,
+                    style = Typography.labelMedium,
                     color = Colors.OnSurfaceVariant,
                     modifier = Modifier.align(Alignment.End)
                 )

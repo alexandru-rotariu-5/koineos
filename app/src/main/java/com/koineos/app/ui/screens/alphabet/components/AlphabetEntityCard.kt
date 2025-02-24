@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -31,6 +30,7 @@ import com.koineos.app.ui.components.core.RegularCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
+import com.koineos.app.ui.theme.Typography
 import com.koineos.app.ui.utils.rememberShimmerBrush
 
 /**
@@ -70,7 +70,7 @@ fun AlphabetEntityCard(
             // Secondary Text (transliteration/pronunciation)
             Text(
                 text = secondaryText,
-                style = MaterialTheme.typography.bodyMedium,
+                style = Typography.bodyMedium,
                 color = if (isMastered)
                     Colors.Primary.copy(alpha = 0.7f)
                 else

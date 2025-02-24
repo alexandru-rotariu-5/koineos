@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -18,6 +19,7 @@ import com.koineos.app.ui.components.core.RegularCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineosTheme
+import com.koineos.app.ui.theme.Typography
 
 @Composable
 fun GridFeatureCard(
@@ -49,7 +51,9 @@ fun GridFeatureCard(
 
             Text(
                 text = title,
-                style = MaterialTheme.typography.titleMedium,
+                style = Typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold
+                ),
                 color = Colors.OnSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -57,7 +61,7 @@ fun GridFeatureCard(
 
             Text(
                 text = description,
-                style = MaterialTheme.typography.bodySmall,
+                style = Typography.bodySmall,
                 color = Colors.OnSurfaceVariant,
                 overflow = TextOverflow.Ellipsis
             )
@@ -75,7 +79,7 @@ fun GridFeatureCard(
                         id = R.string.feature_progress_percentage,
                         (progress * 100).toInt()
                     ),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = Typography.labelSmall,
                     color = Colors.OnSurfaceVariant,
                     modifier = Modifier.align(Alignment.End)
                 )

@@ -12,19 +12,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.koineos.app.R
@@ -43,6 +47,7 @@ import com.koineos.app.ui.screens.alphabet.components.ImproperDiphthongCard
 import com.koineos.app.ui.screens.alphabet.components.LetterCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
+import com.koineos.app.ui.theme.Typography
 import com.koineos.app.ui.utils.rememberShimmerBrush
 
 @Composable
@@ -50,6 +55,23 @@ fun AlphabetScreen(
     viewModel: AlphabetViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val scrollState = rememberLazyListState()
+
+    val headerElevation by remember {
+        derivedStateOf {
+            val firstVisibleItemIndex = scrollState.firstVisibleItemIndex
+            val firstVisibleItemOffset = scrollState.firstVisibleItemScrollOffset
+
+            val totalScroll = if (firstVisibleItemIndex > 0) {
+                firstVisibleItemIndex * 100 + firstVisibleItemOffset
+            } else {
+                firstVisibleItemOffset
+            }
+
+            // Convert directly to dp instead of going through pixels
+            (totalScroll.toFloat() / 40f).coerceIn(0f, 1f) * 8
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -57,13 +79,17 @@ fun AlphabetScreen(
             .background(Colors.Surface)
     ) {
         HeaderContent(
-            onLearnClick = {},
-            modifier = Modifier
+            modifier = Modifier,
+            elevation = headerElevation,
+            onLearnClick = {}
         )
         when (uiState) {
             is AlphabetUiState.Loaded -> {
                 val categories = (uiState as AlphabetUiState.Loaded).categories
-                AlphabetContent(categories = categories)
+                AlphabetContent(
+                    categories = categories,
+                    scrollState = scrollState
+                )
             }
 
             AlphabetUiState.Loading -> LoadingState()
@@ -74,53 +100,42 @@ fun AlphabetScreen(
 
 @Composable
 private fun HeaderContent(
+    modifier: Modifier = Modifier,
+    elevation: Float,
     onLearnClick: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
-    Column(
+    Surface(
         modifier = modifier
             .fillMaxWidth()
-            .background(Colors.Surface)
-            .padding(horizontal = Dimensions.paddingLarge)
-            .padding(top = Dimensions.paddingLarge, bottom = Dimensions.paddingMediumLarge)
+            .zIndex(1f),
+        color = Colors.Surface,
+        shadowElevation = elevation.dp,
     ) {
-        Text(
-            text = stringResource(R.string.alphabet_screen_title),
-            style = MaterialTheme.typography.headlineMedium,
-            color = Colors.TextPrimary,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Text(
-            text = stringResource(R.string.alphabet_screen_description),
-            style = MaterialTheme.typography.bodyLarge,
-            color = Colors.TextSecondary,
-            textAlign = TextAlign.Center,
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = Dimensions.paddingMedium)
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
-
-        RegularButton(
-            onClick = onLearnClick,
-            text = stringResource(R.string.alphabet_screen_learn_button),
-            modifier = Modifier.fillMaxWidth(),
-            enabled = true
-        )
+                .padding(horizontal = Dimensions.paddingLarge)
+                .padding(vertical = Dimensions.paddingLarge)
+        ) {
+            RegularButton(
+                onClick = onLearnClick,
+                text = stringResource(R.string.alphabet_screen_learn_button),
+                modifier = Modifier.fillMaxWidth(),
+                enabled = true
+            )
+        }
     }
 }
 
 @Composable
 private fun AlphabetContent(
     categories: List<CategoryUiState>,
+    scrollState: LazyListState,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
+        state = scrollState,
         contentPadding = PaddingValues(bottom = Dimensions.paddingXLarge),
     ) {
         categories.forEachIndexed { categoryIndex, category ->
@@ -136,7 +151,9 @@ private fun AlphabetContent(
                 item(key = "header_$categoryIndex") {
                     Text(
                         text = category.title,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = Typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
                         color = Colors.TextPrimary,
                         modifier = Modifier.padding(
                             horizontal = Dimensions.paddingLarge,
