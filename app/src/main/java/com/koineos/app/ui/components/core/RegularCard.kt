@@ -2,7 +2,6 @@ package com.koineos.app.ui.components.core
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -59,11 +58,8 @@ fun RegularCard(
     }
 
     ElevatedCard(
-        modifier = modifier
-            .clickable(
-                enabled = enabled,
-                onClick = onClick
-            ),
+        modifier = modifier,
+        onClick = onClick,
         colors = CardDefaults.elevatedCardColors(
             containerColor = backgroundColor,
             disabledContainerColor = backgroundColor.copy(alpha = 0.38f)
