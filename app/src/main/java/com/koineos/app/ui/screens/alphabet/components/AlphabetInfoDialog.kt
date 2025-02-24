@@ -9,11 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,6 +31,7 @@ import com.koineos.app.presentation.model.BreathingMarkUiState
 import com.koineos.app.presentation.model.DiphthongUiState
 import com.koineos.app.presentation.model.ImproperDiphthongUiState
 import com.koineos.app.presentation.model.LetterUiState
+import com.koineos.app.ui.components.core.RegularAssistChip
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
@@ -133,14 +131,6 @@ private fun DiphthongContent(diphthong: DiphthongUiState) {
 
     Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
-    // Component letters
-    Text(
-        text = "(${diphthong.componentLetters})",
-        style = Typography.titleMedium,
-        color = Colors.OnSurfaceVariant,
-        textAlign = TextAlign.Center
-    )
-
     Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
     // Transliteration and pronunciation
@@ -164,16 +154,6 @@ private fun DiphthongContent(diphthong: DiphthongUiState) {
 private fun ImproperDiphthongContent(improperDiphthong: ImproperDiphthongUiState) {
     // Main improper diphthong display
     GreekSymbol(text = improperDiphthong.symbol)
-
-    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
-
-    // Component letters
-    Text(
-        text = "(${improperDiphthong.componentLetters})",
-        style = Typography.titleMedium,
-        color = Colors.OnSurfaceVariant,
-        textAlign = TextAlign.Center
-    )
 
     Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
@@ -201,20 +181,10 @@ private fun BreathingMarkContent(breathingMark: BreathingMarkUiState) {
 
     // Pronunciation
     if (breathingMark.pronunciation != "") {
-        AssistChip(
-            onClick = {},
-            shape = RoundedCornerShape(corner = CornerSize(Dimensions.cornerLarge)),
-            label = {
-                Text(
-                    text = breathingMark.pronunciation,
-                    style = Typography.bodyMedium
-                )
-            },
-            colors = AssistChipDefaults.assistChipColors(
-                containerColor = Colors.PrimaryContainer,
-                labelColor = Colors.OnPrimaryContainer,
-            ),
-            border = null
+        RegularAssistChip(
+            text = breathingMark.pronunciation,
+            backGroundColor = Colors.PrimaryContainer,
+            textColor = Colors.OnPrimaryContainer
         )
     }
 
@@ -246,20 +216,10 @@ private fun GreekSymbol(text: String) {
 
 @Composable
 private fun PronunciationInfo(transliteration: String, pronunciation: String) {
-    AssistChip(
-        onClick = {},
-        shape = RoundedCornerShape(corner = CornerSize(Dimensions.cornerLarge)),
-        label = {
-            Text(
-                text = "$transliteration · /$pronunciation/",
-                style = Typography.bodyMedium
-            )
-        },
-        colors = AssistChipDefaults.assistChipColors(
-            containerColor = Colors.PrimaryContainer,
-            labelColor = Colors.OnPrimaryContainer,
-        ),
-        border = null
+    RegularAssistChip(
+        text = "$transliteration · /$pronunciation/",
+        backGroundColor = Colors.PrimaryContainer,
+        textColor = Colors.OnPrimaryContainer
     )
 }
 
@@ -293,22 +253,14 @@ private fun ExamplesSection(examples: List<String>) {
         verticalArrangement = Arrangement.spacedBy((-6).dp),
     ) {
         examples.forEach { example ->
-            AssistChip(
-                onClick = {},
-                shape = RoundedCornerShape(corner = CornerSize(Dimensions.cornerLarge)),
-                label = {
-                    Text(
-                        text = example,
-                        style = Typography.bodyMedium.copy(
-                            fontFamily = KoineFont, fontWeight = FontWeight.Bold
-                        )
-                    )
-                },
-                colors = AssistChipDefaults.assistChipColors(
-                    containerColor = Colors.Primary,
-                    labelColor = Colors.OnPrimary,
+            RegularAssistChip(
+                text = example,
+                textStyle = Typography.bodyMedium.copy(
+                    fontFamily = KoineFont,
+                    fontWeight = FontWeight.Bold
                 ),
-                border = null
+                textColor = Colors.OnPrimary,
+                backGroundColor = Colors.Primary,
             )
         }
     }
