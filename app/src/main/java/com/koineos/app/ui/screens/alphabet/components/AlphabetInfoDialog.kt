@@ -105,8 +105,6 @@ private fun LetterContent(letter: LetterUiState) {
     // Main letter display
     GreekSymbol(text = "${letter.uppercase} ${letter.lowercase}${if (letter.hasAlternateLowercase) " ${letter.alternateLowercase ?: ""}" else ""}")
 
-    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
-
     // Transliteration and pronunciation
     PronunciationInfo(
         transliteration = letter.transliteration,
