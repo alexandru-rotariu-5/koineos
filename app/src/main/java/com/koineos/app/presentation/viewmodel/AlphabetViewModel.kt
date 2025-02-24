@@ -2,21 +2,19 @@ package com.koineos.app.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.koineos.app.domain.model.Letter
-import com.koineos.app.domain.usecase.GetAllLettersUseCase
-import com.koineos.app.presentation.model.AlphabetUiState
-import com.koineos.app.presentation.model.LetterUiState
+import com.koineos.app.domain.model.*
+import com.koineos.app.domain.usecase.GetAlphabetContentUseCase
+import com.koineos.app.presentation.model.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.random.Random
 
 @HiltViewModel
 class AlphabetViewModel @Inject constructor(
-    private val getAllLettersUseCase: GetAllLettersUseCase
+    private val getAlphabetContentUseCase: GetAlphabetContentUseCase
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AlphabetUiState> by lazy {
@@ -26,16 +24,29 @@ class AlphabetViewModel @Inject constructor(
     val uiState: StateFlow<AlphabetUiState> = _uiState
 
     init {
-        loadLetters()
+        loadAlphabetContent()
     }
 
-    private fun loadLetters() {
+    private fun loadAlphabetContent() {
         viewModelScope.launch {
-            getAllLettersUseCase().fold(
-                onSuccess = { letterFlow ->
-                    letterFlow.collect { letters ->
-                        val processedLetters = processLetters(letters)
-                        _uiState.update { AlphabetUiState.Loaded(processedLetters) }
+            getAlphabetContentUseCase().fold(
+                onSuccess = { contentFlow ->
+                    contentFlow.collect { categories ->
+                        val uiCategories = categories.map { category ->
+                            CategoryUiState(
+                                title = when (category.category) {
+                                    AlphabetCategory.LETTERS -> "Letters"
+                                    AlphabetCategory.DIPHTHONGS -> "Diphthongs"
+                                    AlphabetCategory.IMPROPER_DIPHTHONGS -> "Improper Diphthongs"
+                                    AlphabetCategory.BREATHING_MARKS -> "Breathing Marks"
+                                },
+                                entities = when (category.category) {
+                                    AlphabetCategory.LETTERS -> processLetters(category.entities)
+                                    else -> category.entities.map { it.toUiState() }
+                                }
+                            )
+                        }
+                        _uiState.update { AlphabetUiState.Loaded(uiCategories) }
                     }
                 },
                 onFailure = {
@@ -48,7 +59,10 @@ class AlphabetViewModel @Inject constructor(
     /**
      * Processes the list of letters, handling special cases like sigma variants
      */
-    private fun processLetters(letters: List<Letter>): List<LetterUiState> {
+    private fun processLetters(entities: List<AlphabetEntity>): List<AlphabetEntityUiState> {
+        // Ensure we're working with Letter entities
+        val letters = entities.filterIsInstance<Letter>()
+
         // Group letters by their base form (handles sigma variants)
         val groupedLetters = letters.groupBy { letter ->
             // Group sigmas together, keep other letters separate
@@ -86,10 +100,40 @@ class AlphabetViewModel @Inject constructor(
                         uppercase = firstLetter.uppercase,
                         lowercase = firstLetter.lowercase,
                         transliteration = firstLetter.transliteration,
-                        masteryLevel = Random.nextFloat()
+                        masteryLevel = firstLetter.masteryLevel
                     )
                 }
             }
         }.sortedBy { it.order }
+    }
+
+    private fun AlphabetEntity.toUiState(): AlphabetEntityUiState {
+        return when (this) {
+            is Diphthong -> DiphthongUiState(
+                id = id,
+                order = order,
+                symbol = lowercase,
+                transliteration = transliteration,
+                pronunciation = pronunciation,
+                masteryLevel = masteryLevel
+            )
+            is ImproperDiphthong -> ImproperDiphthongUiState(
+                id = id,
+                order = order,
+                symbol = lowercase,
+                transliteration = transliteration,
+                pronunciation = pronunciation,
+                masteryLevel = masteryLevel
+            )
+            is BreathingMark -> BreathingMarkUiState(
+                id = id,
+                order = order,
+                name = name,
+                symbol = symbol,
+                pronunciation = pronunciation,
+                masteryLevel = masteryLevel
+            )
+            is Letter -> throw IllegalStateException("Letters should be processed through processLetters()")
+        }
     }
 }

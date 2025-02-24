@@ -1,186 +1,242 @@
 package com.koineos.app.ui.components.topbar
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.koineos.app.R
 import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.components.core.IconComponent
 import com.koineos.app.ui.theme.Colors
+import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineosTheme
 
 /**
- * Composable function for the top bar of the app
- *
- * @param title The title to be displayed
- * @param showLogo Whether to show the logo or not
- * @param titleColor The color of the title
- * @param leadingAction The leading action to be displayed
- * @param trailingActions The trailing actions to be displayed
- * @param backgroundColor The background color of the top bar
- * @param showDivider Whether to show a divider or not
+ * Represents an action in the top bar
+ */
+data class TopBarAction(
+    val icon: AppIcon? = null,
+    val contentDescription: String,
+    val action: () -> Unit,
+    val iconTint: Color = Colors.OnSurface
+)
+
+/**
+ * Main top bar component
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(
-    title: String? = null,
+    modifier: Modifier = Modifier,
     showLogo: Boolean = false,
-    titleColor: Color = Colors.TextPrimary,
+    title: String? = null,
+    titleColor: Color = Colors.OnPrimary,
+    backgroundColor: Color = Colors.Primary,
     leadingAction: TopBarAction? = null,
-    trailingActions: List<TopBarAction> = emptyList(),
-    backgroundColor: Color = Colors.Surface,
-    showDivider: Boolean = false
+    trailingActions: List<TopBarAction> = emptyList()
 ) {
-    Column {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = backgroundColor
+    ) {
         TopAppBar(
             title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                if (showLogo) {
+                    Image(
+                        painter = painterResource(id = R.drawable.wordmark_white),
+                        contentDescription = "Koineos Logo",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.height(16.dp)
+                    )
+                } else {
                     title?.let {
                         Text(
-                            text = title,
+                            text = it,
                             color = titleColor,
-                            fontSize = TextUnit(20f, TextUnitType.Sp)
-                        )
-                    }
-                    if (showLogo) {
-                        Image(
-                            painter = painterResource(R.drawable.wordmark_primary),
-                            contentDescription = "Logo",
-                            modifier = Modifier.size(100.dp)
+                            fontWeight = FontWeight.Bold
                         )
                     }
                 }
             },
             navigationIcon = {
-                leadingAction?.let {
-                    IconButton(onClick = leadingAction.action) {
-                        IconComponent(
-                            icon = leadingAction.icon,
-                            contentDescription = leadingAction.contentDescription,
-                            isSelected = false,
-                            tint = leadingAction.iconTint ?: LocalContentColor.current
-                        )
+                leadingAction?.let { action ->
+                    action.icon?.let { icon ->
+                        IconButton(onClick = action.action) {
+                            IconComponent(
+                                icon = icon,
+                                contentDescription = action.contentDescription,
+                                tint = action.iconTint
+                            )
+                        }
                     }
                 }
             },
             actions = {
-                trailingActions.forEach {
-                    IconButton(onClick = it.action) {
-                        IconComponent(
-                            icon = it.icon,
-                            contentDescription = it.contentDescription,
-                            isSelected = false,
-                            tint = it.iconTint ?: LocalContentColor.current
-                        )
+                trailingActions.forEach { action ->
+                    action.icon?.let { icon ->
+                        IconButton(onClick = action.action) {
+                            IconComponent(
+                                icon = icon,
+                                contentDescription = action.contentDescription,
+                                tint = action.iconTint
+                            )
+                        }
                     }
                 }
+                ProfilePicture(
+                    onClick = { /* Handle profile click */ }
+                )
             },
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = backgroundColor
+            colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                containerColor = Color.Transparent
             )
         )
-        if (showDivider) {
-            HorizontalDivider(thickness = 0.5.dp, color = Colors.Outline)
-        }
     }
 }
 
 /**
- * Data class for top bar actions
- *
- * @property icon The icon to be displayed
- * @property contentDescription The content description of the icon
- * @property action The action to be performed when the icon is clicked
- * @property iconTint The tint of the icon
+ * Profile picture component for the top bar
  */
-data class TopBarAction(
-    val icon: AppIcon,
-    val contentDescription: String,
-    val action: () -> Unit,
-    val iconTint: Color? = null
-)
-
-@Preview
 @Composable
-private fun TopBarWithTitlePreview() {
-    KoineosTheme {
-        TopBar(
-            title = "Learn",
-            titleColor = Colors.TextPrimary,
-            leadingAction = TopBarAction(
-                icon = AppIcon.Back,
-                contentDescription = "Back",
-                action = {}
-            ),
-            trailingActions = listOf(
-                TopBarAction(
-                    icon = AppIcon.Search,
-                    contentDescription = "Search",
-                    action = {}
-                ),
-                TopBarAction(
-                    icon = AppIcon.Read,
-                    contentDescription = "Read",
-                    action = {}
-                ),
-                TopBarAction(
-                    icon = AppIcon.MoreHorizontal,
-                    contentDescription = "More",
-                    action = {}
-                )
+fun ProfilePicture(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = modifier.padding(end = Dimensions.paddingSmall)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(Colors.OnPrimary.copy(alpha = 0.1f)),
+            contentAlignment = Alignment.Center
+        ) {
+            IconComponent(
+                icon = AppIcon.Profile,
+                contentDescription = "Profile",
+                tint = Colors.OnPrimary,
+                modifier = Modifier.size(24.dp)
             )
-        )
+        }
     }
 }
 
-@Preview
+@Preview(name = "TopBar - With Logo")
 @Composable
 private fun TopBarWithLogoPreview() {
     KoineosTheme {
         TopBar(
             showLogo = true,
-            titleColor = Colors.TextPrimary,
+            backgroundColor = Colors.Primary,
             leadingAction = TopBarAction(
-                icon = AppIcon.Back,
-                contentDescription = "Back",
+                icon = AppIcon.Menu,
+                contentDescription = "Menu",
                 action = {},
+                iconTint = Colors.OnPrimary
             ),
             trailingActions = listOf(
                 TopBarAction(
-                    icon = AppIcon.Search,
-                    contentDescription = "Search",
-                    action = {}
-                ),
-                TopBarAction(
-                    icon = AppIcon.Read,
-                    contentDescription = "Read",
-                    action = {}
-                ),
-                TopBarAction(
-                    icon = AppIcon.MoreHorizontal,
-                    contentDescription = "More",
-                    action = {}
+                    icon = AppIcon.Notifications,
+                    contentDescription = "Notifications",
+                    action = {},
+                    iconTint = Colors.OnPrimary
                 )
             )
         )
+    }
+}
+
+@Preview(name = "TopBar - With Title")
+@Composable
+private fun TopBarWithTitlePreview() {
+    KoineosTheme {
+        TopBar(
+            title = "Learn",
+            leadingAction = TopBarAction(
+                icon = AppIcon.Menu,
+                contentDescription = "Menu",
+                action = {},
+                iconTint = Colors.OnPrimary
+            ),
+            trailingActions = listOf(
+                TopBarAction(
+                    icon = AppIcon.Notifications,
+                    contentDescription = "Notifications",
+                    action = {},
+                    iconTint = Colors.OnPrimary
+                )
+            )
+        )
+    }
+}
+
+@Preview(name = "TopBar - Primary Colors")
+@Composable
+private fun TopBarPrimaryColorsPreview() {
+    KoineosTheme {
+        TopBar(
+            title = "Alphabet",
+            titleColor = Colors.OnPrimary,
+            backgroundColor = Colors.Primary,
+            leadingAction = TopBarAction(
+                icon = AppIcon.Menu,
+                contentDescription = "Menu",
+                action = {},
+                iconTint = Colors.OnPrimary
+            ),
+            trailingActions = listOf(
+                TopBarAction(
+                    icon = AppIcon.Notifications,
+                    contentDescription = "Notifications",
+                    action = {},
+                    iconTint = Colors.OnPrimary
+                )
+            )
+        )
+    }
+}
+
+@Preview(name = "TopBar - Without Actions")
+@Composable
+private fun TopBarWithoutActionsPreview() {
+    KoineosTheme {
+        TopBar(
+            title = "Simple Title"
+        )
+    }
+}
+
+@Preview(name = "ProfilePicture Component")
+@Composable
+private fun ProfilePicturePreview() {
+    KoineosTheme {
+        Surface(color = Colors.Primary) {
+            ProfilePicture(
+                onClick = {},
+                modifier = Modifier.padding(8.dp)
+            )
+        }
     }
 }

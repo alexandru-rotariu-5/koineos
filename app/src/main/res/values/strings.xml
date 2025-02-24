@@ -23,4 +23,9 @@
     <string name="learn_feature_practice_description">Strengthen your knowledge with mixed exercises.</string>
     <string name="learn_feature_handbook_title">Handbook</string>
     <string name="learn_feature_handbook_description">Access complete reference materials</string>
+
+    <!-- Alphabet Screen -->
+    <string name="alphabet_screen_title">The Alphabet</string>
+    <string name="alphabet_screen_description">Get to know the alphabet</string>
+    <string name="alphabet_screen_learn_button">Learn the letters</string>
 </resources>
