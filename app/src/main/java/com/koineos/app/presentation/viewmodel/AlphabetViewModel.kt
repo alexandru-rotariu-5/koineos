@@ -1,12 +1,12 @@
 package com.koineos.app.presentation.viewmodel
 
-import AlphabetEntityUiState
-import AlphabetUiState
-import BreathingMarkUiState
-import CategoryUiState
-import DiphthongUiState
-import ImproperDiphthongUiState
-import LetterUiState
+import com.koineos.app.presentation.model.AlphabetEntityUiState
+import com.koineos.app.presentation.model.AlphabetUiState
+import com.koineos.app.presentation.model.BreathingMarkUiState
+import com.koineos.app.presentation.model.CategoryUiState
+import com.koineos.app.presentation.model.DiphthongUiState
+import com.koineos.app.presentation.model.ImproperDiphthongUiState
+import com.koineos.app.presentation.model.LetterUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koineos.app.domain.model.AlphabetCategory
@@ -24,6 +24,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * ViewModel for the Alphabet feature
+ *
+ * @property getAlphabetContentUseCase Use case for retrieving alphabet content
+ * @property stringProvider Provider for string resources
+ */
 @HiltViewModel
 class AlphabetViewModel @Inject constructor(
     private val getAlphabetContentUseCase: GetAlphabetContentUseCase,

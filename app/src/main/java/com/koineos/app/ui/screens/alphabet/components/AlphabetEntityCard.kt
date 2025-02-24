@@ -1,9 +1,9 @@
 package com.koineos.app.ui.screens.alphabet.components
 
-import BreathingMarkUiState
-import DiphthongUiState
-import ImproperDiphthongUiState
-import LetterUiState
+import com.koineos.app.presentation.model.BreathingMarkUiState
+import com.koineos.app.presentation.model.DiphthongUiState
+import com.koineos.app.presentation.model.ImproperDiphthongUiState
+import com.koineos.app.presentation.model.LetterUiState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer

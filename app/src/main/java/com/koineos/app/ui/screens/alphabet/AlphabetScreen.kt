@@ -1,11 +1,11 @@
 package com.koineos.app.ui.screens.alphabet
 
-import AlphabetUiState
-import BreathingMarkUiState
-import CategoryUiState
-import DiphthongUiState
-import ImproperDiphthongUiState
-import LetterUiState
+import com.koineos.app.presentation.model.AlphabetUiState
+import com.koineos.app.presentation.model.BreathingMarkUiState
+import com.koineos.app.presentation.model.CategoryUiState
+import com.koineos.app.presentation.model.DiphthongUiState
+import com.koineos.app.presentation.model.ImproperDiphthongUiState
+import com.koineos.app.presentation.model.LetterUiState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

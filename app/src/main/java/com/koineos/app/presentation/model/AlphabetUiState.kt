@@ -1,16 +1,42 @@
+package com.koineos.app.presentation.model
+
+/**
+ * Base interface for UI states in the Alphabet feature
+ */
 sealed interface AlphabetUiState {
+    /**
+     * Loading state
+     */
     data object Loading : AlphabetUiState
+
+    /**
+     * Error state
+     */
     data object Error : AlphabetUiState
+
+    /**
+     * Loaded state
+     *
+     * @property categories List of categories in the alphabet
+     * @property selectedEntityId ID of the selected entity, if any
+     */
     data class Loaded(
         val categories: List<CategoryUiState>,
         val selectedEntityId: String? = null
     ) : AlphabetUiState
 }
 
+/**
+ * UI state for a category in the alphabet
+ *
+ * @property title Title of the category
+ * @property entities List of entities in the category
+ */
 data class CategoryUiState(
     val title: String,
     val entities: List<AlphabetEntityUiState>
 )
+
 
 sealed interface AlphabetEntityUiState {
     val id: String

@@ -12,12 +12,17 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Preferences DataStore for alphabet mastery
+ */
 private val Context.alphabetMasteryDataStore: DataStore<Preferences> by preferencesDataStore(
     name = "alphabet_mastery_preferences"
 )
 
 /**
  * Manages alphabet mastery progress using DataStore
+ *
+ * @property context The application context
  */
 @Singleton
 class AlphabetMasteryDataStore @Inject constructor(
@@ -53,7 +58,7 @@ class AlphabetMasteryDataStore @Inject constructor(
     /**
      * Gets all alphabet entity mastery levels as a map
      *
-     * @return Flow of map from alphabet entity ID to mastery level
+     * @return [Flow] of map from alphabet entity ID to mastery level
      */
     fun getAllAlphabetEntityMasteryLevels(): Flow<Map<String, Float>> {
         return context.alphabetMasteryDataStore.data.map { preferences ->

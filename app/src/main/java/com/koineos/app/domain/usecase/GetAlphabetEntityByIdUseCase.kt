@@ -11,6 +11,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
+/**
+ * Use case for retrieving a Koine Greek alphabet entity, with its mastery level, by its ID
+ *
+ * @property alphabetRepository The repository for accessing alphabet data
+ * @property alphabetMasteryRepository The repository for accessing alphabet mastery data
+ */
 class GetAlphabetEntityByIdUseCase @Inject constructor(
     private val alphabetRepository: AlphabetRepository,
     private val alphabetMasteryRepository: AlphabetMasteryRepository

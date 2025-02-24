@@ -18,6 +18,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/**
+ * Hilt module for providing dependencies related to the Alphabet feature
+ */
 @Module
 @InstallIn(SingletonComponent::class)
 object AlphabetModule {

@@ -1,5 +1,14 @@
 package com.koineos.app.domain.model
 
+/**
+ * Base interface for Domain entities in the Alphabet feature
+ *
+ * @property id Unique identifier for the entity
+ * @property order Order of the entity in the list
+ * @property pronunciation Pronunciation of the entity
+ * @property notesResId Resource ID of the notes text for the entity
+ * @property masteryLevel Mastery level of the entity
+ */
 sealed interface AlphabetEntity {
     val id: String
     val order: Int
@@ -8,6 +17,15 @@ sealed interface AlphabetEntity {
     val masteryLevel: Float
 }
 
+/**
+ * Domain entity for a letter in the alphabet
+ *
+ * @property name Name of the letter
+ * @property uppercase Uppercase version of the letter
+ * @property lowercase Lowercase version of the letter
+ * @property transliteration Transliteration of the letter
+ *
+ */
 data class Letter(
     override val id: String,
     override val order: Int,
@@ -20,6 +38,13 @@ data class Letter(
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity
 
+/**
+ * Domain entity for a diphthong in the alphabet
+ *
+ * @property lowercase Lowercase version of the diphthong
+ * @property transliteration Transliteration of the diphthong
+ * @property examples Examples of words with this diphthong
+ */
 data class Diphthong(
     override val id: String,
     override val order: Int,
@@ -31,6 +56,13 @@ data class Diphthong(
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity
 
+/**
+ * Domain entity for an improper diphthong in the alphabet
+ *
+ * @property lowercase Lowercase version of the improper diphthong
+ * @property transliteration Transliteration of the improper diphthong
+ * @property examples Examples of words with this improper diphthong
+ */
 data class ImproperDiphthong(
     override val id: String,
     override val order: Int,
@@ -42,6 +74,13 @@ data class ImproperDiphthong(
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity
 
+/**
+ * Domain entity for a breathing mark in the alphabet
+ *
+ * @property name Name of the breathing mark
+ * @property symbol Symbol of the breathing mark
+ * @property examples Examples of words with this breathing mark
+ */
 data class BreathingMark(
     override val id: String,
     override val order: Int,

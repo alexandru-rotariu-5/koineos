@@ -1,10 +1,13 @@
 package com.koineos.app.data.content.dto
 
-import BreathingMarkDto
-import DiphthongDto
-import ImproperDiphthongDto
-import LetterDto
-
+/**
+ * DTO response object for the Alphabet feature
+ *
+ * @property letters List of letters in the alphabet
+ * @property diphthongs List of diphthongs in the alphabet
+ * @property improperDiphthongs List of improper diphthongs in the alphabet
+ * @property breathingMarks List of breathing marks in the alphabet
+ */
 data class AlphabetResponse(
     val letters: List<LetterDto>,
     val diphthongs: List<DiphthongDto>,

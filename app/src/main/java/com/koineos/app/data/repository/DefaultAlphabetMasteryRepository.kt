@@ -9,6 +9,8 @@ import javax.inject.Singleton
 
 /**
  * Implementation of [AlphabetMasteryRepository] that uses DataStore
+ *
+ * @property alphabetMasteryDataStore The DataStore for alphabet mastery
  */
 @Singleton
 class DefaultAlphabetMasteryRepository @Inject constructor(

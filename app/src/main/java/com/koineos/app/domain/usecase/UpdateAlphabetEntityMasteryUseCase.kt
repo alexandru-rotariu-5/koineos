@@ -5,6 +5,8 @@ import javax.inject.Inject
 
 /**
  * Use case for updating alphabet entity mastery level
+ *
+ * @property alphabetMasteryRepository The repository for accessing alphabet mastery data
  */
 class UpdateAlphabetEntityMasteryUseCase @Inject constructor(
     private val alphabetMasteryRepository: AlphabetMasteryRepository

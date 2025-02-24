@@ -29,7 +29,7 @@
     <string name="alphabet_screen_description">Get to know the alphabet</string>
     <string name="alphabet_screen_learn_button">Learn the letters</string>
 
-    <!-- com.koineos.app.domain.model.Letter Notes -->
+    <!-- Letter Notes -->
     <string name="note_alpha">The most common vowel in Koine Greek, similar to \'a\' in \'father\'</string>
     <string name="note_beta">In modern Greek pronounced as \'v\', but in Koine Greek it\'s pronounced as \'b\' in \'boy\'</string>
     <string name="note_gamma">Pronounced as \'g\' in \'got\'. When followed by γ, κ, χ, or ξ, pronounced as \'ng\'</string>
@@ -56,7 +56,7 @@
     <string name="note_psi">Pronounced as \'ps\' in \'caps\'</string>
     <string name="note_omega">Long \'o\' sound, held longer than omicron</string>
 
-    <!-- com.koineos.app.domain.model.Diphthong Notes -->
+    <!-- Diphthong Notes -->
     <string name="note_diphthong_ai">One of the most frequent diphthongs, pronounced like \'i\' in \'pine\'</string>
     <string name="note_diphthong_ei">Pronounced like \'ay\' in \'pay\'</string>
     <string name="note_diphthong_oi">Pronounced like \'oi\' in \'coin\'</string>
@@ -66,7 +66,7 @@
     <string name="note_diphthong_hu">Rare diphthong, usually found in augmented forms of ευ-words</string>
     <string name="note_diphthong_ou">Always pronounced like \'oo\' in \'food\'</string>
 
-    <!-- Improper com.koineos.app.domain.model.Diphthong Notes -->
+    <!-- Improper Diphthong Notes -->
     <string name="note_improper_diphthong_ai">Formed with alpha and iota subscript. Pronounced like alpha</string>
     <string name="note_improper_diphthong_ei">Formed with eta and iota subscript. Pronounced like eta</string>
     <string name="note_improper_diphthong_oi">Formed with omega and iota subscript. Pronounced like omega</string>

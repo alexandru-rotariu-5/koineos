@@ -43,6 +43,14 @@ data class TopBarAction(
 
 /**
  * Main top bar component
+ *
+ * @param modifier Modifier for styling
+ * @param showLogo Whether to show the Koineos logo
+ * @param title The title to be displayed
+ * @param titleColor The color of the title
+ * @param backgroundColor The background color of the top bar
+ * @param leadingAction The leading action to be displayed
+ * @param trailingActions The trailing actions to be displayed
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -116,11 +124,14 @@ fun TopBar(
 
 /**
  * Profile picture component for the top bar
+ *
+ * @param modifier Modifier for styling
+ * @param onClick The action to be performed when the profile picture is clicked
  */
 @Composable
 fun ProfilePicture(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
 ) {
     IconButton(
         onClick = onClick,

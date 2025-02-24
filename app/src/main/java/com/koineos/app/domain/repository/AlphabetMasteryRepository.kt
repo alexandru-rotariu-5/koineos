@@ -8,6 +8,8 @@ import kotlinx.coroutines.flow.Flow
 interface AlphabetMasteryRepository {
     /**
      * Gets mastery level for a specific entity
+     *
+     * @param alphabetEntityId The ID of the entity
      */
     fun getAlphabetEntityMasteryLevel(alphabetEntityId: String): Flow<Float>
 
@@ -18,6 +20,9 @@ interface AlphabetMasteryRepository {
 
     /**
      * Updates mastery level for a specific entity
+     *
+     * @param alphabetEntityId The ID of the entity
+     * @param masteryLevel The new mastery level
      */
     suspend fun updateAlphabetEntityMasteryLevel(
         alphabetEntityId: String,

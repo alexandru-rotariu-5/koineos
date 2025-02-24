@@ -1,9 +1,9 @@
 package com.koineos.app.data.content
 
-import BreathingMarkDto
-import DiphthongDto
-import ImproperDiphthongDto
-import LetterDto
+import com.koineos.app.data.content.dto.BreathingMarkDto
+import com.koineos.app.data.content.dto.DiphthongDto
+import com.koineos.app.data.content.dto.ImproperDiphthongDto
+import com.koineos.app.data.content.dto.LetterDto
 import com.koineos.app.R
 import com.koineos.app.data.content.dto.AlphabetResponse
 import kotlinx.coroutines.flow.Flow
@@ -11,6 +11,9 @@ import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 import javax.inject.Singleton
 
+/**
+ * Local data source for the Alphabet feature
+ */
 @Singleton
 class AlphabetLocalDataSource @Inject constructor() {
     private val letters = listOf(
@@ -392,6 +395,9 @@ class AlphabetLocalDataSource @Inject constructor() {
         )
     )
 
+    /**
+     * Returns a [Flow] of [AlphabetResponse] containing the local data source content
+     */
     fun getAlphabetContent(): Flow<AlphabetResponse> = flowOf(
         AlphabetResponse(
             letters = letters,

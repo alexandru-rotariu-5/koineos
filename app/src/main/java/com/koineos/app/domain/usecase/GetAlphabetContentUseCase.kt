@@ -13,6 +13,9 @@ import javax.inject.Inject
 
 /**
  * Use case for retrieving all Koine Greek alphabet entities with mastery levels
+ *
+ * @property alphabetRepository The repository for accessing alphabet data
+ * @property alphabetMasteryRepository The repository for accessing alphabet mastery data
  */
 class GetAlphabetContentUseCase @Inject constructor(
     private val alphabetRepository: AlphabetRepository,

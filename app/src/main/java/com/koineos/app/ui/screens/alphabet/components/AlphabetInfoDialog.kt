@@ -1,10 +1,10 @@
 package com.koineos.app.ui.screens.alphabet.components
 
-import AlphabetEntityUiState
-import BreathingMarkUiState
-import DiphthongUiState
-import ImproperDiphthongUiState
-import LetterUiState
+import com.koineos.app.presentation.model.AlphabetEntityUiState
+import com.koineos.app.presentation.model.BreathingMarkUiState
+import com.koineos.app.presentation.model.DiphthongUiState
+import com.koineos.app.presentation.model.ImproperDiphthongUiState
+import com.koineos.app.presentation.model.LetterUiState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth

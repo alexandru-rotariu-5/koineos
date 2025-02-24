@@ -20,6 +20,11 @@ import com.koineos.app.ui.navigation.learn.LearnDestination
 import com.koineos.app.ui.navigation.read.ReadDestination
 import com.koineos.app.ui.theme.Colors
 
+/**
+ * Transparent top bar component for the app.
+ *
+ * @param navController The navigation controller for the app
+ */
 @Composable
 fun TransparentTopBar(
     navController: NavHostController

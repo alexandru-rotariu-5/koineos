@@ -30,7 +30,6 @@ import com.koineos.app.ui.theme.Dimensions
  *
  * @param modifier Modifier to be applied to the card
  * @param onClick Optional click handler
- * @param enabled Whether the card is enabled
  * @param borderless Whether the card should have a border
  * @param contentPadding Padding to be applied to the content
  * @param specialTopPadding Padding to be applied to the top of the card
@@ -41,7 +40,6 @@ import com.koineos.app.ui.theme.Dimensions
 fun RegularCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit) = {},
-    enabled: Boolean = true,
     borderless: Boolean = false,
     contentPadding: CardPadding = CardPadding.Medium,
     specialTopPadding: CardPadding = contentPadding,
@@ -152,7 +150,6 @@ private fun DisabledRegularCardPreview() {
     MaterialTheme {
         RegularCard(
             modifier = Modifier.fillMaxWidth(),
-            enabled = false,
             onClick = {}
         ) {
             Text(

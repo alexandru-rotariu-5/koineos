@@ -19,10 +19,18 @@ import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.MainFont
 
+/**
+ * A regular button with a text label.
+ *
+ * @param modifier The modifier to be applied to the button.
+ * @param onClick The action to perform when the button is clicked.
+ * @param enabled Whether the button is enabled or disabled.
+ * @param content The content of the button.
+ */
 @Composable
 fun RegularButton(
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit,
     enabled: Boolean = true,
     content: @Composable RowScope.() -> Unit
 ) {
@@ -45,7 +53,9 @@ fun RegularButton(
     )
 }
 
-// Overloaded version for simple text buttons
+/**
+ * Overloaded version of [RegularButton] with a text label.
+ */
 @Composable
 fun RegularButton(
     onClick: () -> Unit,
