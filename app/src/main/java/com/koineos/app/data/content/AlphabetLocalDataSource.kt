@@ -25,6 +25,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "α",
             transliteration = "a",
             pronunciation = "ah",
+            examples = listOf("ἀγάπη", "ἄνθρωπος", "ἀλήθεια"),
             notesResId = R.string.note_alpha
         ),
         LetterDto(
@@ -35,6 +36,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "β",
             transliteration = "b",
             pronunciation = "b",
+            examples = listOf("βασιλεία", "βίβλος", "βαπτίζω"),
             notesResId = R.string.note_beta
         ),
         LetterDto(
@@ -45,6 +47,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "γ",
             transliteration = "g",
             pronunciation = "g",
+            examples = listOf("γῆ", "γράφω", "γίνομαι"),
             notesResId = R.string.note_gamma
         ),
         LetterDto(
@@ -55,6 +58,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "δ",
             transliteration = "d",
             pronunciation = "d",
+            examples = listOf("δοῦλος", "διδάσκαλος", "δικαιοσύνη"),
             notesResId = R.string.note_delta
         ),
         LetterDto(
@@ -65,6 +69,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "ε",
             transliteration = "e",
             pronunciation = "eh",
+            examples = listOf("ἐκκλησία", "ἔργον", "εἰρήνη"),
             notesResId = R.string.note_epsilon
         ),
         LetterDto(
@@ -75,6 +80,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "ζ",
             transliteration = "z",
             pronunciation = "z",
+            examples = listOf("ζωή", "ζητέω", "ζῆλος"),
             notesResId = R.string.note_zeta
         ),
         LetterDto(
@@ -85,6 +91,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "η",
             transliteration = "ē",
             pronunciation = "ay",
+            examples = listOf("ἡμέρα", "ἤδη", "ἦλθον"),
             notesResId = R.string.note_eta
         ),
         LetterDto(
@@ -95,6 +102,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "θ",
             transliteration = "th",
             pronunciation = "th",
+            examples = listOf("θεός", "θάνατος", "θέλημα"),
             notesResId = R.string.note_theta
         ),
         LetterDto(
@@ -105,6 +113,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "ι",
             transliteration = "i",
             pronunciation = "ee",
+            examples = listOf("Ἰησοῦς", "ἵνα", "ἱερόν"),
             notesResId = R.string.note_iota
         ),
         LetterDto(
@@ -115,6 +124,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "κ",
             transliteration = "k",
             pronunciation = "k",
+            examples = listOf("καρδία", "κόσμος", "κύριος"),
             notesResId = R.string.note_kappa
         ),
         LetterDto(
@@ -125,6 +135,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "λ",
             transliteration = "l",
             pronunciation = "l",
+            examples = listOf("λόγος", "λαός", "λαμβάνω"),
             notesResId = R.string.note_lambda
         ),
         LetterDto(
@@ -135,6 +146,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "μ",
             transliteration = "m",
             pronunciation = "m",
+            examples = listOf("μαθητής", "μάρτυς", "μένω"),
             notesResId = R.string.note_mu
         ),
         LetterDto(
@@ -145,6 +157,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "ν",
             transliteration = "n",
             pronunciation = "n",
+            examples = listOf("νόμος", "ναός", "νῦν"),
             notesResId = R.string.note_nu
         ),
         LetterDto(
@@ -155,6 +168,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "ξ",
             transliteration = "x",
             pronunciation = "ks",
+            examples = listOf("ξένος", "ξύλον", "ξηρός"),
             notesResId = R.string.note_xi
         ),
         LetterDto(
@@ -165,6 +179,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "ο",
             transliteration = "o",
             pronunciation = "oh",
+            examples = listOf("ὁδός", "οἶκος", "ὀφθαλμός"),
             notesResId = R.string.note_omicron
         ),
         LetterDto(
@@ -175,6 +190,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "π",
             transliteration = "p",
             pronunciation = "p",
+            examples = listOf("πίστις", "πνεῦμα", "προφήτης"),
             notesResId = R.string.note_pi
         ),
         LetterDto(
@@ -185,6 +201,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "ρ",
             transliteration = "r",
             pronunciation = "r",
+            examples = listOf("ῥῆμα", "ῥαββί", "ῥίζα"),
             notesResId = R.string.note_rho
         ),
         LetterDto(
@@ -195,6 +212,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "σ",
             transliteration = "s",
             pronunciation = "s",
+            examples = listOf("σῶμα", "σοφία", "σημεῖον"),
             notesResId = R.string.note_sigma
         ),
         LetterDto(
@@ -205,6 +223,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "ς",
             transliteration = "s",
             pronunciation = "s",
+            examples = listOf("Χριστός", "θεός", "ἄνθρωπος"),
             notesResId = R.string.note_final_sigma
         ),
         LetterDto(
@@ -215,6 +234,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "τ",
             transliteration = "t",
             pronunciation = "t",
+            examples = listOf("τέκνον", "τόπος", "τιμή"),
             notesResId = R.string.note_tau
         ),
         LetterDto(
@@ -225,6 +245,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "υ",
             transliteration = "y",
             pronunciation = "oo",
+            examples = listOf("ὕδωρ", "υἱός", "ὑπέρ"),
             notesResId = R.string.note_upsilon
         ),
         LetterDto(
@@ -235,6 +256,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "φ",
             transliteration = "ph",
             pronunciation = "f",
+            examples = listOf("φῶς", "φωνή", "φόβος"),
             notesResId = R.string.note_phi
         ),
         LetterDto(
@@ -245,6 +267,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "χ",
             transliteration = "ch",
             pronunciation = "kh",
+            examples = listOf("χάρις", "Χριστός", "χείρ"),
             notesResId = R.string.note_chi
         ),
         LetterDto(
@@ -255,6 +278,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "ψ",
             transliteration = "ps",
             pronunciation = "ps",
+            examples = listOf("ψυχή", "ψευδοπροφήτης", "ψαλμός"),
             notesResId = R.string.note_psi
         ),
         LetterDto(
@@ -265,6 +289,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "ω",
             transliteration = "ō",
             pronunciation = "oh",
+            examples = listOf("ὥρα", "ὡς", "ὤμος"),
             notesResId = R.string.note_omega
         )
     )
@@ -389,7 +414,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             order = 2,
             name = "smooth",
             symbol = "᾽",
-            pronunciation = "-",
+            pronunciation = "",
             examples = listOf("ἐν", "ἀγάπη", "εἰρήνη", "ἰδού"),
             notesResId = R.string.note_breathing_smooth
         )

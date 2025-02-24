@@ -6,6 +6,7 @@ package com.koineos.app.domain.model
  * @property id Unique identifier for the entity
  * @property order Order of the entity in the list
  * @property pronunciation Pronunciation of the entity
+ * @property examples Examples of words regarding this entity
  * @property notesResId Resource ID of the notes text for the entity
  * @property masteryLevel Mastery level of the entity
  */
@@ -13,6 +14,7 @@ sealed interface AlphabetEntity {
     val id: String
     val order: Int
     val pronunciation: String
+    val examples: List<String>
     val notesResId: Int?
     val masteryLevel: Float
 }
@@ -34,6 +36,7 @@ data class Letter(
     val lowercase: String,
     val transliteration: String,
     override val pronunciation: String,
+    override val examples: List<String>,
     override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity
@@ -43,7 +46,6 @@ data class Letter(
  *
  * @property lowercase Lowercase version of the diphthong
  * @property transliteration Transliteration of the diphthong
- * @property examples Examples of words with this diphthong
  */
 data class Diphthong(
     override val id: String,
@@ -51,7 +53,7 @@ data class Diphthong(
     val lowercase: String,
     val transliteration: String,
     override val pronunciation: String,
-    val examples: List<String>,
+    override val examples: List<String>,
     override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity
@@ -61,7 +63,6 @@ data class Diphthong(
  *
  * @property lowercase Lowercase version of the improper diphthong
  * @property transliteration Transliteration of the improper diphthong
- * @property examples Examples of words with this improper diphthong
  */
 data class ImproperDiphthong(
     override val id: String,
@@ -69,7 +70,7 @@ data class ImproperDiphthong(
     val lowercase: String,
     val transliteration: String,
     override val pronunciation: String,
-    val examples: List<String>,
+    override val examples: List<String>,
     override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity
@@ -79,7 +80,6 @@ data class ImproperDiphthong(
  *
  * @property name Name of the breathing mark
  * @property symbol Symbol of the breathing mark
- * @property examples Examples of words with this breathing mark
  */
 data class BreathingMark(
     override val id: String,
@@ -87,7 +87,7 @@ data class BreathingMark(
     val name: String,
     val symbol: String,
     override val pronunciation: String,
-    val examples: List<String>,
+    override val examples: List<String>,
     override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity

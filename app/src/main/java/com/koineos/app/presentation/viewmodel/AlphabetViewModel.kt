@@ -119,6 +119,7 @@ class AlphabetViewModel @Inject constructor(
                         lowercase = medialSigma.lowercase,
                         transliteration = medialSigma.transliteration,
                         pronunciation = medialSigma.pronunciation,
+                        examples = medialSigma.examples,
                         masteryLevel = avgMasteryLevel,
                         notes = medialSigma.notesResId?.let { stringProvider.getString(it) },
                         hasAlternateLowercase = true,
@@ -135,6 +136,7 @@ class AlphabetViewModel @Inject constructor(
                         lowercase = firstLetter.lowercase,
                         transliteration = firstLetter.transliteration,
                         pronunciation = firstLetter.pronunciation,
+                        examples = firstLetter.examples,
                         masteryLevel = firstLetter.masteryLevel,
                         notes = firstLetter.notesResId?.let { stringProvider.getString(it) }
                     )

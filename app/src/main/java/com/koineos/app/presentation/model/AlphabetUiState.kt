@@ -37,9 +37,9 @@ data class CategoryUiState(
     val entities: List<AlphabetEntityUiState>
 )
 
-
 sealed interface AlphabetEntityUiState {
     val id: String
+    val examples: List<String>
     val notes: String?
     val masteryLevel: Float
     val isMastered: Boolean
@@ -56,6 +56,7 @@ data class LetterUiState(
     val pronunciation: String,
     val hasAlternateLowercase: Boolean = false,
     val alternateLowercase: String? = null,
+    override val examples: List<String>,
     override val notes: String?,
     override val masteryLevel: Float
 ) : AlphabetEntityUiState
@@ -67,7 +68,7 @@ data class DiphthongUiState(
     val transliteration: String,
     val pronunciation: String,
     val componentLetters: String,
-    val examples: List<String>,
+    override val examples: List<String>,
     override val notes: String?,
     override val masteryLevel: Float
 ) : AlphabetEntityUiState
@@ -79,7 +80,7 @@ data class ImproperDiphthongUiState(
     val transliteration: String,
     val pronunciation: String,
     val componentLetters: String,
-    val examples: List<String>,
+    override val examples: List<String>,
     override val notes: String?,
     override val masteryLevel: Float
 ) : AlphabetEntityUiState
@@ -90,7 +91,7 @@ data class BreathingMarkUiState(
     val name: String,
     val symbol: String,
     val pronunciation: String,
-    val examples: List<String>,
+    override val examples: List<String>,
     override val notes: String?,
     override val masteryLevel: Float
 ) : AlphabetEntityUiState

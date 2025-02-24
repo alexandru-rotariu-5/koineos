@@ -23,6 +23,7 @@ fun LetterDto.toDomainModel(masteryLevel: Float = 0f): Letter {
         lowercase = lowercase,
         transliteration = transliteration,
         pronunciation = pronunciation,
+        examples = examples,
         notesResId = notesResId,
         masteryLevel = masteryLevel
     )

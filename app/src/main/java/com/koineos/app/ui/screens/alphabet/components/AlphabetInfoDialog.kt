@@ -1,18 +1,19 @@
 package com.koineos.app.ui.screens.alphabet.components
 
-import com.koineos.app.presentation.model.AlphabetEntityUiState
-import com.koineos.app.presentation.model.BreathingMarkUiState
-import com.koineos.app.presentation.model.DiphthongUiState
-import com.koineos.app.presentation.model.ImproperDiphthongUiState
-import com.koineos.app.presentation.model.LetterUiState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,7 +29,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.koineos.app.presentation.model.AlphabetEntityUiState
+import com.koineos.app.presentation.model.BreathingMarkUiState
+import com.koineos.app.presentation.model.DiphthongUiState
+import com.koineos.app.presentation.model.ImproperDiphthongUiState
+import com.koineos.app.presentation.model.LetterUiState
 import com.koineos.app.ui.theme.Colors
+import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
@@ -56,7 +63,7 @@ fun AlphabetInfoDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(24.dp),
+                    .padding(Dimensions.paddingXLarge),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Header with title and close button
@@ -87,7 +94,9 @@ private fun DialogHeader(
 ) {
     Text(
         text = title,
-        style = Typography.labelMedium,
+        style = Typography.labelMedium.copy(
+            fontWeight = FontWeight.Bold
+        ),
         color = Colors.OnSurfaceVariant,
         textAlign = TextAlign.Center,
     )
@@ -98,7 +107,7 @@ private fun LetterContent(letter: LetterUiState) {
     // Main letter display
     GreekSymbol(text = "${letter.uppercase} ${letter.lowercase}${if (letter.hasAlternateLowercase) " ${letter.alternateLowercase ?: ""}" else ""}")
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
     // Transliteration and pronunciation
     PronunciationInfo(
@@ -110,6 +119,11 @@ private fun LetterContent(letter: LetterUiState) {
     if (letter.notes != null) {
         ContentNotes(notes = letter.notes)
     }
+
+    // Examples
+    if (letter.examples.isNotEmpty()) {
+        ExamplesSection(examples = letter.examples)
+    }
 }
 
 @Composable
@@ -117,7 +131,7 @@ private fun DiphthongContent(diphthong: DiphthongUiState) {
     // Main diphthong display
     GreekSymbol(text = diphthong.symbol)
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
     // Component letters
     Text(
@@ -127,7 +141,7 @@ private fun DiphthongContent(diphthong: DiphthongUiState) {
         textAlign = TextAlign.Center
     )
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
     // Transliteration and pronunciation
     PronunciationInfo(
@@ -151,7 +165,7 @@ private fun ImproperDiphthongContent(improperDiphthong: ImproperDiphthongUiState
     // Main improper diphthong display
     GreekSymbol(text = improperDiphthong.symbol)
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
     // Component letters
     Text(
@@ -161,7 +175,7 @@ private fun ImproperDiphthongContent(improperDiphthong: ImproperDiphthongUiState
         textAlign = TextAlign.Center
     )
 
-    Spacer(modifier = Modifier.height(8.dp))
+    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
     // Transliteration and pronunciation
     PronunciationInfo(
@@ -185,15 +199,24 @@ private fun BreathingMarkContent(breathingMark: BreathingMarkUiState) {
     // Main breathing mark display
     GreekSymbol(text = breathingMark.symbol)
 
-    Spacer(modifier = Modifier.height(8.dp))
-
     // Pronunciation
-    Text(
-        text = breathingMark.pronunciation,
-        style = Typography.bodyMedium,
-        color = Colors.OnSurfaceVariant,
-        textAlign = TextAlign.Center
-    )
+    if (breathingMark.pronunciation != "") {
+        AssistChip(
+            onClick = {},
+            shape = RoundedCornerShape(corner = CornerSize(Dimensions.cornerLarge)),
+            label = {
+                Text(
+                    text = breathingMark.pronunciation,
+                    style = Typography.bodyMedium
+                )
+            },
+            colors = AssistChipDefaults.assistChipColors(
+                containerColor = Colors.PrimaryContainer,
+                labelColor = Colors.OnPrimaryContainer,
+            ),
+            border = null
+        )
+    }
 
     // Notes
     if (breathingMark.notes != null) {
@@ -223,17 +246,26 @@ private fun GreekSymbol(text: String) {
 
 @Composable
 private fun PronunciationInfo(transliteration: String, pronunciation: String) {
-    Text(
-        text = "$transliteration · /$pronunciation/",
-        style = Typography.bodyMedium,
-        color = Colors.OnSurfaceVariant,
-        textAlign = TextAlign.Center
+    AssistChip(
+        onClick = {},
+        shape = RoundedCornerShape(corner = CornerSize(Dimensions.cornerLarge)),
+        label = {
+            Text(
+                text = "$transliteration · /$pronunciation/",
+                style = Typography.bodyMedium
+            )
+        },
+        colors = AssistChipDefaults.assistChipColors(
+            containerColor = Colors.PrimaryContainer,
+            labelColor = Colors.OnPrimaryContainer,
+        ),
+        border = null
     )
 }
 
 @Composable
 private fun ContentNotes(notes: String) {
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(Dimensions.paddingLarge))
     Text(
         text = notes,
         style = Typography.bodyMedium,
@@ -242,9 +274,10 @@ private fun ContentNotes(notes: String) {
     )
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ExamplesSection(examples: List<String>) {
-    Spacer(modifier = Modifier.height(16.dp))
+    Spacer(modifier = Modifier.height(Dimensions.spacingXLarge))
     Text(
         text = "EXAMPLES",
         style = Typography.labelSmall,
@@ -252,19 +285,33 @@ private fun ExamplesSection(examples: List<String>) {
         fontWeight = FontWeight.Medium,
         textAlign = TextAlign.Center
     )
-    Text(
-        text = buildAnnotatedString {
-            examples.forEachIndexed { index, example ->
-                if (index > 0) append(", ")
-                withStyle(SpanStyle(fontFamily = KoineFont, fontWeight = FontWeight.Bold)) {
-                    append(example)
-                }
-            }
-        },
-        style = Typography.bodyMedium,
-        color = Colors.OnSurface,
-        textAlign = TextAlign.Center
-    )
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(
+            Dimensions.spacingMedium,
+            Alignment.CenterHorizontally
+        ),
+        verticalArrangement = Arrangement.spacedBy((-6).dp),
+    ) {
+        examples.forEach { example ->
+            AssistChip(
+                onClick = {},
+                shape = RoundedCornerShape(corner = CornerSize(Dimensions.cornerLarge)),
+                label = {
+                    Text(
+                        text = example,
+                        style = Typography.bodyMedium.copy(
+                            fontFamily = KoineFont, fontWeight = FontWeight.Bold
+                        )
+                    )
+                },
+                colors = AssistChipDefaults.assistChipColors(
+                    containerColor = Colors.Primary,
+                    labelColor = Colors.OnPrimary,
+                ),
+                border = null
+            )
+        }
+    }
 }
 
 @Composable
@@ -281,7 +328,7 @@ private fun MasteryProgressSection(masteryLevel: Float) {
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
         LinearProgressIndicator(
             progress = { masteryLevel },
@@ -290,7 +337,7 @@ private fun MasteryProgressSection(masteryLevel: Float) {
             trackColor = Colors.PrimaryContainer,
         )
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(Dimensions.spacingSmall))
 
         Text(
             text = "${(masteryLevel * 100).toInt()}%",
@@ -314,6 +361,7 @@ private fun LetterInfoDialogPreview() {
         pronunciation = "s",
         hasAlternateLowercase = true,
         alternateLowercase = "ς",
+        examples = listOf("σῶμα", "σοφία", "λόγος"),
         notes = "Uses different forms based on position: σ within words, ς at the end of words",
         masteryLevel = 0.75f
     )

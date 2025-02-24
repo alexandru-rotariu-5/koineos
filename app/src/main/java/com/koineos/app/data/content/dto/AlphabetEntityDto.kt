@@ -6,12 +6,14 @@ package com.koineos.app.data.content.dto
  * @property id Unique identifier for the entity
  * @property order Order of the entity in the list
  * @property pronunciation Pronunciation of the entity
+ * @property examples Examples of words regarding this entity
  * @property notesResId Resource ID of the notes text for the entity
  */
 sealed interface AlphabetEntityDto {
     val id: String
     val order: Int
     val pronunciation: String
+    val examples: List<String>
     val notesResId: Int?
 }
 
@@ -32,6 +34,7 @@ data class LetterDto(
     val lowercase: String,
     val transliteration: String,
     override val pronunciation: String,
+    override val examples: List<String>,
     override val notesResId: Int? = null
 ) : AlphabetEntityDto
 
@@ -40,7 +43,6 @@ data class LetterDto(
  *
  * @property lowercase Lowercase version of the diphthong
  * @property transliteration Transliteration of the diphthong
- * @property examples Examples of words with this diphthong
  */
 data class DiphthongDto(
     override val id: String,
@@ -48,7 +50,7 @@ data class DiphthongDto(
     val lowercase: String,
     val transliteration: String,
     override val pronunciation: String,
-    val examples: List<String>,
+    override val examples: List<String>,
     override val notesResId: Int? = null
 ) : AlphabetEntityDto
 
@@ -57,7 +59,6 @@ data class DiphthongDto(
  *
  * @property lowercase Lowercase version of the improper diphthong
  * @property transliteration Transliteration of the improper diphthong
- * @property examples Examples of words with this improper diphthong
  */
 data class ImproperDiphthongDto(
     override val id: String,
@@ -65,7 +66,7 @@ data class ImproperDiphthongDto(
     val lowercase: String,
     val transliteration: String,
     override val pronunciation: String,
-    val examples: List<String>,
+    override val examples: List<String>,
     override val notesResId: Int? = null
 ) : AlphabetEntityDto
 
@@ -74,7 +75,6 @@ data class ImproperDiphthongDto(
  *
  * @property name Name of the breathing mark
  * @property symbol Symbol of the breathing mark
- * @property examples Examples of words with this breathing mark
  */
 data class BreathingMarkDto(
     override val id: String,
@@ -82,6 +82,6 @@ data class BreathingMarkDto(
     val name: String,
     val symbol: String,
     override val pronunciation: String,
-    val examples: List<String>,
+    override val examples: List<String>,
     override val notesResId: Int? = null
 ) : AlphabetEntityDto
