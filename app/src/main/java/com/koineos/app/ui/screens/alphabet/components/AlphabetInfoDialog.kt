@@ -33,6 +33,13 @@ import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
 
+/**
+ * A dialog component for displaying detailed information about an alphabet entity.
+ *
+ * @param entityUiState The state of the alphabet entity to display
+ * @param onDismiss The action to perform when the dialog is dismissed
+ * @param modifier The modifier to apply to the dialog
+ */
 @Composable
 fun AlphabetInfoDialog(
     entityUiState: AlphabetEntityUiState,
@@ -59,7 +66,6 @@ fun AlphabetInfoDialog(
                         is DiphthongUiState -> "DIPHTHONG"
                         is ImproperDiphthongUiState -> "IMPROPER DIPHTHONG"
                         is BreathingMarkUiState -> "${entityUiState.name.uppercase()} BREATHING"
-                        else -> ""
                     }
                 )
 
@@ -69,13 +75,7 @@ fun AlphabetInfoDialog(
                     is DiphthongUiState -> DiphthongContent(diphthong = entityUiState)
                     is ImproperDiphthongUiState -> ImproperDiphthongContent(improperDiphthong = entityUiState)
                     is BreathingMarkUiState -> BreathingMarkContent(breathingMark = entityUiState)
-                    else -> Unit
                 }
-
-                Spacer(modifier = Modifier.height(24.dp))
-
-                // Mastery progress section
-                MasteryProgressSection(masteryLevel = entityUiState.masteryLevel)
             }
         }
     }

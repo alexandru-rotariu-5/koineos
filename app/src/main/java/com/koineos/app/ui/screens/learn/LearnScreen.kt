@@ -63,22 +63,22 @@ private fun LearnScreenContent(
             ) {
                 // Courses Card
                 GridFeatureCard(
+                    modifier = Modifier.fillMaxWidth(),
                     title = stringResource(R.string.learn_feature_courses_title),
                     description = stringResource(R.string.learn_feature_courses_description),
                     icon = AppIcon.Path,
                     progress = coursesProgress,
-                    onClick = onNavigateToCourses,
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = onNavigateToCourses
                 )
 
                 // Practice Card
                 GridFeatureCard(
+                    modifier = Modifier.fillMaxWidth(),
                     title = stringResource(R.string.learn_feature_practice_title),
                     description = stringResource(R.string.learn_feature_practice_description),
                     icon = AppIcon.Practice,
                     progress = 0f,
-                    onClick = onNavigateToPractice,
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = onNavigateToPractice
                 )
             }
 
@@ -89,22 +89,22 @@ private fun LearnScreenContent(
             ) {
                 // Vocabulary Card
                 GridFeatureCard(
+                    modifier = Modifier.fillMaxWidth(),
                     title = stringResource(R.string.learn_feature_vocabulary_title),
                     description = stringResource(R.string.learn_feature_vocabulary_description),
                     icon = AppIcon.Vocabulary,
                     progress = 0f,
-                    onClick = onNavigateToVocabulary,
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = onNavigateToVocabulary
                 )
 
                 // Handbook Card
                 GridFeatureCard(
+                    modifier = Modifier.fillMaxWidth(),
                     title = stringResource(R.string.learn_feature_handbook_title),
                     description = stringResource(R.string.learn_feature_handbook_description),
                     icon = AppIcon.Book,
                     progress = 0f,
-                    onClick = onNavigateToHandbook,
-                    modifier = Modifier.fillMaxWidth()
+                    onClick = onNavigateToHandbook
                 )
             }
         }

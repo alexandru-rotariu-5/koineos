@@ -33,13 +33,11 @@ fun FeatureCard(
     description: String,
     icon: AppIcon,
     progress: Float = 0f,
-    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     RegularCard(
         onClick = onClick,
         contentPadding = CardPadding.Large,
-        enabled = enabled,
         modifier = modifier
     ) {
         Column {
@@ -141,7 +139,6 @@ private fun FeatureCardDisabledPreview() {
             title = "Vocabulary",
             description = "Learn the Koine Greek vocabulary",
             icon = AppIcon.Vocabulary,
-            enabled = false,
             onClick = {},
             modifier = Modifier.padding(Dimensions.paddingMedium)
         )

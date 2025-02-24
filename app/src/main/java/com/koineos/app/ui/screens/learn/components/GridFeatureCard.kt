@@ -28,13 +28,11 @@ fun GridFeatureCard(
     description: String,
     icon: AppIcon,
     progress: Float = 0f,
-    enabled: Boolean = true,
     onClick: () -> Unit
 ) {
     RegularCard(
         onClick = onClick,
         contentPadding = CardPadding.Large,
-        enabled = enabled,
         modifier = modifier
     ) {
         Column(
@@ -93,12 +91,12 @@ fun GridFeatureCard(
 private fun GridFeatureCardPreview() {
     KoineosTheme {
         GridFeatureCard(
+            modifier = Modifier.width(180.dp),
             title = "Courses",
             description = "Progress through structured lessons",
             icon = AppIcon.Learn,
             progress = 0f,
-            onClick = {},
-            modifier = Modifier.width(180.dp)
+            onClick = {}
         )
     }
 }
@@ -108,12 +106,12 @@ private fun GridFeatureCardPreview() {
 private fun GridFeatureCardWithProgressPreview() {
     KoineosTheme {
         GridFeatureCard(
+            modifier = Modifier.width(180.dp),
             title = "Vocabulary",
             description = "Build your Koine Greek vocabulary",
             icon = AppIcon.Vocabulary,
             progress = 0.45f,
-            onClick = {},
-            modifier = Modifier.width(180.dp)
+            onClick = {}
         )
     }
 }
