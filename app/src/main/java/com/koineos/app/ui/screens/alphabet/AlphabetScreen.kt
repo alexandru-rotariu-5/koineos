@@ -7,19 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,28 +51,23 @@ fun AlphabetScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    Scaffold(
-        containerColor = Colors.Surface,
-        contentWindowInsets = WindowInsets.safeDrawing
-    ) { paddingValues ->
-        Column(
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Colors.Surface)
+    ) {
+        HeaderContent(
+            onLearnClick = {},
             modifier = Modifier
-                .fillMaxSize()
-        ) {
-            HeaderContent(
-                onLearnClick = {},
-                modifier = Modifier
-                    .padding(top = paddingValues.calculateTopPadding())
-            )
-            when (uiState) {
-                is AlphabetUiState.Loaded -> {
-                    val categories = (uiState as AlphabetUiState.Loaded).categories
-                    AlphabetContent(categories = categories)
-                }
-
-                AlphabetUiState.Loading -> LoadingState()
-                AlphabetUiState.Error -> ErrorState()
+        )
+        when (uiState) {
+            is AlphabetUiState.Loaded -> {
+                val categories = (uiState as AlphabetUiState.Loaded).categories
+                AlphabetContent(categories = categories)
             }
+
+            AlphabetUiState.Loading -> LoadingState()
+            AlphabetUiState.Error -> ErrorState()
         }
     }
 }
@@ -129,9 +121,10 @@ private fun AlphabetContent(
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
-        contentPadding = PaddingValues(bottom = Dimensions.paddingLarge)
+        contentPadding = PaddingValues(bottom = Dimensions.paddingXLarge),
     ) {
         categories.forEachIndexed { categoryIndex, category ->
+
             if (categoryIndex > 0) {
                 item(key = "divider_$categoryIndex") {
                     CategoryDivider()
@@ -164,10 +157,8 @@ private fun AlphabetContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(
-                                horizontal = Dimensions.paddingLarge,
-                                vertical = if (rowIndex == 0) Dimensions.paddingMedium else 0.dp
-                            ),
+                            .padding(horizontal = Dimensions.paddingLarge)
+                            .padding(top = if (rowIndex == 0) Dimensions.paddingMedium else 0.dp),
                         horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid)
                     ) {
                         rowItems.forEach { entity ->

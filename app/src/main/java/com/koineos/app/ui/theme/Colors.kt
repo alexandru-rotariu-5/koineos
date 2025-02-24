@@ -37,6 +37,8 @@ object Colors {
 
     val Outline = Color(0xFFE0E0E0)
 
+    val Transparent = Color(0x00000000)
+
     // Dark theme
 
     val PrimaryDarkContainer = Color(0xFF00315D)

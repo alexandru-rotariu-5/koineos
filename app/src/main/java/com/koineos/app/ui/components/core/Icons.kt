@@ -30,6 +30,10 @@ sealed class AppIcon(val unselectedDrawableId: Int, val selectedDrawableId: Int)
     data object Add : AppIcon(R.drawable.ic_add, R.drawable.ic_add)
     data object Close : AppIcon(R.drawable.ic_close, R.drawable.ic_close)
     data object Check : AppIcon(R.drawable.ic_check, R.drawable.ic_check)
+    data object Notifications :
+        AppIcon(R.drawable.ic_notifications, R.drawable.ic_notifications_filled)
+
+    data object Profile : AppIcon(R.drawable.ic_profile, R.drawable.ic_profile_filled)
 
     // Learn
     data object Path : AppIcon(R.drawable.ic_path, R.drawable.ic_path)

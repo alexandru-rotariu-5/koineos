@@ -1,24 +1,20 @@
 package com.koineos.app.ui.screens.learn
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.koineos.app.R
 import com.koineos.app.ui.components.core.AppIcon
-import com.koineos.app.ui.components.topbar.MainTopBar
 import com.koineos.app.ui.screens.learn.components.GridFeatureCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
@@ -32,20 +28,13 @@ fun LearnScreen(
     onNavigateToPractice: () -> Unit,
     onNavigateToHandbook: () -> Unit
 ) {
-    Scaffold(
-        topBar = { MainTopBar() },
-        containerColor = Colors.Surface,
-        contentWindowInsets = WindowInsets(0.dp)
-    ) { paddingValues ->
-        LearnScreenContent(
-            coursesProgress = coursesProgress,
-            onNavigateToVocabulary = onNavigateToVocabulary,
-            onNavigateToCourses = onNavigateToCourses,
-            onNavigateToPractice = onNavigateToPractice,
-            onNavigateToHandbook = onNavigateToHandbook,
-            contentPadding = paddingValues
-        )
-    }
+    LearnScreenContent(
+        coursesProgress = coursesProgress,
+        onNavigateToVocabulary = onNavigateToVocabulary,
+        onNavigateToCourses = onNavigateToCourses,
+        onNavigateToPractice = onNavigateToPractice,
+        onNavigateToHandbook = onNavigateToHandbook
+    )
 }
 
 @Composable
@@ -55,15 +44,14 @@ private fun LearnScreenContent(
     onNavigateToCourses: () -> Unit,
     onNavigateToPractice: () -> Unit,
     onNavigateToHandbook: () -> Unit,
-    contentPadding: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(contentPadding)
             .padding(Dimensions.paddingLarge)
+            .background(Colors.Surface)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
