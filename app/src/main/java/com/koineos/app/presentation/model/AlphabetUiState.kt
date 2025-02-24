@@ -1,10 +1,9 @@
-package com.koineos.app.presentation.model
-
 sealed interface AlphabetUiState {
     data object Loading : AlphabetUiState
     data object Error : AlphabetUiState
     data class Loaded(
-        val categories: List<CategoryUiState>
+        val categories: List<CategoryUiState>,
+        val selectedEntityId: String? = null
     ) : AlphabetUiState
 }
 
@@ -15,6 +14,7 @@ data class CategoryUiState(
 
 sealed interface AlphabetEntityUiState {
     val id: String
+    val notes: String?
     val masteryLevel: Float
     val isMastered: Boolean
         get() = masteryLevel >= 1f
@@ -23,12 +23,15 @@ sealed interface AlphabetEntityUiState {
 data class LetterUiState(
     override val id: String,
     val order: Int,
+    val name: String,
     val uppercase: String,
     val lowercase: String,
     val transliteration: String,
-    override val masteryLevel: Float,
+    val pronunciation: String,
     val hasAlternateLowercase: Boolean = false,
-    val alternateLowercase: String? = null
+    val alternateLowercase: String? = null,
+    override val notes: String?,
+    override val masteryLevel: Float
 ) : AlphabetEntityUiState
 
 data class DiphthongUiState(
@@ -37,6 +40,9 @@ data class DiphthongUiState(
     val symbol: String,
     val transliteration: String,
     val pronunciation: String,
+    val componentLetters: String,
+    val examples: List<String>,
+    override val notes: String?,
     override val masteryLevel: Float
 ) : AlphabetEntityUiState
 
@@ -46,6 +52,9 @@ data class ImproperDiphthongUiState(
     val symbol: String,
     val transliteration: String,
     val pronunciation: String,
+    val componentLetters: String,
+    val examples: List<String>,
+    override val notes: String?,
     override val masteryLevel: Float
 ) : AlphabetEntityUiState
 
@@ -55,5 +64,7 @@ data class BreathingMarkUiState(
     val name: String,
     val symbol: String,
     val pronunciation: String,
+    val examples: List<String>,
+    override val notes: String?,
     override val masteryLevel: Float
 ) : AlphabetEntityUiState

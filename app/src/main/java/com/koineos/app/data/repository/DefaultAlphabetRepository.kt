@@ -1,10 +1,10 @@
 package com.koineos.app.data.repository
 
+import com.koineos.app.domain.model.AlphabetEntity
 import com.koineos.app.data.content.AlphabetLocalDataSource
 import com.koineos.app.data.content.mapper.toDomainModel
 import com.koineos.app.data.utils.StorageUtils
 import com.koineos.app.domain.model.AlphabetCategory
-import com.koineos.app.domain.model.AlphabetEntity
 import com.koineos.app.domain.model.CategoryContent
 import com.koineos.app.domain.repository.AlphabetRepository
 import kotlinx.coroutines.flow.Flow
@@ -60,12 +60,17 @@ class DefaultAlphabetRepository @Inject constructor(
                 when {
                     alphabetEntityId.startsWith("letter_") ->
                         response.letters.find { it.id == alphabetEntityId }?.toDomainModel()
+
                     alphabetEntityId.startsWith("diphthong_") ->
                         response.diphthongs.find { it.id == alphabetEntityId }?.toDomainModel()
+
                     alphabetEntityId.startsWith("improper_diphthong_") ->
-                        response.improperDiphthongs.find { it.id == alphabetEntityId }?.toDomainModel()
+                        response.improperDiphthongs.find { it.id == alphabetEntityId }
+                            ?.toDomainModel()
+
                     alphabetEntityId.startsWith("breathing_") ->
                         response.breathingMarks.find { it.id == alphabetEntityId }?.toDomainModel()
+
                     else -> null
                 }
             }

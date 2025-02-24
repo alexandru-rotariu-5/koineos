@@ -1,18 +1,18 @@
 package com.koineos.app.data.content
 
+import BreathingMarkDto
+import DiphthongDto
+import ImproperDiphthongDto
+import LetterDto
+import com.koineos.app.R
 import com.koineos.app.data.content.dto.AlphabetResponse
-import com.koineos.app.data.content.dto.BreathingMarkDto
-import com.koineos.app.data.content.dto.DiphthongDto
-import com.koineos.app.data.content.dto.ImproperDiphthongDto
-import com.koineos.app.data.content.dto.LetterDto
-import javax.inject.Inject
-import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class AlphabetLocalDataSource @Inject constructor() {
-
     private val letters = listOf(
         LetterDto(
             id = "letter_0",
@@ -21,7 +21,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Α",
             lowercase = "α",
             transliteration = "a",
-            pronunciation = "ah"
+            pronunciation = "ah",
+            notesResId = R.string.note_alpha
         ),
         LetterDto(
             id = "letter_1",
@@ -30,7 +31,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Β",
             lowercase = "β",
             transliteration = "b",
-            pronunciation = "b"
+            pronunciation = "b",
+            notesResId = R.string.note_beta
         ),
         LetterDto(
             id = "letter_2",
@@ -39,7 +41,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Γ",
             lowercase = "γ",
             transliteration = "g",
-            pronunciation = "g"
+            pronunciation = "g",
+            notesResId = R.string.note_gamma
         ),
         LetterDto(
             id = "letter_3",
@@ -48,7 +51,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Δ",
             lowercase = "δ",
             transliteration = "d",
-            pronunciation = "d"
+            pronunciation = "d",
+            notesResId = R.string.note_delta
         ),
         LetterDto(
             id = "letter_4",
@@ -57,7 +61,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Ε",
             lowercase = "ε",
             transliteration = "e",
-            pronunciation = "eh"
+            pronunciation = "eh",
+            notesResId = R.string.note_epsilon
         ),
         LetterDto(
             id = "letter_5",
@@ -66,7 +71,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Ζ",
             lowercase = "ζ",
             transliteration = "z",
-            pronunciation = "z"
+            pronunciation = "z",
+            notesResId = R.string.note_zeta
         ),
         LetterDto(
             id = "letter_6",
@@ -75,7 +81,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Η",
             lowercase = "η",
             transliteration = "ē",
-            pronunciation = "ay"
+            pronunciation = "ay",
+            notesResId = R.string.note_eta
         ),
         LetterDto(
             id = "letter_7",
@@ -84,7 +91,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Θ",
             lowercase = "θ",
             transliteration = "th",
-            pronunciation = "th"
+            pronunciation = "th",
+            notesResId = R.string.note_theta
         ),
         LetterDto(
             id = "letter_8",
@@ -93,7 +101,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Ι",
             lowercase = "ι",
             transliteration = "i",
-            pronunciation = "ee"
+            pronunciation = "ee",
+            notesResId = R.string.note_iota
         ),
         LetterDto(
             id = "letter_9",
@@ -102,7 +111,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Κ",
             lowercase = "κ",
             transliteration = "k",
-            pronunciation = "k"
+            pronunciation = "k",
+            notesResId = R.string.note_kappa
         ),
         LetterDto(
             id = "letter_10",
@@ -111,7 +121,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Λ",
             lowercase = "λ",
             transliteration = "l",
-            pronunciation = "l"
+            pronunciation = "l",
+            notesResId = R.string.note_lambda
         ),
         LetterDto(
             id = "letter_11",
@@ -120,7 +131,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Μ",
             lowercase = "μ",
             transliteration = "m",
-            pronunciation = "m"
+            pronunciation = "m",
+            notesResId = R.string.note_mu
         ),
         LetterDto(
             id = "letter_12",
@@ -129,7 +141,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Ν",
             lowercase = "ν",
             transliteration = "n",
-            pronunciation = "n"
+            pronunciation = "n",
+            notesResId = R.string.note_nu
         ),
         LetterDto(
             id = "letter_13",
@@ -138,7 +151,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Ξ",
             lowercase = "ξ",
             transliteration = "x",
-            pronunciation = "ks"
+            pronunciation = "ks",
+            notesResId = R.string.note_xi
         ),
         LetterDto(
             id = "letter_14",
@@ -147,7 +161,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Ο",
             lowercase = "ο",
             transliteration = "o",
-            pronunciation = "oh"
+            pronunciation = "oh",
+            notesResId = R.string.note_omicron
         ),
         LetterDto(
             id = "letter_15",
@@ -156,7 +171,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Π",
             lowercase = "π",
             transliteration = "p",
-            pronunciation = "p"
+            pronunciation = "p",
+            notesResId = R.string.note_pi
         ),
         LetterDto(
             id = "letter_16",
@@ -165,7 +181,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Ρ",
             lowercase = "ρ",
             transliteration = "r",
-            pronunciation = "r"
+            pronunciation = "r",
+            notesResId = R.string.note_rho
         ),
         LetterDto(
             id = "letter_17",
@@ -174,7 +191,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Σ",
             lowercase = "σ",
             transliteration = "s",
-            pronunciation = "s"
+            pronunciation = "s",
+            notesResId = R.string.note_sigma
         ),
         LetterDto(
             id = "letter_18",
@@ -183,7 +201,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Σ",
             lowercase = "ς",
             transliteration = "s",
-            pronunciation = "s"
+            pronunciation = "s",
+            notesResId = R.string.note_final_sigma
         ),
         LetterDto(
             id = "letter_19",
@@ -192,7 +211,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Τ",
             lowercase = "τ",
             transliteration = "t",
-            pronunciation = "t"
+            pronunciation = "t",
+            notesResId = R.string.note_tau
         ),
         LetterDto(
             id = "letter_20",
@@ -201,7 +221,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Υ",
             lowercase = "υ",
             transliteration = "y",
-            pronunciation = "oo"
+            pronunciation = "oo",
+            notesResId = R.string.note_upsilon
         ),
         LetterDto(
             id = "letter_21",
@@ -210,7 +231,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Φ",
             lowercase = "φ",
             transliteration = "ph",
-            pronunciation = "f"
+            pronunciation = "f",
+            notesResId = R.string.note_phi
         ),
         LetterDto(
             id = "letter_22",
@@ -219,7 +241,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Χ",
             lowercase = "χ",
             transliteration = "ch",
-            pronunciation = "kh"
+            pronunciation = "kh",
+            notesResId = R.string.note_chi
         ),
         LetterDto(
             id = "letter_23",
@@ -228,7 +251,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Ψ",
             lowercase = "ψ",
             transliteration = "ps",
-            pronunciation = "ps"
+            pronunciation = "ps",
+            notesResId = R.string.note_psi
         ),
         LetterDto(
             id = "letter_24",
@@ -237,7 +261,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             uppercase = "Ω",
             lowercase = "ω",
             transliteration = "ō",
-            pronunciation = "oh"
+            pronunciation = "oh",
+            notesResId = R.string.note_omega
         )
     )
 
@@ -247,56 +272,72 @@ class AlphabetLocalDataSource @Inject constructor() {
             order = 1,
             lowercase = "αι",
             transliteration = "ai",
-            pronunciation = "eye"
+            pronunciation = "eye",
+            examples = listOf("καί", "αἷμα", "παιδίον"),
+            notesResId = R.string.note_diphthong_ai
         ),
         DiphthongDto(
             id = "diphthong_1",
             order = 2,
             lowercase = "ει",
             transliteration = "ei",
-            pronunciation = "ay"
+            pronunciation = "ay",
+            examples = listOf("εἰμί", "εἰς", "εἶπεν"),
+            notesResId = R.string.note_diphthong_ei
         ),
         DiphthongDto(
             id = "diphthong_2",
             order = 3,
             lowercase = "οι",
             transliteration = "oi",
-            pronunciation = "oy"
+            pronunciation = "oy",
+            examples = listOf("οἶκος", "οἶνος", "ποιέω"),
+            notesResId = R.string.note_diphthong_oi
         ),
         DiphthongDto(
             id = "diphthong_3",
             order = 4,
             lowercase = "υι",
             transliteration = "ui",
-            pronunciation = "ui"
+            pronunciation = "ui",
+            examples = listOf("υἱός", "υἱοθεσία"),
+            notesResId = R.string.note_diphthong_ui
         ),
         DiphthongDto(
             id = "diphthong_4",
             order = 5,
             lowercase = "αυ",
             transliteration = "au",
-            pronunciation = "ow"
+            pronunciation = "ow",
+            examples = listOf("αὐτός", "ταῦτα"),
+            notesResId = R.string.note_diphthong_au
         ),
         DiphthongDto(
             id = "diphthong_5",
             order = 6,
             lowercase = "ευ",
             transliteration = "eu",
-            pronunciation = "eh-oo"
+            pronunciation = "eh-oo",
+            examples = listOf("εὑρίσκω", "εὐθύς"),
+            notesResId = R.string.note_diphthong_eu
         ),
         DiphthongDto(
             id = "diphthong_6",
             order = 7,
             lowercase = "ηυ",
             transliteration = "ēu",
-            pronunciation = "ay-oo"
+            pronunciation = "ay-oo",
+            examples = listOf("ηὗρον", "ηὐχόμην"),
+            notesResId = R.string.note_diphthong_hu
         ),
         DiphthongDto(
             id = "diphthong_7",
             order = 8,
             lowercase = "ου",
             transliteration = "ou",
-            pronunciation = "oo"
+            pronunciation = "oo",
+            examples = listOf("οὐ", "οὖν", "οὗτος"),
+            notesResId = R.string.note_diphthong_ou
         )
     )
 
@@ -306,21 +347,27 @@ class AlphabetLocalDataSource @Inject constructor() {
             order = 1,
             lowercase = "ᾳ",
             transliteration = "āi",
-            pronunciation = "a"
+            pronunciation = "ah",
+            examples = listOf("σοφίᾳ", "δόξᾳ", "ἡμέρᾳ"),
+            notesResId = R.string.note_improper_diphthong_ai
         ),
         ImproperDiphthongDto(
             id = "improper_diphthong_1",
             order = 2,
             lowercase = "ῃ",
             transliteration = "ēi",
-            pronunciation = "e"
+            pronunciation = "ay",
+            examples = listOf("ζωῇ", "ἀγάπῃ", "ψυχῇ"),
+            notesResId = R.string.note_improper_diphthong_ei
         ),
         ImproperDiphthongDto(
             id = "improper_diphthong_2",
             order = 3,
             lowercase = "ῳ",
             transliteration = "ōi",
-            pronunciation = "o"
+            pronunciation = "oh",
+            examples = listOf("λόγῳ", "κυρίῳ", "θεῷ"),
+            notesResId = R.string.note_improper_diphthong_oi
         )
     )
 
@@ -330,14 +377,18 @@ class AlphabetLocalDataSource @Inject constructor() {
             order = 1,
             name = "rough",
             symbol = "῾",
-            pronunciation = "h-"
+            pronunciation = "h-",
+            examples = listOf("ὁ", "ἡμεῖς", "ὑμεῖς", "ἅγιος"),
+            notesResId = R.string.note_breathing_rough
         ),
         BreathingMarkDto(
             id = "breathing_1",
             order = 2,
             name = "smooth",
             symbol = "᾽",
-            pronunciation = "-"
+            pronunciation = "-",
+            examples = listOf("ἐν", "ἀγάπη", "εἰρήνη", "ἰδού"),
+            notesResId = R.string.note_breathing_smooth
         )
     )
 

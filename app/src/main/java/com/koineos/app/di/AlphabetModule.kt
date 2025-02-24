@@ -9,6 +9,8 @@ import com.koineos.app.domain.repository.AlphabetMasteryRepository
 import com.koineos.app.domain.repository.AlphabetRepository
 import com.koineos.app.domain.usecase.GetAlphabetContentUseCase
 import com.koineos.app.domain.usecase.UpdateAlphabetEntityMasteryUseCase
+import com.koineos.app.ui.utils.AndroidStringProvider
+import com.koineos.app.ui.utils.StringProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,6 +21,14 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AlphabetModule {
+
+    @Provides
+    @Singleton
+    fun provideStringProvider(
+        @ApplicationContext context: Context
+    ): StringProvider {
+        return AndroidStringProvider(context)
+    }
 
     @Provides
     @Singleton

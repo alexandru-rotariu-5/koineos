@@ -3,8 +3,9 @@ package com.koineos.app.domain.model
 sealed interface AlphabetEntity {
     val id: String
     val order: Int
-    val masteryLevel: Float
     val pronunciation: String
+    val notesResId: Int?
+    val masteryLevel: Float
 }
 
 data class Letter(
@@ -15,6 +16,7 @@ data class Letter(
     val lowercase: String,
     val transliteration: String,
     override val pronunciation: String,
+    override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity
 
@@ -24,6 +26,8 @@ data class Diphthong(
     val lowercase: String,
     val transliteration: String,
     override val pronunciation: String,
+    val examples: List<String>,
+    override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity
 
@@ -33,6 +37,8 @@ data class ImproperDiphthong(
     val lowercase: String,
     val transliteration: String,
     override val pronunciation: String,
+    val examples: List<String>,
+    override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity
 
@@ -42,5 +48,7 @@ data class BreathingMark(
     val name: String,
     val symbol: String,
     override val pronunciation: String,
+    val examples: List<String>,
+    override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f
 ) : AlphabetEntity

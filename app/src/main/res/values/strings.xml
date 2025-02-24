@@ -28,4 +28,50 @@
     <string name="alphabet_screen_title">The Alphabet</string>
     <string name="alphabet_screen_description">Get to know the alphabet</string>
     <string name="alphabet_screen_learn_button">Learn the letters</string>
+
+    <!-- com.koineos.app.domain.model.Letter Notes -->
+    <string name="note_alpha">The most common vowel in Koine Greek, similar to \'a\' in \'father\'</string>
+    <string name="note_beta">In modern Greek pronounced as \'v\', but in Koine Greek it\'s pronounced as \'b\' in \'boy\'</string>
+    <string name="note_gamma">Pronounced as \'g\' in \'got\'. When followed by γ, κ, χ, or ξ, pronounced as \'ng\'</string>
+    <string name="note_delta">Pronounced as \'d\' in \'dog\'</string>
+    <string name="note_epsilon">Short \'e\' sound, as in \'pet\'. Never pronounced as \'ee\'</string>
+    <string name="note_zeta">Pronounced as \'z\' in \'zebra\'</string>
+    <string name="note_eta">Long \'e\' sound, like \'a\' in \'late\' without the \'y\' glide</string>
+    <string name="note_theta">Pronounced as \'th\' in \'think\', never as in \'this\'</string>
+    <string name="note_iota">Pronounced as \'ee\' in \'feet\'</string>
+    <string name="note_kappa">Pronounced as \'k\' in \'king\'</string>
+    <string name="note_lambda">Pronounced as \'l\' in \'lamp\'</string>
+    <string name="note_mu">Pronounced as \'m\' in \'man\'</string>
+    <string name="note_nu">Pronounced as \'n\' in \'night\'</string>
+    <string name="note_xi">Pronounced as \'x\' in \'box\' (as \'ks\')</string>
+    <string name="note_omicron">Short \'o\' sound, as in \'lot\'. Never pronounced as in \'go\'</string>
+    <string name="note_pi">Pronounced as \'p\' in \'pen\'</string>
+    <string name="note_rho">Rolled \'r\' sound as in Spanish. Always takes a breathing mark when at the beginning of a word</string>
+    <string name="note_sigma">Uses different forms based on position: σ within words, ς at the end of words</string>
+    <string name="note_final_sigma">Used only at the end of words</string>
+    <string name="note_tau">Pronounced as \'t\' in \'top\'</string>
+    <string name="note_upsilon">Pronounced like German \'ü\' or French \'u\'. Similar to \'oo\' in \'food\'</string>
+    <string name="note_phi">Pronounced as \'f\' in \'foot\', never as \'p\'</string>
+    <string name="note_chi">Pronounced like \'ch\' in Scottish \'loch\' or German \'Bach\'</string>
+    <string name="note_psi">Pronounced as \'ps\' in \'caps\'</string>
+    <string name="note_omega">Long \'o\' sound, held longer than omicron</string>
+
+    <!-- com.koineos.app.domain.model.Diphthong Notes -->
+    <string name="note_diphthong_ai">One of the most frequent diphthongs, pronounced like \'i\' in \'pine\'</string>
+    <string name="note_diphthong_ei">Pronounced like \'ay\' in \'pay\'</string>
+    <string name="note_diphthong_oi">Pronounced like \'oi\' in \'coin\'</string>
+    <string name="note_diphthong_ui">Rare diphthong, most commonly found in words related to \'son\'</string>
+    <string name="note_diphthong_au">Pronounced like \'ow\' in \'cow\'</string>
+    <string name="note_diphthong_eu">Pronounced as a quick succession of \'e\' and \'u\'</string>
+    <string name="note_diphthong_hu">Rare diphthong, usually found in augmented forms of ευ-words</string>
+    <string name="note_diphthong_ou">Always pronounced like \'oo\' in \'food\'</string>
+
+    <!-- Improper com.koineos.app.domain.model.Diphthong Notes -->
+    <string name="note_improper_diphthong_ai">Formed with alpha and iota subscript. Pronounced like alpha</string>
+    <string name="note_improper_diphthong_ei">Formed with eta and iota subscript. Pronounced like eta</string>
+    <string name="note_improper_diphthong_oi">Formed with omega and iota subscript. Pronounced like omega</string>
+
+    <!-- Breathing Mark Notes -->
+    <string name="note_breathing_rough">Adds \'h\' sound before vowels and rho. Must appear on every word beginning with a vowel or rho</string>
+    <string name="note_breathing_smooth">No additional sound. Must appear on every word beginning with a vowel</string>
 </resources>

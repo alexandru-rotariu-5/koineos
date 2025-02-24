@@ -1,10 +1,22 @@
 package com.koineos.app.presentation.viewmodel
 
+import AlphabetEntityUiState
+import AlphabetUiState
+import BreathingMarkUiState
+import CategoryUiState
+import DiphthongUiState
+import ImproperDiphthongUiState
+import LetterUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.koineos.app.domain.model.*
+import com.koineos.app.domain.model.AlphabetCategory
+import com.koineos.app.domain.model.AlphabetEntity
+import com.koineos.app.domain.model.BreathingMark
+import com.koineos.app.domain.model.Diphthong
+import com.koineos.app.domain.model.ImproperDiphthong
+import com.koineos.app.domain.model.Letter
 import com.koineos.app.domain.usecase.GetAlphabetContentUseCase
-import com.koineos.app.presentation.model.*
+import com.koineos.app.ui.utils.StringProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,17 +26,35 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AlphabetViewModel @Inject constructor(
-    private val getAlphabetContentUseCase: GetAlphabetContentUseCase
+    private val getAlphabetContentUseCase: GetAlphabetContentUseCase,
+    private val stringProvider: StringProvider
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AlphabetUiState> by lazy {
         MutableStateFlow(AlphabetUiState.Loading)
     }
-
     val uiState: StateFlow<AlphabetUiState> = _uiState
 
     init {
         loadAlphabetContent()
+    }
+
+    fun onAlphabetEntityClick(entityId: String) {
+        val currentState = _uiState.value
+        if (currentState is AlphabetUiState.Loaded) {
+            _uiState.update {
+                currentState.copy(selectedEntityId = entityId)
+            }
+        }
+    }
+
+    fun onInfoDialogDismiss() {
+        val currentState = _uiState.value
+        if (currentState is AlphabetUiState.Loaded) {
+            _uiState.update {
+                currentState.copy(selectedEntityId = null)
+            }
+        }
     }
 
     private fun loadAlphabetContent() {
@@ -42,7 +72,14 @@ class AlphabetViewModel @Inject constructor(
                                 },
                                 entities = when (category.category) {
                                     AlphabetCategory.LETTERS -> processLetters(category.entities)
-                                    else -> category.entities.map { it.toUiState() }
+                                    AlphabetCategory.DIPHTHONGS -> processDiphthongs(category.entities)
+                                    AlphabetCategory.IMPROPER_DIPHTHONGS -> processImproperDiphthongs(
+                                        category.entities
+                                    )
+
+                                    AlphabetCategory.BREATHING_MARKS -> processBreathingMarks(
+                                        category.entities
+                                    )
                                 }
                             )
                         }
@@ -56,84 +93,94 @@ class AlphabetViewModel @Inject constructor(
         }
     }
 
-    /**
-     * Processes the list of letters, handling special cases like sigma variants
-     */
     private fun processLetters(entities: List<AlphabetEntity>): List<AlphabetEntityUiState> {
-        // Ensure we're working with Letter entities
         val letters = entities.filterIsInstance<Letter>()
-
-        // Group letters by their base form (handles sigma variants)
-        val groupedLetters = letters.groupBy { letter ->
-            // Group sigmas together, keep other letters separate
-            if (letter.name.contains("sigma")) "sigma" else letter.id
-        }
+        val groupedLetters = letters.groupBy { if (it.name.contains("sigma")) "sigma" else it.id }
 
         return groupedLetters.map { (_, letterGroup) ->
             val firstLetter = letterGroup.first()
-
             when {
-                // Special handling for sigma variants
                 letterGroup.size > 1 && firstLetter.name.contains("sigma") -> {
                     val medialSigma = letterGroup.first { !it.name.contains("final") }
                     val finalSigma = letterGroup.first { it.name.contains("final") }
-
-                    // Calculate average mastery level for sigma
                     val avgMasteryLevel = (medialSigma.masteryLevel + finalSigma.masteryLevel) / 2
 
                     LetterUiState(
-                        id = medialSigma.id, // Use the medial sigma's ID
+                        id = medialSigma.id,
                         order = medialSigma.order,
+                        name = medialSigma.name,
                         uppercase = medialSigma.uppercase,
-                        lowercase = medialSigma.lowercase, // σ
+                        lowercase = medialSigma.lowercase,
                         transliteration = medialSigma.transliteration,
+                        pronunciation = medialSigma.pronunciation,
                         masteryLevel = avgMasteryLevel,
+                        notes = medialSigma.notesResId?.let { stringProvider.getString(it) },
                         hasAlternateLowercase = true,
-                        alternateLowercase = finalSigma.lowercase // ς
+                        alternateLowercase = finalSigma.lowercase
                     )
                 }
-                // Standard handling for all other letters
+
                 else -> {
                     LetterUiState(
                         id = firstLetter.id,
                         order = firstLetter.order,
+                        name = firstLetter.name,
                         uppercase = firstLetter.uppercase,
                         lowercase = firstLetter.lowercase,
                         transliteration = firstLetter.transliteration,
-                        masteryLevel = firstLetter.masteryLevel
+                        pronunciation = firstLetter.pronunciation,
+                        masteryLevel = firstLetter.masteryLevel,
+                        notes = firstLetter.notesResId?.let { stringProvider.getString(it) }
                     )
                 }
             }
         }.sortedBy { it.order }
     }
 
-    private fun AlphabetEntity.toUiState(): AlphabetEntityUiState {
-        return when (this) {
-            is Diphthong -> DiphthongUiState(
-                id = id,
-                order = order,
-                symbol = lowercase,
-                transliteration = transliteration,
-                pronunciation = pronunciation,
-                masteryLevel = masteryLevel
+    private fun processDiphthongs(entities: List<AlphabetEntity>): List<AlphabetEntityUiState> {
+        return entities.filterIsInstance<Diphthong>().map { diphthong ->
+            DiphthongUiState(
+                id = diphthong.id,
+                order = diphthong.order,
+                symbol = diphthong.lowercase,
+                transliteration = diphthong.transliteration,
+                pronunciation = diphthong.pronunciation,
+                componentLetters = diphthong.lowercase.toList().joinToString(" + "),
+                examples = diphthong.examples,
+                masteryLevel = diphthong.masteryLevel,
+                notes = diphthong.notesResId?.let { stringProvider.getString(it) }
             )
-            is ImproperDiphthong -> ImproperDiphthongUiState(
-                id = id,
-                order = order,
-                symbol = lowercase,
-                transliteration = transliteration,
-                pronunciation = pronunciation,
-                masteryLevel = masteryLevel
+        }.sortedBy { it.order }
+    }
+
+    private fun processImproperDiphthongs(entities: List<AlphabetEntity>): List<AlphabetEntityUiState> {
+        return entities.filterIsInstance<ImproperDiphthong>().map { diphthong ->
+            ImproperDiphthongUiState(
+                id = diphthong.id,
+                order = diphthong.order,
+                symbol = diphthong.lowercase,
+                transliteration = diphthong.transliteration,
+                pronunciation = diphthong.pronunciation,
+                componentLetters = "${diphthong.lowercase[0]} + iota subscript",
+                examples = diphthong.examples,
+                masteryLevel = diphthong.masteryLevel,
+                notes = diphthong.notesResId?.let { stringProvider.getString(it) }
             )
-            is BreathingMark -> BreathingMarkUiState(
-                id = id,
-                order = order,
-                name = name,
-                symbol = symbol,
-                pronunciation = pronunciation,
-                masteryLevel = masteryLevel
+        }.sortedBy { it.order }
+    }
+
+    private fun processBreathingMarks(entities: List<AlphabetEntity>): List<AlphabetEntityUiState> {
+        return entities.filterIsInstance<BreathingMark>().map { mark ->
+            BreathingMarkUiState(
+                id = mark.id,
+                order = mark.order,
+                name = mark.name,
+                symbol = mark.symbol,
+                pronunciation = mark.pronunciation,
+                examples = mark.examples,
+                masteryLevel = mark.masteryLevel,
+                notes = mark.notesResId?.let { stringProvider.getString(it) }
             )
-            is Letter -> throw IllegalStateException("Letters should be processed through processLetters()")
-        }
+        }.sortedBy { it.order }
     }
 }

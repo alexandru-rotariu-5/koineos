@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.annotation.ArrayRes
 import androidx.annotation.PluralsRes
 import androidx.annotation.StringRes
+import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 
 /**
  * Provider for string resources
@@ -46,7 +48,9 @@ interface StringProvider {
  *
  * @param context The application context
  */
-class AndroidStringProvider(private val context: Context) : StringProvider {
+class AndroidStringProvider @Inject constructor(
+    @ApplicationContext private val context: Context
+) : StringProvider {
     override fun getString(resId: Int, vararg formatArgs: Any): String {
         return context.getString(resId, *formatArgs)
     }

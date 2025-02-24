@@ -1,5 +1,11 @@
 package com.koineos.app.ui.screens.alphabet
 
+import AlphabetUiState
+import BreathingMarkUiState
+import CategoryUiState
+import DiphthongUiState
+import ImproperDiphthongUiState
+import LetterUiState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,14 +38,9 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.koineos.app.R
-import com.koineos.app.presentation.model.AlphabetUiState
-import com.koineos.app.presentation.model.BreathingMarkUiState
-import com.koineos.app.presentation.model.CategoryUiState
-import com.koineos.app.presentation.model.DiphthongUiState
-import com.koineos.app.presentation.model.ImproperDiphthongUiState
-import com.koineos.app.presentation.model.LetterUiState
 import com.koineos.app.presentation.viewmodel.AlphabetViewModel
 import com.koineos.app.ui.components.core.RegularButton
+import com.koineos.app.ui.screens.alphabet.components.AlphabetInfoDialog
 import com.koineos.app.ui.screens.alphabet.components.AlphabetEntityShimmerCard
 import com.koineos.app.ui.screens.alphabet.components.BreathingMarkCard
 import com.koineos.app.ui.screens.alphabet.components.DiphthongCard
@@ -61,39 +62,54 @@ fun AlphabetScreen(
         derivedStateOf {
             val firstVisibleItemIndex = scrollState.firstVisibleItemIndex
             val firstVisibleItemOffset = scrollState.firstVisibleItemScrollOffset
-
             val totalScroll = if (firstVisibleItemIndex > 0) {
                 firstVisibleItemIndex * 100 + firstVisibleItemOffset
             } else {
                 firstVisibleItemOffset
             }
-
-            // Convert directly to dp instead of going through pixels
             (totalScroll.toFloat() / 40f).coerceIn(0f, 1f) * 8
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Colors.Surface)
-    ) {
-        HeaderContent(
-            modifier = Modifier,
-            elevation = headerElevation,
-            onLearnClick = {}
-        )
-        when (uiState) {
-            is AlphabetUiState.Loaded -> {
-                val categories = (uiState as AlphabetUiState.Loaded).categories
-                AlphabetContent(
-                    categories = categories,
-                    scrollState = scrollState
-                )
-            }
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Colors.Surface)
+        ) {
+            HeaderContent(
+                modifier = Modifier,
+                elevation = headerElevation,
+                onLearnClick = {}
+            )
+            when (uiState) {
+                is AlphabetUiState.Loaded -> {
+                    val loadedState = uiState as AlphabetUiState.Loaded
+                    AlphabetContent(
+                        categories = loadedState.categories,
+                        scrollState = scrollState,
+                        onEntityClick = viewModel::onAlphabetEntityClick
+                    )
 
-            AlphabetUiState.Loading -> LoadingState()
-            AlphabetUiState.Error -> ErrorState()
+                    // Get the selected entity if any
+                    val selectedEntity = loadedState.selectedEntityId?.let { selectedId ->
+                        loadedState.categories
+                            .flatMap { it.entities }
+                            .find { it.id == selectedId }
+                    }
+
+                    // Show info dialog if an entity is selected
+                    if (selectedEntity != null) {
+                        AlphabetInfoDialog(
+                            entityUiState = selectedEntity,
+                            onDismiss = viewModel::onInfoDialogDismiss
+                        )
+                    }
+                }
+                AlphabetUiState.Loading -> LoadingState()
+                AlphabetUiState.Error -> ErrorState()
+                else -> Unit
+            }
         }
     }
 }
@@ -131,6 +147,7 @@ private fun HeaderContent(
 private fun AlphabetContent(
     categories: List<CategoryUiState>,
     scrollState: LazyListState,
+    onEntityClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -139,7 +156,6 @@ private fun AlphabetContent(
         contentPadding = PaddingValues(bottom = Dimensions.paddingXLarge),
     ) {
         categories.forEachIndexed { categoryIndex, category ->
-
             if (categoryIndex > 0) {
                 item(key = "divider_$categoryIndex") {
                     CategoryDivider()
@@ -186,26 +202,24 @@ private fun AlphabetContent(
                                     is LetterUiState -> LetterCard(
                                         letter = entity,
                                         modifier = Modifier.fillMaxWidth(),
-                                        onClick = {}
+                                        onClick = { onEntityClick(entity.id) }
                                     )
-
                                     is DiphthongUiState -> DiphthongCard(
                                         diphthong = entity,
                                         modifier = Modifier.fillMaxWidth(),
-                                        onClick = {}
+                                        onClick = { onEntityClick(entity.id) }
                                     )
-
                                     is ImproperDiphthongUiState -> ImproperDiphthongCard(
                                         improperDiphthong = entity,
                                         modifier = Modifier.fillMaxWidth(),
-                                        onClick = {}
+                                        onClick = { onEntityClick(entity.id) }
                                     )
-
                                     is BreathingMarkUiState -> BreathingMarkCard(
                                         breathingMark = entity,
                                         modifier = Modifier.fillMaxWidth(),
-                                        onClick = {}
+                                        onClick = { onEntityClick(entity.id) }
                                     )
+                                    else -> Unit
                                 }
                             }
                         }
