@@ -10,8 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,40 +31,34 @@ import com.koineos.app.ui.theme.Dimensions
  *
  * @param modifier Modifier to be applied to the card
  * @param onClick Optional click handler
- * @param borderless Whether the card should have a border
  * @param contentPadding Padding to be applied to the content
  * @param specialTopPadding Padding to be applied to the top of the card
  * @param backgroundColor Background color of the card
+ * @param elevation Elevation of the card
+ * @param border Border to be applied to the card
  * @param content Content to be displayed inside the card
  */
 @Composable
 fun RegularCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit) = {},
-    borderless: Boolean = false,
     contentPadding: CardPadding = CardPadding.Medium,
     specialTopPadding: CardPadding = contentPadding,
-    backgroundColor: Color = Colors.Surface,
+    backgroundColor: Color = Colors.RegularCardBackground,
+    elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = Dimensions.elevationMedium),
+    border: BorderStroke? = null,
     content: @Composable BoxScope.() -> Unit
 ) {
-    val border = if (borderless) {
-        null
-    } else {
-        BorderStroke(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)
-        )
-    }
-
-    ElevatedCard(
+    Card(
         modifier = modifier,
         onClick = onClick,
-        colors = CardDefaults.elevatedCardColors(
+        colors = CardDefaults.cardColors(
             containerColor = backgroundColor,
             disabledContainerColor = backgroundColor.copy(alpha = 0.38f)
         ),
         shape = RoundedCornerShape(Dimensions.cornerLarge),
-        elevation = CardDefaults.cardElevation(defaultElevation = Dimensions.elevationMedium),
+        elevation = elevation,
+        border = border
     ) {
         Box(
             modifier = Modifier
@@ -166,8 +161,7 @@ private fun DisabledRegularCardPreview() {
 private fun BorderlessRegularCardPreview() {
     MaterialTheme {
         RegularCard(
-            modifier = Modifier.fillMaxWidth(),
-            borderless = true
+            modifier = Modifier.fillMaxWidth()
         ) {
             Text(
                 text = "Borderless Card",

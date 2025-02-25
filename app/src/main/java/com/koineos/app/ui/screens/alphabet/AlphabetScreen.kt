@@ -1,11 +1,5 @@
 package com.koineos.app.ui.screens.alphabet
 
-import com.koineos.app.presentation.model.AlphabetUiState
-import com.koineos.app.presentation.model.BreathingMarkUiState
-import com.koineos.app.presentation.model.CategoryUiState
-import com.koineos.app.presentation.model.DiphthongUiState
-import com.koineos.app.presentation.model.ImproperDiphthongUiState
-import com.koineos.app.presentation.model.LetterUiState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,10 +32,16 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.koineos.app.R
+import com.koineos.app.presentation.model.AlphabetUiState
+import com.koineos.app.presentation.model.BreathingMarkUiState
+import com.koineos.app.presentation.model.CategoryUiState
+import com.koineos.app.presentation.model.DiphthongUiState
+import com.koineos.app.presentation.model.ImproperDiphthongUiState
+import com.koineos.app.presentation.model.LetterUiState
 import com.koineos.app.presentation.viewmodel.AlphabetViewModel
 import com.koineos.app.ui.components.core.RegularButton
-import com.koineos.app.ui.screens.alphabet.components.AlphabetInfoDialog
 import com.koineos.app.ui.screens.alphabet.components.AlphabetEntityShimmerCard
+import com.koineos.app.ui.screens.alphabet.components.AlphabetInfoDialog
 import com.koineos.app.ui.screens.alphabet.components.BreathingMarkCard
 import com.koineos.app.ui.screens.alphabet.components.DiphthongCard
 import com.koineos.app.ui.screens.alphabet.components.ImproperDiphthongCard
@@ -72,11 +72,9 @@ fun AlphabetScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Colors.Surface)
-        ) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .background(Colors.Surface)) {
             HeaderContent(
                 modifier = Modifier,
                 elevation = headerElevation,
@@ -106,9 +104,9 @@ fun AlphabetScreen(
                         )
                     }
                 }
+
                 AlphabetUiState.Loading -> LoadingState()
                 AlphabetUiState.Error -> ErrorState()
-                else -> Unit
             }
         }
     }
@@ -125,7 +123,7 @@ private fun HeaderContent(
             .fillMaxWidth()
             .zIndex(1f),
         color = Colors.Surface,
-        shadowElevation = elevation.dp,
+        shadowElevation = elevation.dp
     ) {
         Column(
             modifier = Modifier
@@ -204,22 +202,24 @@ private fun AlphabetContent(
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = { onEntityClick(entity.id) }
                                     )
+
                                     is DiphthongUiState -> DiphthongCard(
                                         diphthong = entity,
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = { onEntityClick(entity.id) }
                                     )
+
                                     is ImproperDiphthongUiState -> ImproperDiphthongCard(
                                         improperDiphthong = entity,
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = { onEntityClick(entity.id) }
                                     )
+
                                     is BreathingMarkUiState -> BreathingMarkCard(
                                         breathingMark = entity,
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = { onEntityClick(entity.id) }
                                     )
-                                    else -> Unit
                                 }
                             }
                         }

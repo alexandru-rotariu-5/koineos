@@ -55,7 +55,7 @@ fun AlphabetInfoDialog(
         Surface(
             modifier = modifier.fillMaxWidth(),
             shape = RoundedCornerShape(28.dp),
-            color = Colors.Surface
+            color = Colors.DialogBackground
         ) {
             Column(
                 modifier = Modifier
@@ -126,8 +126,6 @@ private fun LetterContent(letter: LetterUiState) {
 private fun DiphthongContent(diphthong: DiphthongUiState) {
     // Main diphthong display
     GreekSymbol(text = diphthong.symbol)
-
-    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
     Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 

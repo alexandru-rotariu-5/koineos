@@ -212,7 +212,7 @@ class AlphabetLocalDataSource @Inject constructor() {
             lowercase = "σ",
             transliteration = "s",
             pronunciation = "s",
-            examples = listOf("σῶμα", "σοφία", "σημεῖον"),
+            examples = listOf("σῶμα", "σοφία", "λόγος"),
             notesResId = R.string.note_sigma
         ),
         LetterDto(
