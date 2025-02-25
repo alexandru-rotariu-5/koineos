@@ -5,6 +5,7 @@ import com.koineos.app.data.content.dto.DiphthongDto
 import com.koineos.app.data.content.dto.ImproperDiphthongDto
 import com.koineos.app.data.content.dto.LetterDto
 import com.koineos.app.R
+import com.koineos.app.data.content.dto.AccentMarkDto
 import com.koineos.app.data.content.dto.AlphabetResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -294,6 +295,34 @@ class AlphabetLocalDataSource @Inject constructor() {
         )
     )
 
+    private val accentMarks = listOf(
+        AccentMarkDto(
+            id = "accent_0",
+            order = 1,
+            name = "acute",
+            symbol = "´",
+            examples = listOf("λόγος", "ἀγάπη", "ἄνθρωπος"),
+            notesResId = R.string.note_accent_acute
+        ),
+        AccentMarkDto(
+            id = "accent_2",
+            order = 2,
+            name = "circumflex",
+            symbol = "῀",
+            examples = listOf("γῆ", "μῆνις", "δοῦλος"),
+            notesResId = R.string.note_accent_circumflex
+        ),
+        AccentMarkDto(
+            id = "accent_1",
+            order = 3,
+            name = "grave",
+            symbol = "`",
+            examples = listOf("καὶ", "δὲ", "γὰρ"),
+            notesResId = R.string.note_accent_grave
+        )
+    )
+
+
     private val diphthongs = listOf(
         DiphthongDto(
             id = "diphthong_0",
@@ -428,7 +457,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             letters = letters,
             diphthongs = diphthongs,
             improperDiphthongs = improperDiphthongs,
-            breathingMarks = breathingMarks
+            breathingMarks = breathingMarks,
+            accentMarks = accentMarks
         )
     )
 }

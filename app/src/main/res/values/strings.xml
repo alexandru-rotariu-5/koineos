@@ -65,11 +65,17 @@
     <string name="note_diphthong_ou">Always pronounced like \'oo\' in \'food\'.</string>
 
     <!-- Improper Diphthong Notes -->
-    <string name="note_improper_diphthong_ai">Formed with alpha and iota subscript. Pronounced like alpha.</string>
-    <string name="note_improper_diphthong_ei">Formed with eta and iota subscript. Pronounced like eta.</string>
-    <string name="note_improper_diphthong_oi">Formed with omega and iota subscript. Pronounced like omega.</string>
+    <string name="note_improper_diphthong_ai">Alpha + iota subscript.\nPronounced like alpha.</string>
+    <string name="note_improper_diphthong_ei">Eta + iota subscript.\nPronounced like eta.</string>
+    <string name="note_improper_diphthong_oi">Omega + iota subscript.\nPronounced like omega.</string>
 
     <!-- Breathing Mark Notes -->
     <string name="note_breathing_rough">Adds an \'h\' sound before vowels and rho.</string>
     <string name="note_breathing_smooth">Does not affect pronunciation; used for orthographic purposes.</string>
+
+    <!-- Accent Mark Notes -->
+    <string name="note_accent_acute">Indicates a rising pitch.\nAppears on one of the last three syllables of a word.</string>
+    <string name="note_accent_circumflex">Marks a rising-falling pitch and only appears on long vowels or diphthongs.</string>
+    <string name="note_accent_grave">Replaces an acute at the end of a word when followed by another word.</string>
+
 </resources>

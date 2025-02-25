@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.koineos.app.presentation.model.AccentMarkUiState
 import com.koineos.app.presentation.model.AlphabetEntityUiState
 import com.koineos.app.presentation.model.BreathingMarkUiState
 import com.koineos.app.presentation.model.DiphthongUiState
@@ -71,6 +72,7 @@ fun AlphabetInfoDialog(
                         is DiphthongUiState -> "DIPHTHONG"
                         is ImproperDiphthongUiState -> "IMPROPER DIPHTHONG"
                         is BreathingMarkUiState -> "${entityUiState.name.uppercase()} BREATHING"
+                        is AccentMarkUiState -> "${entityUiState.name.uppercase()} ACCENT"
                     }
                 )
 
@@ -80,6 +82,7 @@ fun AlphabetInfoDialog(
                     is DiphthongUiState -> DiphthongContent(diphthong = entityUiState)
                     is ImproperDiphthongUiState -> ImproperDiphthongContent(improperDiphthong = entityUiState)
                     is BreathingMarkUiState -> BreathingMarkContent(breathingMark = entityUiState)
+                    is AccentMarkUiState -> AccentMarkContent(accentMark = entityUiState)
                 }
             }
         }
@@ -192,6 +195,24 @@ private fun BreathingMarkContent(breathingMark: BreathingMarkUiState) {
     // Examples
     if (breathingMark.examples.isNotEmpty()) {
         ExamplesSection(examples = breathingMark.examples)
+    }
+}
+
+@Composable
+private fun AccentMarkContent(accentMark: AccentMarkUiState) {
+    // Main accent mark display
+    GreekSymbol(text = accentMark.symbol)
+
+    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
+
+    // Notes
+    if (accentMark.notes != null) {
+        ContentNotes(notes = accentMark.notes)
+    }
+
+    // Examples
+    if (accentMark.examples.isNotEmpty()) {
+        ExamplesSection(examples = accentMark.examples)
     }
 }
 
@@ -385,6 +406,27 @@ private fun BreathingMarkInfoDialogPreview() {
     KoineosTheme {
         AlphabetInfoDialog(
             entityUiState = sampleBreathingMark,
+            onDismiss = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun AccentMarkInfoDialogPreview() {
+    val sampleAccentMark = AccentMarkUiState(
+        id = "accent_0",
+        order = 1,
+        name = "acute",
+        symbol = "´",
+        examples = listOf("λόγος", "θεός", "ἀγάπη"),
+        notes = "Marks the syllable that receives the elevated tone or stress in pronunciation.",
+        masteryLevel = 0.5f
+    )
+
+    KoineosTheme {
+        AlphabetInfoDialog(
+            entityUiState = sampleAccentMark,
             onDismiss = {}
         )
     }

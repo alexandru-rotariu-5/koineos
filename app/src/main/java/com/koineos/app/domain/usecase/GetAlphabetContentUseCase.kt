@@ -1,5 +1,6 @@
 package com.koineos.app.domain.usecase
 
+import com.koineos.app.domain.model.AccentMark
 import com.koineos.app.domain.model.BreathingMark
 import com.koineos.app.domain.model.CategoryContent
 import com.koineos.app.domain.model.Diphthong
@@ -43,6 +44,10 @@ class GetAlphabetContentUseCase @Inject constructor(
                                         )
 
                                         is BreathingMark -> entity.copy(
+                                            masteryLevel = masteryMap[entity.id] ?: 0f
+                                        )
+
+                                        is AccentMark -> entity.copy(
                                             masteryLevel = masteryMap[entity.id] ?: 0f
                                         )
                                     }

@@ -1,5 +1,6 @@
 package com.koineos.app.domain.usecase
 
+import com.koineos.app.domain.model.AccentMark
 import com.koineos.app.domain.model.AlphabetEntity
 import com.koineos.app.domain.model.BreathingMark
 import com.koineos.app.domain.model.Diphthong
@@ -31,6 +32,7 @@ class GetAlphabetEntityByIdUseCase @Inject constructor(
                             is Diphthong -> entity.copy(masteryLevel = masteryLevel)
                             is ImproperDiphthong -> entity.copy(masteryLevel = masteryLevel)
                             is BreathingMark -> entity.copy(masteryLevel = masteryLevel)
+                            is AccentMark -> entity.copy(masteryLevel = masteryLevel)
                             null -> null
                         }
                     }

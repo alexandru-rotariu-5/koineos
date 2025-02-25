@@ -32,6 +32,7 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.koineos.app.R
+import com.koineos.app.presentation.model.AccentMarkUiState
 import com.koineos.app.presentation.model.AlphabetUiState
 import com.koineos.app.presentation.model.BreathingMarkUiState
 import com.koineos.app.presentation.model.CategoryUiState
@@ -40,6 +41,7 @@ import com.koineos.app.presentation.model.ImproperDiphthongUiState
 import com.koineos.app.presentation.model.LetterUiState
 import com.koineos.app.presentation.viewmodel.AlphabetViewModel
 import com.koineos.app.ui.components.core.RegularButton
+import com.koineos.app.ui.screens.alphabet.components.AccentMarkCard
 import com.koineos.app.ui.screens.alphabet.components.AlphabetEntityShimmerCard
 import com.koineos.app.ui.screens.alphabet.components.AlphabetInfoDialog
 import com.koineos.app.ui.screens.alphabet.components.BreathingMarkCard
@@ -220,6 +222,12 @@ private fun AlphabetContent(
                                         modifier = Modifier.fillMaxWidth(),
                                         onClick = { onEntityClick(entity.id) }
                                     )
+
+                                    is AccentMarkUiState -> AccentMarkCard(
+                                        accentMark = entity,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        onClick = { onEntityClick(entity.id) }
+                                    )
                                 }
                             }
                         }
@@ -300,7 +308,8 @@ private fun LoadingState() {
                         0 -> 24 // Letters
                         1 -> 8  // Diphthongs
                         2 -> 3  // Improper Diphthongs
-                        else -> 2 // Breathing Marks
+                        3 -> 2  // Breathing Marks
+                        else -> 3 // Accent Marks
                     }
 
                     items(itemCount) {

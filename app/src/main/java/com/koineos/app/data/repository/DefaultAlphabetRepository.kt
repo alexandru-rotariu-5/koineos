@@ -47,6 +47,12 @@ class DefaultAlphabetRepository @Inject constructor(
                         category = AlphabetCategory.BREATHING_MARKS,
                         title = "Breathing Marks",
                         entities = response.breathingMarks.map { it.toDomainModel() }
+                    ),
+
+                    CategoryContent(
+                        category = AlphabetCategory.ACCENT_MARKS,
+                        title = "Accent Marks",
+                        entities = response.accentMarks.map { it.toDomainModel() }
                     )
                 )
             }
@@ -70,6 +76,9 @@ class DefaultAlphabetRepository @Inject constructor(
 
                     alphabetEntityId.startsWith("breathing_") ->
                         response.breathingMarks.find { it.id == alphabetEntityId }?.toDomainModel()
+
+                    alphabetEntityId.startsWith("accent_") ->
+                        response.accentMarks.find { it.id == alphabetEntityId }?.toDomainModel()
 
                     else -> null
                 }

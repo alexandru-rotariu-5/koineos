@@ -9,6 +9,7 @@ import com.koineos.app.presentation.model.ImproperDiphthongUiState
 import com.koineos.app.presentation.model.LetterUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.koineos.app.domain.model.AccentMark
 import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.domain.model.AlphabetEntity
 import com.koineos.app.domain.model.BreathingMark
@@ -16,6 +17,7 @@ import com.koineos.app.domain.model.Diphthong
 import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
 import com.koineos.app.domain.usecase.GetAlphabetContentUseCase
+import com.koineos.app.presentation.model.AccentMarkUiState
 import com.koineos.app.ui.utils.StringProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -75,6 +77,7 @@ class AlphabetViewModel @Inject constructor(
                                     AlphabetCategory.DIPHTHONGS -> "Diphthongs"
                                     AlphabetCategory.IMPROPER_DIPHTHONGS -> "Improper Diphthongs"
                                     AlphabetCategory.BREATHING_MARKS -> "Breathing Marks"
+                                    AlphabetCategory.ACCENT_MARKS -> "Accent Marks"
                                 },
                                 entities = when (category.category) {
                                     AlphabetCategory.LETTERS -> processLetters(category.entities)
@@ -84,6 +87,10 @@ class AlphabetViewModel @Inject constructor(
                                     )
 
                                     AlphabetCategory.BREATHING_MARKS -> processBreathingMarks(
+                                        category.entities
+                                    )
+
+                                    AlphabetCategory.ACCENT_MARKS -> processAccentMarks(
                                         category.entities
                                     )
                                 }
@@ -185,6 +192,20 @@ class AlphabetViewModel @Inject constructor(
                 name = mark.name,
                 symbol = mark.symbol,
                 pronunciation = mark.pronunciation,
+                examples = mark.examples,
+                masteryLevel = mark.masteryLevel,
+                notes = mark.notesResId?.let { stringProvider.getString(it) }
+            )
+        }.sortedBy { it.order }
+    }
+
+    private fun processAccentMarks(entities: List<AlphabetEntity>): List<AlphabetEntityUiState> {
+        return entities.filterIsInstance<AccentMark>().map { mark ->
+            AccentMarkUiState(
+                id = mark.id,
+                order = mark.order,
+                name = mark.name,
+                symbol = mark.symbol,
                 examples = mark.examples,
                 masteryLevel = mark.masteryLevel,
                 notes = mark.notesResId?.let { stringProvider.getString(it) }

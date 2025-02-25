@@ -7,10 +7,12 @@ package com.koineos.app.data.content.dto
  * @property diphthongs List of diphthongs in the alphabet
  * @property improperDiphthongs List of improper diphthongs in the alphabet
  * @property breathingMarks List of breathing marks in the alphabet
+ * @property accentMarks List of accent marks in the alphabet
  */
 data class AlphabetResponse(
     val letters: List<LetterDto>,
     val diphthongs: List<DiphthongDto>,
     val improperDiphthongs: List<ImproperDiphthongDto>,
-    val breathingMarks: List<BreathingMarkDto>
+    val breathingMarks: List<BreathingMarkDto>,
+    val accentMarks: List<AccentMarkDto>
 )

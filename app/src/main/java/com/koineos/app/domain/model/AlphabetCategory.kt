@@ -22,5 +22,10 @@ enum class AlphabetCategory {
     /**
      * Breathing marks category
      */
-    BREATHING_MARKS
+    BREATHING_MARKS,
+
+    /**
+     * Accent marks category
+     */
+    ACCENT_MARKS
 }

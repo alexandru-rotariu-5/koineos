@@ -95,3 +95,13 @@ data class BreathingMarkUiState(
     override val notes: String?,
     override val masteryLevel: Float
 ) : AlphabetEntityUiState
+
+data class AccentMarkUiState(
+    override val id: String,
+    val order: Int,
+    val name: String,
+    val symbol: String,
+    override val examples: List<String>,
+    override val notes: String?,
+    override val masteryLevel: Float
+) : AlphabetEntityUiState

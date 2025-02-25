@@ -19,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.koineos.app.presentation.model.AccentMarkUiState
 import com.koineos.app.presentation.model.BreathingMarkUiState
 import com.koineos.app.presentation.model.DiphthongUiState
 import com.koineos.app.presentation.model.ImproperDiphthongUiState
@@ -166,6 +167,22 @@ fun BreathingMarkCard(
         secondaryText = breathingMark.pronunciation,
         isMastered = breathingMark.isMastered,
         masteryLevel = breathingMark.masteryLevel,
+        onClick = onClick
+    )
+}
+
+@Composable
+fun AccentMarkCard(
+    modifier: Modifier = Modifier,
+    accentMark: AccentMarkUiState,
+    onClick: () -> Unit
+) {
+    AlphabetEntityCard(
+        modifier = modifier,
+        primaryText = accentMark.symbol,
+        secondaryText = "",
+        isMastered = accentMark.isMastered,
+        masteryLevel = accentMark.masteryLevel,
         onClick = onClick
     )
 }
@@ -389,6 +406,28 @@ private fun BreathingMarkCardPreview() {
                     examples = listOf("ὁ", "ἡμεῖς", "ὑμεῖς", "ἅγιος"),
                     notes = "Adds 'h' sound before vowels and rho. Must appear on every word beginning with a vowel or rho",
                     masteryLevel = 0.25f
+                ),
+                onClick = {},
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Preview(name = "Accent Mark Card")
+@Composable
+private fun AccentMarkCardPreview() {
+    KoineosTheme {
+        Column(modifier = Modifier.padding(16.dp)) {
+            AccentMarkCard(
+                accentMark = AccentMarkUiState(
+                    id = "accent_0",
+                    order = 1,
+                    name = "acute",
+                    symbol = "´",
+                    examples = listOf("λόγος", "θεός", "ἀγάπη"),
+                    notes = "Marks the syllable that receives the elevated tone or stress.",
+                    masteryLevel = 0.5f
                 ),
                 onClick = {},
                 modifier = Modifier.fillMaxWidth()

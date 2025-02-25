@@ -1,5 +1,6 @@
 package com.koineos.app.data.content.mapper
 
+import com.koineos.app.data.content.dto.AccentMarkDto
 import com.koineos.app.domain.model.BreathingMark
 import com.koineos.app.data.content.dto.BreathingMarkDto
 import com.koineos.app.domain.model.Diphthong
@@ -8,6 +9,7 @@ import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.data.content.dto.ImproperDiphthongDto
 import com.koineos.app.domain.model.Letter
 import com.koineos.app.data.content.dto.LetterDto
+import com.koineos.app.domain.model.AccentMark
 
 /**
  * Extension function to convert a [LetterDto] to a [Letter]
@@ -77,6 +79,23 @@ fun BreathingMarkDto.toDomainModel(masteryLevel: Float = 0f): BreathingMark {
         name = name,
         symbol = symbol,
         pronunciation = pronunciation,
+        examples = examples,
+        notesResId = notesResId,
+        masteryLevel = masteryLevel
+    )
+}
+
+/**
+ * Extension function to convert an [AccentMarkDto] to an [AccentMark]
+ *
+ * @param masteryLevel The mastery level of the accent mark, defaults to 0
+ */
+fun AccentMarkDto.toDomainModel(masteryLevel: Float = 0f): AccentMark {
+    return AccentMark(
+        id = id,
+        order = order,
+        name = name,
+        symbol = symbol,
         examples = examples,
         notesResId = notesResId,
         masteryLevel = masteryLevel
