@@ -1,12 +1,5 @@
 package com.koineos.app.presentation.viewmodel
 
-import com.koineos.app.presentation.model.AlphabetEntityUiState
-import com.koineos.app.presentation.model.AlphabetUiState
-import com.koineos.app.presentation.model.BreathingMarkUiState
-import com.koineos.app.presentation.model.CategoryUiState
-import com.koineos.app.presentation.model.DiphthongUiState
-import com.koineos.app.presentation.model.ImproperDiphthongUiState
-import com.koineos.app.presentation.model.LetterUiState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koineos.app.domain.model.AccentMark
@@ -18,6 +11,13 @@ import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
 import com.koineos.app.domain.usecase.GetAlphabetContentUseCase
 import com.koineos.app.presentation.model.AccentMarkUiState
+import com.koineos.app.presentation.model.AlphabetEntityUiState
+import com.koineos.app.presentation.model.AlphabetUiState
+import com.koineos.app.presentation.model.BreathingMarkUiState
+import com.koineos.app.presentation.model.CategoryUiState
+import com.koineos.app.presentation.model.DiphthongUiState
+import com.koineos.app.presentation.model.ImproperDiphthongUiState
+import com.koineos.app.presentation.model.LetterUiState
 import com.koineos.app.ui.utils.StringProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

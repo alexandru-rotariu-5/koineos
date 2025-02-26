@@ -1,6 +1,7 @@
 package com.koineos.app.data.content.mapper
 
 import com.koineos.app.data.content.dto.AccentMarkDto
+import com.koineos.app.data.content.dto.AlphabetVariantsDto
 import com.koineos.app.domain.model.BreathingMark
 import com.koineos.app.data.content.dto.BreathingMarkDto
 import com.koineos.app.domain.model.Diphthong
@@ -10,6 +11,7 @@ import com.koineos.app.data.content.dto.ImproperDiphthongDto
 import com.koineos.app.domain.model.Letter
 import com.koineos.app.data.content.dto.LetterDto
 import com.koineos.app.domain.model.AccentMark
+import com.koineos.app.domain.model.AlphabetVariants
 
 /**
  * Extension function to convert a [LetterDto] to a [Letter]
@@ -25,6 +27,7 @@ fun LetterDto.toDomainModel(masteryLevel: Float = 0f): Letter {
         lowercase = lowercase,
         transliteration = transliteration,
         pronunciation = pronunciation,
+        variants = variants?.toDomainModel(),
         examples = examples,
         notesResId = notesResId,
         masteryLevel = masteryLevel
@@ -43,6 +46,7 @@ fun DiphthongDto.toDomainModel(masteryLevel: Float = 0f): Diphthong {
         lowercase = lowercase,
         transliteration = transliteration,
         pronunciation = pronunciation,
+        variants = variants?.toDomainModel(),
         examples = examples,
         notesResId = notesResId,
         masteryLevel = masteryLevel
@@ -61,6 +65,7 @@ fun ImproperDiphthongDto.toDomainModel(masteryLevel: Float = 0f): ImproperDiphth
         lowercase = lowercase,
         transliteration = transliteration,
         pronunciation = pronunciation,
+        variants = variants?.toDomainModel(),
         examples = examples,
         notesResId = notesResId,
         masteryLevel = masteryLevel
@@ -99,5 +104,24 @@ fun AccentMarkDto.toDomainModel(masteryLevel: Float = 0f): AccentMark {
         examples = examples,
         notesResId = notesResId,
         masteryLevel = masteryLevel
+    )
+}
+
+/**
+ * Extension function to convert an [AlphabetVariantsDto] to [AlphabetVariants]
+ */
+fun AlphabetVariantsDto.toDomainModel(): AlphabetVariants {
+    return AlphabetVariants(
+        smoothBreathing = smoothBreathing,
+        roughBreathing = roughBreathing,
+        acuteAccent = acuteAccent,
+        graveAccent = graveAccent,
+        circumflexAccent = circumflexAccent,
+        smoothBreathingAcuteAccent = smoothBreathingAcuteAccent,
+        smoothBreathingGraveAccent = smoothBreathingGraveAccent,
+        smoothBreathingCircumflexAccent = smoothBreathingCircumflexAccent,
+        roughBreathingAcuteAccent = roughBreathingAcuteAccent,
+        roughBreathingGraveAccent = roughBreathingGraveAccent,
+        roughBreathingCircumflexAccent = roughBreathingCircumflexAccent
     )
 }

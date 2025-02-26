@@ -23,7 +23,7 @@ sealed interface AlphabetEntityDto {
  * @property lowercase Lowercase version of the letter
  * @property transliteration Transliteration of the letter
  * @property pronunciation Pronunciation of the letter
- *
+ * @property variants Variants of the letter
  */
 data class LetterDto(
     override val id: String,
@@ -33,6 +33,7 @@ data class LetterDto(
     val lowercase: String,
     val transliteration: String,
     val pronunciation: String,
+    val variants: AlphabetVariantsDto? = null,
     override val examples: List<String>,
     override val notesResId: Int? = null
 ) : AlphabetEntityDto
@@ -43,6 +44,7 @@ data class LetterDto(
  * @property lowercase Lowercase version of the diphthong
  * @property transliteration Transliteration of the diphthong
  * @property pronunciation Pronunciation of the diphthong
+ * @property variants Variants of the diphthong
  */
 data class DiphthongDto(
     override val id: String,
@@ -50,6 +52,7 @@ data class DiphthongDto(
     val lowercase: String,
     val transliteration: String,
     val pronunciation: String,
+    val variants: AlphabetVariantsDto? = null,
     override val examples: List<String>,
     override val notesResId: Int? = null
 ) : AlphabetEntityDto
@@ -60,6 +63,7 @@ data class DiphthongDto(
  * @property lowercase Lowercase version of the improper diphthong
  * @property transliteration Transliteration of the improper diphthong
  * @property pronunciation Pronunciation of the improper diphthong
+ * @property variants Variants of the improper diphthong
  */
 data class ImproperDiphthongDto(
     override val id: String,
@@ -67,6 +71,7 @@ data class ImproperDiphthongDto(
     val lowercase: String,
     val transliteration: String,
     val pronunciation: String,
+    val variants: AlphabetVariantsDto? = null,
     override val examples: List<String>,
     override val notesResId: Int? = null
 ) : AlphabetEntityDto

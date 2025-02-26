@@ -25,6 +25,7 @@ sealed interface AlphabetEntity {
  * @property lowercase Lowercase version of the letter
  * @property transliteration Transliteration of the letter
  * @property pronunciation Pronunciation of the letter
+ * @property variants Variants of the letter
  *
  */
 data class Letter(
@@ -35,6 +36,7 @@ data class Letter(
     val lowercase: String,
     val transliteration: String,
     val pronunciation: String,
+    val variants: AlphabetVariants? = null,
     override val examples: List<String>,
     override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f
@@ -46,6 +48,7 @@ data class Letter(
  * @property lowercase Lowercase version of the diphthong
  * @property transliteration Transliteration of the diphthong
  * @property pronunciation Pronunciation of the diphthong
+ * @property variants Variants of the diphthong
  */
 data class Diphthong(
     override val id: String,
@@ -53,6 +56,7 @@ data class Diphthong(
     val lowercase: String,
     val transliteration: String,
     val pronunciation: String,
+    val variants: AlphabetVariants? = null,
     override val examples: List<String>,
     override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f
@@ -64,6 +68,7 @@ data class Diphthong(
  * @property lowercase Lowercase version of the improper diphthong
  * @property transliteration Transliteration of the improper diphthong
  * @property pronunciation Pronunciation of the improper diphthong
+ * @property variants Variants of the improper diphthong
  */
 data class ImproperDiphthong(
     override val id: String,
@@ -71,6 +76,7 @@ data class ImproperDiphthong(
     val lowercase: String,
     val transliteration: String,
     val pronunciation: String,
+    val variants: AlphabetVariants? = null,
     override val examples: List<String>,
     override val notesResId: Int? = null,
     override val masteryLevel: Float = 0f

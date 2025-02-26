@@ -1,12 +1,13 @@
 package com.koineos.app.data.content
 
+import com.koineos.app.R
+import com.koineos.app.data.content.dto.AccentMarkDto
+import com.koineos.app.data.content.dto.AlphabetResponse
 import com.koineos.app.data.content.dto.BreathingMarkDto
 import com.koineos.app.data.content.dto.DiphthongDto
 import com.koineos.app.data.content.dto.ImproperDiphthongDto
 import com.koineos.app.data.content.dto.LetterDto
-import com.koineos.app.R
-import com.koineos.app.data.content.dto.AccentMarkDto
-import com.koineos.app.data.content.dto.AlphabetResponse
+import com.koineos.app.data.utils.AlphabetVariantGenerator
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
@@ -17,6 +18,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class AlphabetLocalDataSource @Inject constructor() {
+    private val variantGenerator = AlphabetVariantGenerator()
+
     private val letters = listOf(
         LetterDto(
             id = "letter_0",
@@ -27,7 +30,13 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "a",
             pronunciation = "ah",
             examples = listOf("ἀγάπη", "ἄνθρωπος", "ἀλήθεια"),
-            notesResId = R.string.note_alpha
+            notesResId = R.string.note_alpha,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "α",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
         ),
         LetterDto(
             id = "letter_1",
@@ -38,7 +47,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "b",
             pronunciation = "b",
             examples = listOf("βασιλεία", "βίβλος", "βαπτίζω"),
-            notesResId = R.string.note_beta
+            notesResId = R.string.note_beta,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_2",
@@ -49,7 +59,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "g",
             pronunciation = "g",
             examples = listOf("γῆ", "γράφω", "γίνομαι"),
-            notesResId = R.string.note_gamma
+            notesResId = R.string.note_gamma,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_3",
@@ -60,7 +71,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "d",
             pronunciation = "d",
             examples = listOf("δοῦλος", "διδάσκαλος", "δικαιοσύνη"),
-            notesResId = R.string.note_delta
+            notesResId = R.string.note_delta,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_4",
@@ -71,7 +83,13 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "e",
             pronunciation = "eh",
             examples = listOf("ἐκκλησία", "ἔργον", "εἰρήνη"),
-            notesResId = R.string.note_epsilon
+            notesResId = R.string.note_epsilon,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ε",
+                canTakeBreathing = true,
+                canTakeCircumflex = false, // Epsilon cannot take circumflex (short vowel)
+                canTakeAccent = true
+            )
         ),
         LetterDto(
             id = "letter_5",
@@ -82,7 +100,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "z",
             pronunciation = "z",
             examples = listOf("ζωή", "ζητέω", "ζῆλος"),
-            notesResId = R.string.note_zeta
+            notesResId = R.string.note_zeta,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_6",
@@ -93,7 +112,13 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "ē",
             pronunciation = "ay",
             examples = listOf("ἡμέρα", "ἤδη", "ἦλθον"),
-            notesResId = R.string.note_eta
+            notesResId = R.string.note_eta,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "η",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
         ),
         LetterDto(
             id = "letter_7",
@@ -104,7 +129,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "th",
             pronunciation = "th",
             examples = listOf("θεός", "θάνατος", "θέλημα"),
-            notesResId = R.string.note_theta
+            notesResId = R.string.note_theta,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_8",
@@ -115,7 +141,13 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "i",
             pronunciation = "ee",
             examples = listOf("Ἰησοῦς", "ἵνα", "ἱερόν"),
-            notesResId = R.string.note_iota
+            notesResId = R.string.note_iota,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ι",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
         ),
         LetterDto(
             id = "letter_9",
@@ -126,7 +158,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "k",
             pronunciation = "k",
             examples = listOf("καρδία", "κόσμος", "κύριος"),
-            notesResId = R.string.note_kappa
+            notesResId = R.string.note_kappa,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_10",
@@ -137,7 +170,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "l",
             pronunciation = "l",
             examples = listOf("λόγος", "λαός", "λαμβάνω"),
-            notesResId = R.string.note_lambda
+            notesResId = R.string.note_lambda,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_11",
@@ -148,7 +182,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "m",
             pronunciation = "m",
             examples = listOf("μαθητής", "μάρτυς", "μένω"),
-            notesResId = R.string.note_mu
+            notesResId = R.string.note_mu,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_12",
@@ -159,7 +194,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "n",
             pronunciation = "n",
             examples = listOf("νόμος", "ναός", "νῦν"),
-            notesResId = R.string.note_nu
+            notesResId = R.string.note_nu,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_13",
@@ -170,7 +206,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "x",
             pronunciation = "ks",
             examples = listOf("ξένος", "ξύλον", "ξηρός"),
-            notesResId = R.string.note_xi
+            notesResId = R.string.note_xi,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_14",
@@ -181,7 +218,13 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "o",
             pronunciation = "oh",
             examples = listOf("ὁδός", "οἶκος", "ὀφθαλμός"),
-            notesResId = R.string.note_omicron
+            notesResId = R.string.note_omicron,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ο",
+                canTakeBreathing = true,
+                canTakeCircumflex = false, // Omicron cannot take circumflex (short vowel)
+                canTakeAccent = true
+            )
         ),
         LetterDto(
             id = "letter_15",
@@ -192,7 +235,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "p",
             pronunciation = "p",
             examples = listOf("πίστις", "πνεῦμα", "προφήτης"),
-            notesResId = R.string.note_pi
+            notesResId = R.string.note_pi,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_16",
@@ -203,7 +247,13 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "r",
             pronunciation = "r",
             examples = listOf("ῥῆμα", "ῥαββί", "ῥίζα"),
-            notesResId = R.string.note_rho
+            notesResId = R.string.note_rho,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ρ",
+                canTakeBreathing = true, // Rho can take rough breathing at start of word
+                canTakeCircumflex = false, // Rho cannot take circumflex
+                canTakeAccent = false // Rho cannot take accent marks
+            )
         ),
         LetterDto(
             id = "letter_17",
@@ -214,7 +264,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "s",
             pronunciation = "s",
             examples = listOf("σῶμα", "σοφία", "λόγος"),
-            notesResId = R.string.note_sigma
+            notesResId = R.string.note_sigma,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_18",
@@ -225,7 +276,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "s",
             pronunciation = "s",
             examples = listOf("Χριστός", "θεός", "ἄνθρωπος"),
-            notesResId = R.string.note_final_sigma
+            notesResId = R.string.note_final_sigma,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_19",
@@ -236,7 +288,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "t",
             pronunciation = "t",
             examples = listOf("τέκνον", "τόπος", "τιμή"),
-            notesResId = R.string.note_tau
+            notesResId = R.string.note_tau,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_20",
@@ -247,7 +300,13 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "y",
             pronunciation = "oo",
             examples = listOf("ὕδωρ", "υἱός", "ὑπέρ"),
-            notesResId = R.string.note_upsilon
+            notesResId = R.string.note_upsilon,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "υ",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
         ),
         LetterDto(
             id = "letter_21",
@@ -258,7 +317,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "ph",
             pronunciation = "f",
             examples = listOf("φῶς", "φωνή", "φόβος"),
-            notesResId = R.string.note_phi
+            notesResId = R.string.note_phi,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_22",
@@ -269,7 +329,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "ch",
             pronunciation = "kh",
             examples = listOf("χάρις", "Χριστός", "χείρ"),
-            notesResId = R.string.note_chi
+            notesResId = R.string.note_chi,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_23",
@@ -280,7 +341,8 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "ps",
             pronunciation = "ps",
             examples = listOf("ψυχή", "ψευδοπροφήτης", "ψαλμός"),
-            notesResId = R.string.note_psi
+            notesResId = R.string.note_psi,
+            variants = null // Consonants don't take breathing marks or accents
         ),
         LetterDto(
             id = "letter_24",
@@ -291,7 +353,184 @@ class AlphabetLocalDataSource @Inject constructor() {
             transliteration = "ō",
             pronunciation = "oh",
             examples = listOf("ὥρα", "ὡς", "ὤμος"),
-            notesResId = R.string.note_omega
+            notesResId = R.string.note_omega,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ω",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        )
+    )
+
+    private val diphthongs = listOf(
+        DiphthongDto(
+            id = "diphthong_0",
+            order = 1,
+            lowercase = "αι",
+            transliteration = "ai",
+            pronunciation = "eye",
+            examples = listOf("καί", "αἷμα", "παιδίον"),
+            notesResId = R.string.note_diphthong_ai,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "αι",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        ),
+        DiphthongDto(
+            id = "diphthong_1",
+            order = 2,
+            lowercase = "ει",
+            transliteration = "ei",
+            pronunciation = "ay",
+            examples = listOf("εἰμί", "εἰς", "εἶπεν"),
+            notesResId = R.string.note_diphthong_ei,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ει",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        ),
+        DiphthongDto(
+            id = "diphthong_2",
+            order = 3,
+            lowercase = "οι",
+            transliteration = "oi",
+            pronunciation = "oy",
+            examples = listOf("οἶκος", "οἶνος", "ποιέω"),
+            notesResId = R.string.note_diphthong_oi,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "οι",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        ),
+        DiphthongDto(
+            id = "diphthong_3",
+            order = 4,
+            lowercase = "υι",
+            transliteration = "ui",
+            pronunciation = "ui",
+            examples = listOf("υἱός", "υἱοθεσία"),
+            notesResId = R.string.note_diphthong_ui,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "υι",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        ),
+        DiphthongDto(
+            id = "diphthong_4",
+            order = 5,
+            lowercase = "αυ",
+            transliteration = "au",
+            pronunciation = "ow",
+            examples = listOf("αὐτός", "ταῦτα"),
+            notesResId = R.string.note_diphthong_au,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "αυ",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        ),
+        DiphthongDto(
+            id = "diphthong_5",
+            order = 6,
+            lowercase = "ευ",
+            transliteration = "eu",
+            pronunciation = "eh-oo",
+            examples = listOf("εὑρίσκω", "εὐθύς"),
+            notesResId = R.string.note_diphthong_eu,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ευ",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        ),
+        DiphthongDto(
+            id = "diphthong_6",
+            order = 7,
+            lowercase = "ηυ",
+            transliteration = "ēu",
+            pronunciation = "ay-oo",
+            examples = listOf("ηὗρον", "ηὐχόμην"),
+            notesResId = R.string.note_diphthong_hu,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ηυ",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        ),
+        DiphthongDto(
+            id = "diphthong_7",
+            order = 8,
+            lowercase = "ου",
+            transliteration = "ou",
+            pronunciation = "oo",
+            examples = listOf("οὐ", "οὖν", "οὗτος"),
+            notesResId = R.string.note_diphthong_ou,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ου",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        )
+    )
+
+    private val improperDiphthongs = listOf(
+        ImproperDiphthongDto(
+            id = "improper_diphthong_0",
+            order = 1,
+            lowercase = "ᾳ",
+            transliteration = "āi",
+            pronunciation = "ah",
+            examples = listOf("σοφίᾳ", "δόξᾳ", "ἡμέρᾳ"),
+            notesResId = R.string.note_improper_diphthong_ai,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ᾳ",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        ),
+        ImproperDiphthongDto(
+            id = "improper_diphthong_1",
+            order = 2,
+            lowercase = "ῃ",
+            transliteration = "ēi",
+            pronunciation = "ay",
+            examples = listOf("ζωῇ", "ἀγάπῃ", "ψυχῇ"),
+            notesResId = R.string.note_improper_diphthong_ei,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ῃ",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
+        ),
+        ImproperDiphthongDto(
+            id = "improper_diphthong_2",
+            order = 3,
+            lowercase = "ῳ",
+            transliteration = "ōi",
+            pronunciation = "oh",
+            examples = listOf("λόγῳ", "κυρίῳ", "θεῷ"),
+            notesResId = R.string.note_improper_diphthong_oi,
+            variants = variantGenerator.generateVariantsFor(
+                baseCharacter = "ῳ",
+                canTakeBreathing = true,
+                canTakeCircumflex = true,
+                canTakeAccent = true
+            )
         )
     )
 
@@ -319,112 +558,6 @@ class AlphabetLocalDataSource @Inject constructor() {
             symbol = "`",
             examples = listOf("καὶ", "δὲ", "γὰρ"),
             notesResId = R.string.note_accent_grave
-        )
-    )
-
-
-    private val diphthongs = listOf(
-        DiphthongDto(
-            id = "diphthong_0",
-            order = 1,
-            lowercase = "αι",
-            transliteration = "ai",
-            pronunciation = "eye",
-            examples = listOf("καί", "αἷμα", "παιδίον"),
-            notesResId = R.string.note_diphthong_ai
-        ),
-        DiphthongDto(
-            id = "diphthong_1",
-            order = 2,
-            lowercase = "ει",
-            transliteration = "ei",
-            pronunciation = "ay",
-            examples = listOf("εἰμί", "εἰς", "εἶπεν"),
-            notesResId = R.string.note_diphthong_ei
-        ),
-        DiphthongDto(
-            id = "diphthong_2",
-            order = 3,
-            lowercase = "οι",
-            transliteration = "oi",
-            pronunciation = "oy",
-            examples = listOf("οἶκος", "οἶνος", "ποιέω"),
-            notesResId = R.string.note_diphthong_oi
-        ),
-        DiphthongDto(
-            id = "diphthong_3",
-            order = 4,
-            lowercase = "υι",
-            transliteration = "ui",
-            pronunciation = "ui",
-            examples = listOf("υἱός", "υἱοθεσία"),
-            notesResId = R.string.note_diphthong_ui
-        ),
-        DiphthongDto(
-            id = "diphthong_4",
-            order = 5,
-            lowercase = "αυ",
-            transliteration = "au",
-            pronunciation = "ow",
-            examples = listOf("αὐτός", "ταῦτα"),
-            notesResId = R.string.note_diphthong_au
-        ),
-        DiphthongDto(
-            id = "diphthong_5",
-            order = 6,
-            lowercase = "ευ",
-            transliteration = "eu",
-            pronunciation = "eh-oo",
-            examples = listOf("εὑρίσκω", "εὐθύς"),
-            notesResId = R.string.note_diphthong_eu
-        ),
-        DiphthongDto(
-            id = "diphthong_6",
-            order = 7,
-            lowercase = "ηυ",
-            transliteration = "ēu",
-            pronunciation = "ay-oo",
-            examples = listOf("ηὗρον", "ηὐχόμην"),
-            notesResId = R.string.note_diphthong_hu
-        ),
-        DiphthongDto(
-            id = "diphthong_7",
-            order = 8,
-            lowercase = "ου",
-            transliteration = "ou",
-            pronunciation = "oo",
-            examples = listOf("οὐ", "οὖν", "οὗτος"),
-            notesResId = R.string.note_diphthong_ou
-        )
-    )
-
-    private val improperDiphthongs = listOf(
-        ImproperDiphthongDto(
-            id = "improper_diphthong_0",
-            order = 1,
-            lowercase = "ᾳ",
-            transliteration = "āi",
-            pronunciation = "ah",
-            examples = listOf("σοφίᾳ", "δόξᾳ", "ἡμέρᾳ"),
-            notesResId = R.string.note_improper_diphthong_ai
-        ),
-        ImproperDiphthongDto(
-            id = "improper_diphthong_1",
-            order = 2,
-            lowercase = "ῃ",
-            transliteration = "ēi",
-            pronunciation = "ay",
-            examples = listOf("ζωῇ", "ἀγάπῃ", "ψυχῇ"),
-            notesResId = R.string.note_improper_diphthong_ei
-        ),
-        ImproperDiphthongDto(
-            id = "improper_diphthong_2",
-            order = 3,
-            lowercase = "ῳ",
-            transliteration = "ōi",
-            pronunciation = "oh",
-            examples = listOf("λόγῳ", "κυρίῳ", "θεῷ"),
-            notesResId = R.string.note_improper_diphthong_oi
         )
     )
 
