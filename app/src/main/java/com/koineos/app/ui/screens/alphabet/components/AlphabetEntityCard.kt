@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,6 +24,7 @@ import com.koineos.app.presentation.model.ImproperDiphthongUiState
 import com.koineos.app.presentation.model.LetterUiState
 import com.koineos.app.ui.components.core.CardPadding
 import com.koineos.app.ui.components.core.RegularCard
+import com.koineos.app.ui.components.core.RegularLinearProgressIndicator
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
@@ -79,14 +79,11 @@ fun AlphabetEntityCard(
             Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
             // Progress bar
-            LinearProgressIndicator(
-                progress = { masteryLevel },
+            RegularLinearProgressIndicator(
                 modifier = Modifier.fillMaxWidth(),
+                progress = masteryLevel,
                 color = Colors.Primary,
-                trackColor = if (isMastered)
-                    Colors.Primary.copy(alpha = 0.2f)
-                else
-                    Colors.PrimaryContainer
+                trackColor = Colors.PrimaryContainer,
             )
         }
     }
