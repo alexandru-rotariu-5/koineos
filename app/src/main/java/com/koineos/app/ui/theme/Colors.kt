@@ -9,17 +9,17 @@ object Colors {
 
     // Light theme
 
-    val Primary = Color(0xFF0056B3)
-    val PrimaryLight = Color(0xFF4C86D1)
-    val PrimaryDark = Color(0xFF003F80)
+    val Primary = Color(0xFF1867DB)
+    val PrimaryLight = Color(0xFF5B90FF)
+    val PrimaryDark = Color(0xFF004BA0)
 
     val Secondary = Color(0xFFFF6F61)
     val SecondaryLight = Color(0xFFFFA497)
     val SecondaryDark = Color(0xFFC74337)
 
     val OnPrimary = Color(0xFFFFFFFF)
-    val PrimaryContainer = Color(0xFFCCE0FF)
-    val OnPrimaryContainer = Color(0xFF00254D)
+    val PrimaryContainer = Color(0xFFD3E3FF)
+    val OnPrimaryContainer = Color(0xFF001D4C)
 
     val OnSecondary = Color(0xFFFFFFFF)
     val SecondaryContainer = Color(0xFFFFDAD5)
@@ -44,8 +44,8 @@ object Colors {
 
     // Dark theme
 
-    val PrimaryDarkContainer = Color(0xFF00315D)
-    val OnPrimaryDark = Color(0xFFB3D4FF)
+    val PrimaryDarkContainer = Color(0xFF004080)
+    val OnPrimaryDark = Color(0xFFB8D2FF)
 
     val SecondaryDarkContainer = Color(0xFF5F1410)
     val OnSecondaryDark = Color(0xFFFFB4A9)
