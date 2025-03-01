@@ -25,7 +25,7 @@ object Colors {
     val SecondaryContainer = Color(0xFFFFDAD5)
     val OnSecondaryContainer = Color(0xFF410002)
 
-    val Surface = Color(0xFFF6F8FD)
+    val Surface = Color(0xFFF8F9FA)
     val OnSurface = Color(0xFF1C1B1F)
     val SurfaceVariant = Color(0xFFE4E4E7)
     val OnSurfaceVariant = Color(0xFF49454F)
@@ -40,6 +40,8 @@ object Colors {
     val Transparent = Color(0x00000000)
 
     val RegularCardBackground = Color(0xFFFFFFFF)
+    val RegularCardBorder = Color(0xFFCBCED1)
+
     val DialogBackground = Color(0xFFFFFFFF)
 
     // Dark theme
@@ -72,6 +74,7 @@ object Colors {
     val TextPrimaryDark = Color(0xFFE3E3E3)
     val TextSecondaryDark = Color(0xFFABADAF)
 
+    val BottomNavBarBackground = Color(0xFFFFFFFF)
     val BottomNavBarSelectedIconColor = Primary
     val BottomNavBarSelectedTextColor = Primary
     val BottomNavBarUnselectedIconColor = BlackSecondary

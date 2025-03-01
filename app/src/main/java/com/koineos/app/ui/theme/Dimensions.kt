@@ -47,7 +47,8 @@ object Dimensions {
     val iconSizeLarge = 32.dp
     val toolbarHeight = 56.dp
     val bottomNavHeight = 56.dp
-    val cardElevation = 4.dp
+    val cardElevation = 0.dp
+    val regularCardBorder = 0.5.dp
     val roundedCorner = 8.dp
     val illustrationSize = 240.dp
     val dividerThickness = 0.5.dp

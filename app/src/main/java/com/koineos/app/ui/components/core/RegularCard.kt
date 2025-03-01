@@ -45,8 +45,8 @@ fun RegularCard(
     contentPadding: CardPadding = CardPadding.Medium,
     specialTopPadding: CardPadding = contentPadding,
     backgroundColor: Color = Colors.RegularCardBackground,
-    elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = Dimensions.elevationMedium),
-    border: BorderStroke? = null,
+    elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = Dimensions.cardElevation),
+    border: BorderStroke? = BorderStroke(Dimensions.regularCardBorder, Colors.RegularCardBorder),
     content: @Composable BoxScope.() -> Unit
 ) {
     Card(

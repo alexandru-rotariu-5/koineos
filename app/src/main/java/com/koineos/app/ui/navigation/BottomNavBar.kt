@@ -98,7 +98,7 @@ fun BottomNavBar(
         content = {
             Column {
                 HorizontalDivider(thickness = 0.5.dp, color = Colors.Outline)
-                NavigationBar(containerColor = Colors.Surface) {
+                NavigationBar(containerColor = Colors.BottomNavBarBackground) {
                     val currentDestination = navBackStackEntry?.destination
 
                     items.forEach { item ->

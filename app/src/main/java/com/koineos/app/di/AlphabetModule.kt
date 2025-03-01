@@ -7,10 +7,13 @@ import com.koineos.app.data.repository.DefaultAlphabetMasteryRepository
 import com.koineos.app.data.repository.DefaultAlphabetRepository
 import com.koineos.app.domain.repository.AlphabetMasteryRepository
 import com.koineos.app.domain.repository.AlphabetRepository
-import com.koineos.app.domain.usecase.GetAlphabetContentUseCase
-import com.koineos.app.domain.usecase.UpdateAlphabetEntityMasteryUseCase
-import com.koineos.app.ui.utils.AndroidStringProvider
-import com.koineos.app.ui.utils.StringProvider
+import com.koineos.app.domain.usecase.alphabet.GenerateAlphabetPracticeSetUseCase
+import com.koineos.app.domain.usecase.alphabet.GetAlphabetContentUseCase
+import com.koineos.app.domain.usecase.alphabet.UpdateAlphabetEntityMasteryUseCase
+import com.koineos.app.domain.utils.practice.PracticeManager
+import com.koineos.app.domain.utils.practice.alphabet.AlphabetExerciseGenerator
+import com.koineos.app.domain.utils.practice.alphabet.AlphabetPracticeSetGenerator
+import com.koineos.app.domain.utils.practice.alphabet.RandomLetterProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,14 +27,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AlphabetModule {
-
-    @Provides
-    @Singleton
-    fun provideStringProvider(
-        @ApplicationContext context: Context
-    ): StringProvider {
-        return AndroidStringProvider(context)
-    }
 
     @Provides
     @Singleton
@@ -64,7 +59,7 @@ object AlphabetModule {
     }
 
     @Provides
-    fun provideGetAlphabetcontentUseCase(
+    fun provideGetAlphabetContentUseCase(
         alphabetRepository: AlphabetRepository,
         alphabetMasteryRepository: AlphabetMasteryRepository
     ): GetAlphabetContentUseCase {
@@ -76,5 +71,37 @@ object AlphabetModule {
         alphabetMasteryRepository: AlphabetMasteryRepository
     ): UpdateAlphabetEntityMasteryUseCase {
         return UpdateAlphabetEntityMasteryUseCase(alphabetMasteryRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLetterProvider(
+        alphabetRepository: AlphabetRepository
+    ): RandomLetterProvider {
+        return RandomLetterProvider(alphabetRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAlphabetExerciseGenerator(
+        letterProvider: RandomLetterProvider
+    ): AlphabetExerciseGenerator {
+        return AlphabetExerciseGenerator(letterProvider)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAlphabetPracticeSetGenerator(
+        alphabetExerciseGenerator: AlphabetExerciseGenerator,
+        letterProvider: RandomLetterProvider
+    ): AlphabetPracticeSetGenerator {
+        return AlphabetPracticeSetGenerator(alphabetExerciseGenerator, letterProvider)
+    }
+
+    @Provides
+    fun provideGenerateAlphabetPracticeSetUseCase(
+        practiceManager: PracticeManager
+    ): GenerateAlphabetPracticeSetUseCase {
+        return GenerateAlphabetPracticeSetUseCase(practiceManager)
     }
 }

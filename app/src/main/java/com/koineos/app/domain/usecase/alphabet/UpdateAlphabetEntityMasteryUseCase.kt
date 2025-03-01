@@ -1,4 +1,4 @@
-package com.koineos.app.domain.usecase
+package com.koineos.app.domain.usecase.alphabet
 
 import com.koineos.app.domain.repository.AlphabetMasteryRepository
 import javax.inject.Inject

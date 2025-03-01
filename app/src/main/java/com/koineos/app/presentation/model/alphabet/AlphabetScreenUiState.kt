@@ -1,18 +1,18 @@
-package com.koineos.app.presentation.model
+package com.koineos.app.presentation.model.alphabet
 
 /**
  * Base interface for UI states in the Alphabet feature
  */
-sealed interface AlphabetUiState {
+sealed interface AlphabetScreenUiState {
     /**
      * Loading state
      */
-    data object Loading : AlphabetUiState
+    data object Loading : AlphabetScreenUiState
 
     /**
      * Error state
      */
-    data object Error : AlphabetUiState
+    data object Error : AlphabetScreenUiState
 
     /**
      * Loaded state
@@ -23,7 +23,7 @@ sealed interface AlphabetUiState {
     data class Loaded(
         val categories: List<CategoryUiState>,
         val selectedEntityId: String? = null
-    ) : AlphabetUiState
+    ) : AlphabetScreenUiState
 }
 
 /**
