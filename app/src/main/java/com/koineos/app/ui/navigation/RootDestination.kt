@@ -21,6 +21,13 @@ sealed interface RootDestination {
     }
 
     /**
+     * Practice section root
+     */
+    data object PracticeRoot : RootDestination {
+        override val route = "practice_root"
+    }
+
+    /**
      * Alphabet section root
      */
     data object AlphabetRoot : RootDestination {

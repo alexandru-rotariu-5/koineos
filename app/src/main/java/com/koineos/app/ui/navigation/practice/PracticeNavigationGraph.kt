@@ -8,9 +8,11 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
-import com.koineos.app.presentation.viewmodel.practice.AlphabetPracticeViewModel
-import com.koineos.app.ui.screens.practice.PracticeResultsScreen
-import com.koineos.app.ui.screens.practice.PracticeScreen
+import androidx.navigation.navigation
+import com.koineos.app.presentation.viewmodel.AlphabetPracticeSessionViewModel
+import com.koineos.app.ui.navigation.RootDestination
+import com.koineos.app.ui.screens.practice.PracticeSessionResultsScreen
+import com.koineos.app.ui.screens.practice.PracticeSessionScreen
 import com.koineos.app.ui.utils.AnimationUtils
 
 /**
@@ -25,35 +27,47 @@ fun NavGraphBuilder.practiceGraph(
     enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = AnimationUtils.slideUpEnter,
     exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = AnimationUtils.slideDownExit
 ) {
-    composable(
-        route = PracticeDestination.AlphabetPracticeSession.route,
-        enterTransition = enterTransition,
-        exitTransition = exitTransition
+    navigation(
+        startDestination = PracticeDestination.PracticeHome.route,
+        route = RootDestination.PracticeRoot.route
     ) {
-        PracticeScreen(
-            viewModel = hiltViewModel<AlphabetPracticeViewModel>(),
-            onNavigateToResults = {
-                navController.navigate(PracticeDestination.PracticeResults.route) {
-                    popUpTo(PracticeDestination.AlphabetPracticeSession.route) {
-                        inclusive = true
-                    }
-                }
-            },
-            onClose = {
-                navController.popBackStack()
-            }
-        )
-    }
+        // Main Practice screen
+        composable(
+            route = PracticeDestination.PracticeHome.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None }
+        ) {}
 
-    composable(
-        route = PracticeDestination.PracticeResults.route,
-        enterTransition = enterTransition,
-        exitTransition = exitTransition
-    ) {
-        PracticeResultsScreen(
-            onDone = {
-                navController.popBackStack()
-            }
-        )
+        composable(
+            route = PracticeDestination.AlphabetPracticeSession.route,
+            enterTransition = enterTransition,
+            exitTransition = exitTransition
+        ) {
+            PracticeSessionScreen(
+                viewModel = hiltViewModel<AlphabetPracticeSessionViewModel>(),
+                onNavigateToResults = {
+                    navController.navigate(PracticeDestination.PracticeSessionResults.route) {
+                        popUpTo(PracticeDestination.AlphabetPracticeSession.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onClose = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable(
+            route = PracticeDestination.PracticeSessionResults.route,
+            enterTransition = enterTransition,
+            exitTransition = exitTransition
+        ) {
+            PracticeSessionResultsScreen(
+                onDone = {
+                    navController.popBackStack()
+                }
+            )
+        }
     }
 }

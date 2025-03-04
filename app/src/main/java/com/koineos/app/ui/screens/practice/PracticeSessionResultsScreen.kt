@@ -45,7 +45,7 @@ import java.util.concurrent.TimeUnit
  * @param onDone Callback when the user is done viewing results
  */
 @Composable
-fun PracticeResultsScreen(
+fun PracticeSessionResultsScreen(
     onDone: () -> Unit
 ) {
     val totalExercises = 15
@@ -288,7 +288,7 @@ private fun AccuracyCard(
 private fun PracticeResultsScreenPreview() {
     KoineosTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
-            PracticeResultsScreen(
+            PracticeSessionResultsScreen(
                 onDone = {}
             )
         }

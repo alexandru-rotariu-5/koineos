@@ -1,6 +1,5 @@
 package com.koineos.app.ui.screens.alphabet.components
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -50,10 +49,7 @@ fun AlphabetEntityCard(
         backgroundColor = if (isMastered) Colors.PrimaryContainer else Colors.RegularCardBackground,
         contentPadding = CardPadding.Large,
         specialTopPadding = CardPadding.Medium,
-        border = BorderStroke(
-            Dimensions.regularCardBorder,
-            if (isMastered) Colors.Primary else Colors.RegularCardBorder
-        ),
+        border = null,
         onClick = onClick
     ) {
         Column(
@@ -209,7 +205,7 @@ fun AlphabetEntityShimmerCard(
     RegularCard(
         modifier = modifier,
         backgroundColor = Colors.RegularCardBackground,
-        border = BorderStroke(Dimensions.regularCardBorder, Colors.RegularCardBorder),
+        border = null,
         contentPadding = CardPadding.Large
     ) {
         Column(

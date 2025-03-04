@@ -1,6 +1,7 @@
 package com.koineos.app.di
 
 import android.content.Context
+import android.util.Log
 import com.koineos.app.data.content.AlphabetLocalDataSource
 import com.koineos.app.data.datastore.AlphabetMasteryDataStore
 import com.koineos.app.data.repository.DefaultAlphabetMasteryRepository
@@ -13,6 +14,7 @@ import com.koineos.app.domain.usecase.alphabet.UpdateAlphabetEntityMasteryUseCas
 import com.koineos.app.domain.utils.practice.PracticeManager
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetExerciseGenerator
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetPracticeSetGenerator
+import com.koineos.app.domain.utils.practice.alphabet.LetterProvider
 import com.koineos.app.domain.utils.practice.alphabet.RandomLetterProvider
 import dagger.Module
 import dagger.Provides
@@ -27,10 +29,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AlphabetModule {
+    private const val TAG = "AlphabetModule"
 
     @Provides
     @Singleton
     fun provideAlphabetLocalDataSource(): AlphabetLocalDataSource {
+        Log.d(TAG, "Providing AlphabetLocalDataSource")
         return AlphabetLocalDataSource()
     }
 
@@ -39,6 +43,7 @@ object AlphabetModule {
     fun provideAlphabetMasteryDataStore(
         @ApplicationContext context: Context
     ): AlphabetMasteryDataStore {
+        Log.d(TAG, "Providing AlphabetMasteryDataStore")
         return AlphabetMasteryDataStore(context)
     }
 
@@ -47,6 +52,7 @@ object AlphabetModule {
     fun provideAlphabetRepository(
         alphabetLocalDataSource: AlphabetLocalDataSource
     ): AlphabetRepository {
+        Log.d(TAG, "Providing AlphabetRepository")
         return DefaultAlphabetRepository(alphabetLocalDataSource)
     }
 
@@ -55,21 +61,26 @@ object AlphabetModule {
     fun provideAlphabetMasteryRepository(
         alphabetMasteryDataStore: AlphabetMasteryDataStore
     ): AlphabetMasteryRepository {
+        Log.d(TAG, "Providing AlphabetMasteryRepository")
         return DefaultAlphabetMasteryRepository(alphabetMasteryDataStore)
     }
 
     @Provides
+    @Singleton
     fun provideGetAlphabetContentUseCase(
         alphabetRepository: AlphabetRepository,
         alphabetMasteryRepository: AlphabetMasteryRepository
     ): GetAlphabetContentUseCase {
+        Log.d(TAG, "Providing GetAlphabetContentUseCase")
         return GetAlphabetContentUseCase(alphabetRepository, alphabetMasteryRepository)
     }
 
     @Provides
+    @Singleton
     fun provideUpdateAlphabetMasteryUseCase(
         alphabetMasteryRepository: AlphabetMasteryRepository
     ): UpdateAlphabetEntityMasteryUseCase {
+        Log.d(TAG, "Providing UpdateAlphabetEntityMasteryUseCase")
         return UpdateAlphabetEntityMasteryUseCase(alphabetMasteryRepository)
     }
 
@@ -77,15 +88,17 @@ object AlphabetModule {
     @Singleton
     fun provideLetterProvider(
         alphabetRepository: AlphabetRepository
-    ): RandomLetterProvider {
+    ): LetterProvider {
+        Log.d(TAG, "Providing LetterProvider")
         return RandomLetterProvider(alphabetRepository)
     }
 
     @Provides
     @Singleton
     fun provideAlphabetExerciseGenerator(
-        letterProvider: RandomLetterProvider
+        letterProvider: LetterProvider
     ): AlphabetExerciseGenerator {
+        Log.d(TAG, "Providing AlphabetExerciseGenerator")
         return AlphabetExerciseGenerator(letterProvider)
     }
 
@@ -93,15 +106,18 @@ object AlphabetModule {
     @Singleton
     fun provideAlphabetPracticeSetGenerator(
         alphabetExerciseGenerator: AlphabetExerciseGenerator,
-        letterProvider: RandomLetterProvider
+        letterProvider: LetterProvider
     ): AlphabetPracticeSetGenerator {
+        Log.d(TAG, "Providing AlphabetPracticeSetGenerator")
         return AlphabetPracticeSetGenerator(alphabetExerciseGenerator, letterProvider)
     }
 
     @Provides
+    @Singleton
     fun provideGenerateAlphabetPracticeSetUseCase(
         practiceManager: PracticeManager
     ): GenerateAlphabetPracticeSetUseCase {
+        Log.d(TAG, "Providing GenerateAlphabetPracticeSetUseCase")
         return GenerateAlphabetPracticeSetUseCase(practiceManager)
     }
 }

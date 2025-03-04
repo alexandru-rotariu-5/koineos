@@ -2,19 +2,27 @@ package com.koineos.app.ui.screens.alphabet.components.exercises
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.koineos.app.presentation.model.practice.alphabet.SelectLemmaExerciseUiState
-import com.koineos.app.ui.components.practice.OptionGrid
+import com.koineos.app.ui.components.core.CardPadding
+import com.koineos.app.ui.components.core.RegularCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
+import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
 
@@ -32,30 +40,55 @@ fun SelectLemmaExerciseContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(Dimensions.spacingXLarge)
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
             text = exerciseState.instructions,
-            style = Typography.titleMedium,
+            style = Typography.titleLarge.copy(
+                fontWeight = FontWeight.Bold
+            ),
             textAlign = TextAlign.Start,
-            color = Colors.OnSurface
+            color = Colors.OnSurface,
+            modifier = Modifier.fillMaxWidth()
         )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
+                verticalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
+                contentPadding = PaddingValues(vertical = Dimensions.paddingMedium),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                items(exerciseState.options) { option ->
+                    val isSelected = option.display == exerciseState.selectedAnswer
 
-        Text(
-            text = exerciseState.transliteration,
-            style = Typography.displayMedium,
-            textAlign = TextAlign.Center,
-            color = Colors.Primary
-        )
-
-        OptionGrid(
-            options = exerciseState.options.map { it.display },
-            selectedOption = exerciseState.selectedAnswer,
-            onOptionSelected = onAnswerSelected,
-            showKoineFont = true
-        )
+                    RegularCard(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { onAnswerSelected(option.display) },
+                        contentPadding = CardPadding.Large,
+                        backgroundColor = if (isSelected) Colors.Primary else Colors.RegularCardBackground,
+                    ) {
+                        Text(
+                            text = option.display,
+                            style = Typography.headlineMedium.copy(
+                                fontFamily = KoineFont,
+                                fontWeight = FontWeight.Bold
+                            ),
+                            color = if (isSelected) Colors.OnPrimary else Colors.OnSurface,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = Dimensions.paddingMedium)
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 

@@ -30,13 +30,13 @@ fun MainNavigationGraph(
         // Learn section graph
         learnGraph(navController)
 
+        // Practice section graph
+        practiceGraph(navController)
+
         // Alphabet section graph
         alphabetGraph(navController)
 
         // Read section graph
         readGraph(navController)
-
-        // Practice graph - not associated with a bottom tab, accessed from other sections
-        practiceGraph(navController)
     }
 }

@@ -20,11 +20,6 @@ sealed class LearnDestination(val route: String) {
     data object Vocabulary : LearnDestination("vocabulary")
 
     /**
-     * Practice screen
-     */
-    data object Practice : LearnDestination("practice")
-
-    /**
      * Handbook screen
      */
     data object Handbook : LearnDestination("handbook")

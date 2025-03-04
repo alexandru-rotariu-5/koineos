@@ -43,7 +43,6 @@ fun PracticeTopBar(
                     start = Dimensions.paddingXLarge,
                     end = Dimensions.paddingMedium,
                     top = Dimensions.paddingMedium,
-                    bottom = Dimensions.paddingMedium
                 ),
             verticalAlignment = Alignment.CenterVertically
         ) {

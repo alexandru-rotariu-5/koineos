@@ -17,6 +17,7 @@ import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.navigation.alphabet.AlphabetDestination
 import com.koineos.app.ui.navigation.home.HomeDestination
 import com.koineos.app.ui.navigation.learn.LearnDestination
+import com.koineos.app.ui.navigation.practice.PracticeDestination
 import com.koineos.app.ui.navigation.read.ReadDestination
 import com.koineos.app.ui.theme.Colors
 
@@ -36,6 +37,7 @@ fun TransparentTopBar(
     when (navBackStackEntry?.destination?.route) {
         HomeDestination.HomeScreen.route,
         LearnDestination.LearnHome.route,
+        PracticeDestination.PracticeHome.route,
         AlphabetDestination.AlphabetHome.route,
         ReadDestination.ReadHome.route -> {
             topBarState.value = true
@@ -60,6 +62,7 @@ fun TransparentTopBar(
                     showLogo = currentDestination?.route == HomeDestination.HomeScreen.route,
                     title = when (currentDestination?.route) {
                         LearnDestination.LearnHome.route -> "Learn"
+                        PracticeDestination.PracticeHome.route -> "Practice"
                         AlphabetDestination.AlphabetHome.route -> "Alphabet"
                         ReadDestination.ReadHome.route -> "Read"
                         else -> null

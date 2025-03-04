@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,7 +31,7 @@ import com.koineos.app.presentation.model.practice.ActionButtonUiState
 import com.koineos.app.presentation.model.practice.FeedbackUiState
 import com.koineos.app.presentation.model.practice.PracticeScreenUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
-import com.koineos.app.presentation.viewmodel.BasePracticeViewModel
+import com.koineos.app.presentation.viewmodel.BasePracticeSessionViewModel
 import com.koineos.app.ui.components.core.RegularButton
 import com.koineos.app.ui.components.practice.FeedbackPanel
 import com.koineos.app.ui.components.practice.PracticeActionButton
@@ -43,15 +42,15 @@ import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
 
 /**
- * Main practice screen that orchestrates the practice flow.
+ * Main practice session screen that orchestrates the practice flow.
  *
  * @param viewModel The ViewModel to use
  * @param onNavigateToResults Navigation callback for the results screen
  * @param onClose Callback when the practice session is closed
  */
 @Composable
-fun PracticeScreen(
-    viewModel: BasePracticeViewModel,
+fun PracticeSessionScreen(
+    viewModel: BasePracticeSessionViewModel,
     onNavigateToResults: (String) -> Unit = {},
     onClose: () -> Unit = {}
 ) {
@@ -70,7 +69,8 @@ fun PracticeScreen(
                     onClose = onClose
                 )
             }
-        }
+        },
+        containerColor = Colors.Surface
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -83,11 +83,13 @@ fun PracticeScreen(
                     message = (uiState as PracticeScreenUiState.Error).message,
                     onRetry = (uiState as PracticeScreenUiState.Error).retry
                 )
+
                 is PracticeScreenUiState.Loaded -> PracticeContentState(
                     state = uiState as PracticeScreenUiState.Loaded,
                     onAnswerSelected = { answer -> viewModel.onAnswerProvided(answer) },
                     onActionButtonClick = { viewModel.onActionButtonClick() }
                 )
+
                 is PracticeScreenUiState.Completed -> PracticeCompletedState(
                     state = uiState as PracticeScreenUiState.Completed,
                     onDone = onClose
@@ -254,7 +256,7 @@ private fun PracticeCompletedState(
 @Composable
 private fun PracticeScreenLoadingPreview() {
     KoineosTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
+        Surface(color = Colors.Surface) {
             Scaffold {
                 Box(
                     modifier = Modifier
@@ -272,7 +274,7 @@ private fun PracticeScreenLoadingPreview() {
 @Composable
 private fun PracticeScreenErrorPreview() {
     KoineosTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
+        Surface(color = Colors.Surface) {
             Scaffold {
                 Box(
                     modifier = Modifier
@@ -293,7 +295,7 @@ private fun PracticeScreenErrorPreview() {
 @Composable
 private fun PracticeContentStatePreview() {
     KoineosTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
+        Surface(color = Colors.Surface) {
             Scaffold(
                 topBar = {
                     PracticeTopBar(
@@ -339,7 +341,7 @@ private fun PracticeContentStatePreview() {
 @Composable
 private fun PracticeContentWithFeedbackPreview() {
     KoineosTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
+        Surface(color = Colors.Surface) {
             Scaffold(
                 topBar = {
                     PracticeTopBar(
@@ -393,7 +395,7 @@ private fun PracticeContentWithFeedbackPreview() {
 @Composable
 private fun PracticeCompletedStatePreview() {
     KoineosTheme {
-        Surface(color = MaterialTheme.colorScheme.background) {
+        Surface(color = Colors.Surface) {
             Scaffold {
                 Box(
                     modifier = Modifier

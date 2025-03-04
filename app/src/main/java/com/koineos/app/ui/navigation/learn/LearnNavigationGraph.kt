@@ -34,7 +34,6 @@ fun NavGraphBuilder.learnGraph(
                 coursesProgress = 0f,
                 onNavigateToCourses = { navController.navigate(LearnDestination.Courses.route) },
                 onNavigateToVocabulary = { navController.navigate(LearnDestination.Vocabulary.route) },
-                onNavigateToPractice = { navController.navigate(LearnDestination.Practice.route) },
                 onNavigateToHandbook = { navController.navigate(LearnDestination.Handbook.route) }
             )
         }
@@ -51,13 +50,6 @@ fun NavGraphBuilder.learnGraph(
             route = LearnDestination.Vocabulary.route,
             enterTransition = enterTransition,
             exitTransition = exitTransition
-        ) {}
-
-        // Practice screen
-        composable(
-            route = LearnDestination.Practice.route,
-            enterTransition = enterTransition,
-            exitTransition = exitTransition,
         ) {}
 
         // Handbook screen

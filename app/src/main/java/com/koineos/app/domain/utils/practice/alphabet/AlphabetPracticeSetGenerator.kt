@@ -24,6 +24,7 @@ class AlphabetPracticeSetGenerator @Inject constructor(
 ) : PracticeSetGenerator {
 
     override suspend fun generatePracticeSet(configuration: PracticeSetConfiguration): PracticeSet {
+
         // Validate that the configuration is for alphabet practice
         if (configuration.focusArea != PracticeFocusArea.ALPHABET) {
             throw IllegalArgumentException("This generator can only create alphabet practice sets")

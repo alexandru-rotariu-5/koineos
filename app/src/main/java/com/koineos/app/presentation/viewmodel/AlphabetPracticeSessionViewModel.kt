@@ -1,11 +1,10 @@
-package com.koineos.app.presentation.viewmodel.practice
+package com.koineos.app.presentation.viewmodel
 
 import com.koineos.app.domain.model.practice.Exercise
 import com.koineos.app.domain.usecase.CompletePracticeSetUseCase
 import com.koineos.app.domain.usecase.ValidateExerciseAnswerUseCase
 import com.koineos.app.domain.usecase.alphabet.GenerateAlphabetPracticeSetUseCase
 import com.koineos.app.presentation.mapper.ExerciseStateMapper
-import com.koineos.app.presentation.viewmodel.BasePracticeViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -14,16 +13,20 @@ import javax.inject.Inject
  * Handles alphabet-specific practice generation and behavior.
  */
 @HiltViewModel
-class AlphabetPracticeViewModel @Inject constructor(
+class AlphabetPracticeSessionViewModel @Inject constructor(
     private val generateAlphabetPracticeSetUseCase: GenerateAlphabetPracticeSetUseCase,
     validateExerciseAnswerUseCase: ValidateExerciseAnswerUseCase,
     completePracticeSetUseCase: CompletePracticeSetUseCase,
     exerciseStateMapper: ExerciseStateMapper
-) : BasePracticeViewModel(
+) : BasePracticeSessionViewModel(
     validateExerciseAnswerUseCase,
     completePracticeSetUseCase,
     exerciseStateMapper
 ) {
+
+    init {
+        initialize()
+    }
 
     /**
      * Generates an alphabet-specific practice set.

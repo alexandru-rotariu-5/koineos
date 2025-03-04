@@ -25,7 +25,8 @@ class AlphabetExerciseGenerator @Inject constructor(
 
     companion object {
         // Number of options to show in multiple choice exercises
-        private const val DEFAULT_OPTION_COUNT = 4
+        private const val DEFAULT_LEMMA_OPTION_COUNT = 4
+        private const val DEFAULT_TRANSLITERATION_OPTION_COUNT = 3
     }
 
     override suspend fun generateExercise(exerciseType: ExerciseType, content: Letter): Exercise? {
@@ -76,7 +77,7 @@ class AlphabetExerciseGenerator @Inject constructor(
         // Get incorrect options for the multiple choice
         val incorrectOptions = letterProvider.getIncorrectTransliterationOptions(
             letter.transliteration,
-            DEFAULT_OPTION_COUNT - 1
+            DEFAULT_TRANSLITERATION_OPTION_COUNT - 1
         )
 
         // Combine correct and incorrect options and shuffle
@@ -97,7 +98,7 @@ class AlphabetExerciseGenerator @Inject constructor(
         // Get incorrect options for the multiple choice
         val incorrectOptions = letterProvider.getIncorrectLetterOptions(
             letter,
-            DEFAULT_OPTION_COUNT - 1
+            DEFAULT_LEMMA_OPTION_COUNT - 1
         )
 
         // Combine correct and incorrect options and shuffle

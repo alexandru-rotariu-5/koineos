@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
  * Base abstract ViewModel for practice features that handles the common practice flow.
  * Specific practice types should extend this class and implement the abstract methods.
  */
-abstract class BasePracticeViewModel(
+abstract class BasePracticeSessionViewModel(
     private val validateExerciseAnswerUseCase: ValidateExerciseAnswerUseCase,
     private val completePracticeSetUseCase: CompletePracticeSetUseCase,
     private val exerciseStateMapper: ExerciseStateMapper
@@ -37,10 +37,9 @@ abstract class BasePracticeViewModel(
     private val _uiState = MutableStateFlow<PracticeScreenUiState>(PracticeScreenUiState.Loading)
     val uiState: StateFlow<PracticeScreenUiState> = _uiState.asStateFlow()
 
-    // Jobs
-    protected var practiceGenerationJob: Job? = null
+    private var practiceGenerationJob: Job? = null
 
-    init {
+    fun initialize() {
         startPracticeSession()
     }
 
@@ -49,7 +48,7 @@ abstract class BasePracticeViewModel(
      * This is the main entry point for initializing a practice session.
      */
     private fun startPracticeSession() {
-        _uiState.value = PracticeScreenUiState.Loading
+        _uiState.update { PracticeScreenUiState.Loading }
         startTimeMs = System.currentTimeMillis()
 
         practiceGenerationJob?.cancel()

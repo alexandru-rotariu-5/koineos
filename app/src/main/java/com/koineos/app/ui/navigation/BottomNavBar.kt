@@ -27,6 +27,7 @@ import com.koineos.app.ui.components.core.IconComponent
 import com.koineos.app.ui.navigation.alphabet.AlphabetDestination
 import com.koineos.app.ui.navigation.home.HomeDestination
 import com.koineos.app.ui.navigation.learn.LearnDestination
+import com.koineos.app.ui.navigation.practice.PracticeDestination
 import com.koineos.app.ui.navigation.read.ReadDestination
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.utils.AndroidStringProvider
@@ -46,6 +47,12 @@ sealed class BottomNavItem(
         rootDestination = RootDestination.LearnRoot,
         icon = AppIcon.Learn,
         labelResId = R.string.bottom_nav_bar_learn
+    )
+
+    data object Practice : BottomNavItem(
+        rootDestination = RootDestination.PracticeRoot,
+        icon = AppIcon.Practice,
+        labelResId = R.string.bottom_nav_bar_practice
     )
 
     data object Alphabet : BottomNavItem(
@@ -74,6 +81,7 @@ fun BottomNavBar(
     when (navBackStackEntry?.destination?.route) {
         HomeDestination.HomeScreen.route,
         LearnDestination.LearnHome.route,
+        PracticeDestination.PracticeHome.route,
         AlphabetDestination.AlphabetHome.route,
         ReadDestination.ReadHome.route -> {
             bottomBarState.value = true
@@ -87,6 +95,7 @@ fun BottomNavBar(
     val items = listOf(
         BottomNavItem.Home,
         BottomNavItem.Learn,
+        BottomNavItem.Practice,
         BottomNavItem.Alphabet,
         BottomNavItem.Read
     )
