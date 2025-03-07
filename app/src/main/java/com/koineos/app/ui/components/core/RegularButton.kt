@@ -25,6 +25,7 @@ import com.koineos.app.ui.theme.MainFont
  * @param modifier The modifier to be applied to the button.
  * @param onClick The action to perform when the button is clicked.
  * @param enabled Whether the button is enabled or disabled.
+ * @param colors The button colors.
  * @param content The content of the button.
  */
 @Composable
@@ -32,6 +33,7 @@ fun RegularButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     enabled: Boolean = true,
+    colors: RegularButtonColors = RegularButtonColors(),
     content: @Composable RowScope.() -> Unit
 ) {
     Button(
@@ -39,10 +41,10 @@ fun RegularButton(
         modifier = modifier.defaultMinSize(minHeight = 48.dp),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
-            containerColor = Colors.Primary,
-            contentColor = Colors.OnPrimary,
-            disabledContainerColor = Colors.Primary.copy(alpha = 0.12f),
-            disabledContentColor = Colors.OnPrimary.copy(alpha = 0.38f)
+            containerColor = colors.containerColor,
+            contentColor = colors.contentColor,
+            disabledContainerColor = colors.disabledContainerColor,
+            disabledContentColor = colors.disabledContentColor
         ),
         shape = RoundedCornerShape(size = 16.dp),
         contentPadding = PaddingValues(
@@ -61,12 +63,14 @@ fun RegularButton(
     onClick: () -> Unit,
     text: String,
     modifier: Modifier = Modifier,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    colors: RegularButtonColors = RegularButtonColors()
 ) {
     RegularButton(
         onClick = onClick,
         modifier = modifier,
-        enabled = enabled
+        enabled = enabled,
+        colors = colors
     ) {
         Text(
             text = text,

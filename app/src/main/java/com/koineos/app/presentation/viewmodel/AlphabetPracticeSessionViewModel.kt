@@ -6,6 +6,7 @@ import com.koineos.app.domain.usecase.CompletePracticeSetUseCase
 import com.koineos.app.domain.usecase.ValidateExerciseAnswerUseCase
 import com.koineos.app.domain.usecase.alphabet.GenerateAlphabetPracticeSetUseCase
 import com.koineos.app.presentation.mapper.ExerciseStateMapper
+import com.koineos.app.presentation.model.practice.ActionButtonColorState
 import com.koineos.app.presentation.model.practice.ActionButtonFactory
 import com.koineos.app.presentation.model.practice.FeedbackUiState
 import com.koineos.app.presentation.model.practice.PracticeScreenUiState
@@ -127,7 +128,7 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
                             FeedbackUiState.correct("Great job matching all pairs!")
                         else null,
                         actionButtonState = if (allPairsMatched)
-                            ActionButtonFactory.continue_(state.isLastExercise)
+                            ActionButtonFactory.continue_(state.isLastExercise, ActionButtonColorState.SUCCESS)
                         else ActionButtonFactory.check(false)
                     )
                 } else state
@@ -152,7 +153,7 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
                     state.copy(
                         flowState = PracticeFlowState.FEEDBACK,
                         feedback = FeedbackUiState.incorrectMatch(),
-                        actionButtonState = ActionButtonFactory.gotIt()
+                        actionButtonState = ActionButtonFactory.gotIt(ActionButtonColorState.ERROR)
                     )
                 } else state
             }

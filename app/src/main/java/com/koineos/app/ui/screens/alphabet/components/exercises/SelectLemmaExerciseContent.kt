@@ -41,51 +41,57 @@ fun SelectLemmaExerciseContent(
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Text(
-            text = exerciseState.instructions,
-            style = Typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold
-            ),
-            textAlign = TextAlign.Start,
-            color = Colors.OnSurface,
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
+            verticalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
+            contentPadding = PaddingValues(vertical = Dimensions.paddingMedium),
             modifier = Modifier.fillMaxWidth()
-        )
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
         ) {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
-                verticalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
-                contentPadding = PaddingValues(vertical = Dimensions.paddingMedium),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                items(exerciseState.options) { option ->
-                    val isSelected = option.display == exerciseState.selectedAnswer
+            items(exerciseState.options) { option ->
+                val isSelected = option.display == exerciseState.selectedAnswer
 
-                    RegularCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = { onAnswerSelected(option.display) },
-                        contentPadding = CardPadding.Large,
-                        backgroundColor = if (isSelected) Colors.Primary else Colors.RegularCardBackground,
-                    ) {
-                        Text(
-                            text = option.display,
-                            style = Typography.displayLarge.copy(
-                                fontFamily = KoineFont,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            color = if (isSelected) Colors.OnPrimary else Colors.OnSurface,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = Dimensions.paddingMedium)
-                        )
+                val backgroundColor = when {
+                    isSelected && exerciseState.isChecked -> {
+                        if (exerciseState.isCorrect == true) Colors.Success else Colors.Error
                     }
+                    isSelected -> Colors.Primary
+                    else -> Colors.RegularCardBackground
+                }
+
+                val textColor = when {
+                    isSelected && exerciseState.isChecked -> {
+                        if (exerciseState.isCorrect == true) Colors.OnSuccess else Colors.OnError
+                    }
+                    isSelected -> Colors.OnPrimary
+                    else -> Colors.OnSurface
+                }
+
+                RegularCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        if (!exerciseState.isChecked) {
+                            onAnswerSelected(option.display)
+                        }
+                    },
+                    contentPadding = CardPadding.Large,
+                    backgroundColor = backgroundColor,
+                ) {
+                    Text(
+                        text = option.display,
+                        style = Typography.displayLarge.copy(
+                            fontFamily = KoineFont,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = textColor,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = Dimensions.paddingMedium)
+                    )
                 }
             }
         }

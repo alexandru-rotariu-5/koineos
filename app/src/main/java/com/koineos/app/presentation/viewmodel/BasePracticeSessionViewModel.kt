@@ -7,9 +7,12 @@ import com.koineos.app.domain.model.practice.PracticeFlowState
 import com.koineos.app.domain.usecase.CompletePracticeSetUseCase
 import com.koineos.app.domain.usecase.ValidateExerciseAnswerUseCase
 import com.koineos.app.presentation.mapper.ExerciseStateMapper
+import com.koineos.app.presentation.model.practice.ActionButtonColorState
 import com.koineos.app.presentation.model.practice.ActionButtonFactory
 import com.koineos.app.presentation.model.practice.ActionButtonType
 import com.koineos.app.presentation.model.practice.PracticeScreenUiState
+import com.koineos.app.presentation.model.practice.alphabet.SelectLemmaExerciseUiState
+import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -138,16 +141,38 @@ abstract class BasePracticeSessionViewModel(
             put(currentExerciseId, feedback.isCorrect)
         }
 
+        val updatedExercises = currentState.exercises.toMutableList()
+
+        when (val currentExercise = updatedExercises[currentExerciseIndex]) {
+            is SelectLemmaExerciseUiState -> {
+                updatedExercises[currentExerciseIndex] = currentExercise.copy(
+                    isChecked = true,
+                    isCorrect = feedback.isCorrect
+                )
+            }
+            is SelectTransliterationExerciseUiState -> {
+                updatedExercises[currentExerciseIndex] = currentExercise.copy(
+                    isChecked = true,
+                    isCorrect = feedback.isCorrect
+                )
+            }
+        }
+
         _uiState.update { state ->
             if (state is PracticeScreenUiState.Loaded) {
                 state.copy(
+                    exercises = updatedExercises,
                     exerciseResults = newResults,
                     flowState = PracticeFlowState.FEEDBACK,
                     feedback = feedbackUiState,
                     actionButtonState = if (feedbackUiState.isPartialFeedback) {
-                        ActionButtonFactory.gotIt()
+                        ActionButtonFactory.gotIt(ActionButtonColorState.ERROR)
                     } else {
-                        ActionButtonFactory.continue_(state.isLastExercise)
+                        val colorState = if (feedback.isCorrect)
+                            ActionButtonColorState.SUCCESS
+                        else
+                            ActionButtonColorState.ERROR
+                        ActionButtonFactory.continue_(state.isLastExercise, colorState)
                     }
                 )
             } else state

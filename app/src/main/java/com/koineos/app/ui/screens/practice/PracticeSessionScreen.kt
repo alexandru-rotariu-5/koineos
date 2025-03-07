@@ -19,10 +19,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.koineos.app.domain.model.practice.PracticeFlowState
 import com.koineos.app.domain.utils.practice.ExerciseContentFactory
 import com.koineos.app.presentation.model.practice.ActionButtonFactory
@@ -165,40 +172,74 @@ private fun PracticeContentState(
 ) {
     val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-            .padding(horizontal = Dimensions.paddingLarge),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Box(
+    val buttonHeightPx = remember { mutableIntStateOf(0) }
+    val buttonDensity = LocalDensity.current
+
+    // Main container
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Main screen content
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(vertical = Dimensions.paddingLarge),
-            contentAlignment = Alignment.Center
+                .fillMaxSize()
+                .verticalScroll(scrollState)
+                .padding(horizontal = Dimensions.paddingLarge),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            ExerciseContentFactory.CreateExerciseContent(
-                exerciseState = state.currentExercise,
-                onAnswerSelected = onAnswerSelected,
+            // Instructions
+            Text(
+                text = state.currentExercise.instructions,
+                style = Typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                textAlign = TextAlign.Start,
+                color = Colors.OnSurface,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            // Exercise content
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(vertical = Dimensions.paddingLarge),
+                contentAlignment = Alignment.Center
+            ) {
+                ExerciseContentFactory.CreateExerciseContent(
+                    exerciseState = state.currentExercise,
+                    onAnswerSelected = onAnswerSelected,
+                )
+            }
+
+            // Action button - measure its height
+            Spacer(modifier = Modifier.height(Dimensions.spacingLarge))
+
+            PracticeActionButton(
+                buttonState = state.actionButtonState,
+                onClick = onActionButtonClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = Dimensions.paddingLarge)
+                    .onGloballyPositioned { coordinates ->
+                        buttonHeightPx.intValue = coordinates.size.height
+                    }
+                    .zIndex(1f)
             )
         }
 
+        // Feedback panel overlay
         FeedbackPanel(
             feedback = state.feedback,
             isVisible = state.flowState == PracticeFlowState.FEEDBACK,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.spacingLarge))
-
-        PracticeActionButton(
-            buttonState = state.actionButtonState,
-            onClick = onActionButtonClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = Dimensions.paddingLarge)
+                .align(Alignment.BottomCenter)
+                .padding(horizontal = Dimensions.paddingLarge)
+                .padding(
+                    bottom = with(buttonDensity) {
+                        (buttonHeightPx.intValue / density).dp + Dimensions.paddingLarge + Dimensions.spacingLarge
+                    }
+                )
+                .zIndex(0f)
         )
     }
 }

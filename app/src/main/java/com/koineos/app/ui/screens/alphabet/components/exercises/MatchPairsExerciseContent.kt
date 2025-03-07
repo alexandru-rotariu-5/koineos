@@ -54,122 +54,107 @@ fun MatchPairsExerciseContent(
     val letterOptions = remember { exerciseState.letterOptions }
     val transliterationOptions = remember { exerciseState.transliterationOptions }
 
-    Column(
+    Row(
         modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
     ) {
-        Text(
-            text = exerciseState.instructions,
-            style = Typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold
-            ),
-            textAlign = TextAlign.Start,
-            color = Colors.OnSurface,
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
+        // Left column - Letter options
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
         ) {
-            // Left column - Letter options
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
-            ) {
-                letterOptions.forEach { option ->
-                    val isMatched = option.id in exerciseState.matchedPairs.keys
-                    val isSelected = option.id == selectedLetterOption?.id
+            letterOptions.forEach { option ->
+                val isMatched = option.id in exerciseState.matchedPairs.keys
+                val isSelected = option.id == selectedLetterOption?.id
 
-                    RegularCard(
-                        onClick = {
-                            if (!isMatched) {
-                                selectedLetterOption = option
+                RegularCard(
+                    onClick = {
+                        if (!isMatched) {
+                            selectedLetterOption = option
 
-                                // If there's already a transliteration selected, try to match
-                                if (selectedTransliteration != null) {
-                                    onMatchCreated(option.id, selectedTransliteration!!)
+                            // If there's already a transliteration selected, try to match
+                            if (selectedTransliteration != null) {
+                                onMatchCreated(option.id, selectedTransliteration!!)
 
-                                    // Reset selections after attempting a match
-                                    selectedLetterOption = null
-                                    selectedTransliteration = null
-                                }
+                                // Reset selections after attempting a match
+                                selectedLetterOption = null
+                                selectedTransliteration = null
                             }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = CardPadding.Large,
-                        backgroundColor = when {
-                            isMatched -> Colors.PrimaryContainer
-                            isSelected -> Colors.Primary
-                            else -> Colors.RegularCardBackground
                         }
-                    ) {
-                        Text(
-                            text = option.display,
-                            style = Typography.headlineMedium.copy(
-                                fontFamily = KoineFont,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            textAlign = TextAlign.Center,
-                            color = when {
-                                isMatched -> Colors.Primary
-                                isSelected -> Colors.OnPrimary
-                                else -> Colors.OnSurface
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = CardPadding.Large,
+                    backgroundColor = when {
+                        isMatched -> Colors.PrimaryContainer
+                        isSelected -> Colors.Primary
+                        else -> Colors.RegularCardBackground
                     }
+                ) {
+                    Text(
+                        text = option.display,
+                        style = Typography.headlineMedium.copy(
+                            fontFamily = KoineFont,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        textAlign = TextAlign.Center,
+                        color = when {
+                            isMatched -> Colors.Primary
+                            isSelected -> Colors.OnPrimary
+                            else -> Colors.OnSurface
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
+        }
 
-            // Right column - Transliteration options
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
-            ) {
-                transliterationOptions.forEach { transliteration ->
-                    val isMatched = transliteration in exerciseState.matchedPairs.values
-                    val isSelected = transliteration == selectedTransliteration
+        // Right column - Transliteration options
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
+        ) {
+            transliterationOptions.forEach { transliteration ->
+                val isMatched = transliteration in exerciseState.matchedPairs.values
+                val isSelected = transliteration == selectedTransliteration
 
-                    RegularCard(
-                        onClick = {
-                            if (!isMatched) {
-                                selectedTransliteration = transliteration
+                RegularCard(
+                    onClick = {
+                        if (!isMatched) {
+                            selectedTransliteration = transliteration
 
-                                // If there's already a letter selected, try to match
-                                if (selectedLetterOption != null) {
-                                    onMatchCreated(selectedLetterOption!!.id, transliteration)
+                            // If there's already a letter selected, try to match
+                            if (selectedLetterOption != null) {
+                                onMatchCreated(selectedLetterOption!!.id, transliteration)
 
-                                    // Reset selections after attempting a match
-                                    selectedLetterOption = null
-                                    selectedTransliteration = null
-                                }
+                                // Reset selections after attempting a match
+                                selectedLetterOption = null
+                                selectedTransliteration = null
                             }
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        contentPadding = CardPadding.Large,
-                        backgroundColor = when {
-                            isMatched -> Colors.PrimaryContainer
-                            isSelected -> Colors.Primary
-                            else -> Colors.RegularCardBackground
                         }
-                    ) {
-                        Text(
-                            text = transliteration,
-                            style = Typography.headlineMedium.copy(
-                                fontFamily = KoineFont,
-                                fontWeight = FontWeight.Bold
-                            ),
-                            textAlign = TextAlign.Center,
-                            color = when {
-                                isMatched -> Colors.Primary
-                                isSelected -> Colors.OnPrimary
-                                else -> Colors.OnSurface
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = CardPadding.Large,
+                    backgroundColor = when {
+                        isMatched -> Colors.PrimaryContainer
+                        isSelected -> Colors.Primary
+                        else -> Colors.RegularCardBackground
                     }
+                ) {
+                    Text(
+                        text = transliteration,
+                        style = Typography.headlineMedium.copy(
+                            fontFamily = KoineFont,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        textAlign = TextAlign.Center,
+                        color = when {
+                            isMatched -> Colors.Primary
+                            isSelected -> Colors.OnPrimary
+                            else -> Colors.OnSurface
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }

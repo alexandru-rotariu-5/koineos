@@ -41,63 +41,68 @@ fun SelectTransliterationExerciseContent(
 ) {
     Column(
         modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = exerciseState.instructions,
-            style = Typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold
+            text = exerciseState.letterDisplay,
+            style = Typography.displayLarge.copy(
+                fontFamily = KoineFont,
+                fontWeight = FontWeight.Bold,
+                fontSize = 120.sp
             ),
-            textAlign = TextAlign.Start,
-            color = Colors.OnSurface,
-            modifier = Modifier.fillMaxWidth()
+            textAlign = TextAlign.Center,
+            color = Colors.Primary
         )
 
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Spacer(modifier = Modifier.height(Dimensions.spacingLargest))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid)
         ) {
-            Text(
-                text = exerciseState.letterDisplay,
-                style = Typography.displayLarge.copy(
-                    fontFamily = KoineFont,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 120.sp
-                ),
-                textAlign = TextAlign.Center,
-                color = Colors.Primary
-            )
+            val displayOptions = exerciseState.options
 
-            Spacer(modifier = Modifier.height(Dimensions.spacingLargest))
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid)
-            ) {
-                val displayOptions = exerciseState.options
+            displayOptions.forEach { option ->
+                val isSelected = option == exerciseState.selectedAnswer
 
-                displayOptions.forEach { option ->
-                    val isSelected = option == exerciseState.selectedAnswer
-
-                    RegularCard(
-                        modifier = Modifier.weight(1f),
-                        onClick = { onAnswerSelected(option) },
-                        contentPadding = CardPadding.Medium,
-                        backgroundColor = if (isSelected) Colors.Primary else Colors.RegularCardBackground,
-                    ) {
-                        Text(
-                            text = option,
-                            style = Typography.headlineMedium.copy(
-                                fontWeight = FontWeight.Bold
-                            ),
-                            color = if (isSelected) Colors.OnPrimary else Colors.OnSurface,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = Dimensions.paddingMedium)
-                        )
+                val backgroundColor = when {
+                    isSelected && exerciseState.isChecked -> {
+                        if (exerciseState.isCorrect == true) Colors.Success else Colors.Error
                     }
+                    isSelected -> Colors.Primary
+                    else -> Colors.RegularCardBackground
+                }
+
+                val textColor = when {
+                    isSelected && exerciseState.isChecked -> {
+                        if (exerciseState.isCorrect == true) Colors.OnSuccess else Colors.OnError
+                    }
+                    isSelected -> Colors.OnPrimary
+                    else -> Colors.OnSurface
+                }
+
+                RegularCard(
+                    modifier = Modifier.weight(1f),
+                    onClick = {
+                        if (!exerciseState.isChecked) {
+                            onAnswerSelected(option)
+                        }
+                    },
+                    contentPadding = CardPadding.Medium,
+                    backgroundColor = backgroundColor,
+                ) {
+                    Text(
+                        text = option,
+                        style = Typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        color = textColor,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = Dimensions.paddingMedium)
+                    )
                 }
             }
         }

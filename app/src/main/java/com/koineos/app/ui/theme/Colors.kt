@@ -35,6 +35,11 @@ object Colors {
     val ErrorContainer = Color(0xFFFCD8D6)
     val OnErrorContainer = Color(0xFF370B04)
 
+    val Success = Color(0xFF43A047)
+    val OnSuccess = Color(0xFFFFFFFF)
+    val SuccessContainer = Color(0xFFDCEDC8)
+    val OnSuccessContainer = Color(0xFF1B5E20)
+
     val Outline = Color(0xFFE0E0E0)
 
     val Transparent = Color(0x00000000)

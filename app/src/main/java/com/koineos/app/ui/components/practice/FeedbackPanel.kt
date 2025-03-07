@@ -55,13 +55,13 @@ fun FeedbackPanel(
     ) {
         if (feedback != null) {
             val backgroundColor = if (feedback.isCorrect) {
-                Colors.SecondaryContainer
+                Colors.SuccessContainer
             } else {
                 Colors.ErrorContainer
             }
 
             val textColor = if (feedback.isCorrect) {
-                Colors.OnSecondaryContainer
+                Colors.OnSuccessContainer
             } else {
                 Colors.OnErrorContainer
             }

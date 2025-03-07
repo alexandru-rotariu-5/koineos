@@ -10,7 +10,8 @@ package com.koineos.app.presentation.model.practice
 data class ActionButtonUiState(
     val text: String,
     val isEnabled: Boolean,
-    val type: ActionButtonType
+    val type: ActionButtonType,
+    val colorState: ActionButtonColorState = ActionButtonColorState.PRIMARY
 )
 
 /**
@@ -39,6 +40,26 @@ enum class ActionButtonType {
 }
 
 /**
+ * Color states for the primary action button.
+ */
+enum class ActionButtonColorState {
+    /**
+     * Default primary color.
+     */
+    PRIMARY,
+
+    /**
+     * Success color for correct answers.
+     */
+    SUCCESS,
+
+    /**
+     * Error color for incorrect answers.
+     */
+    ERROR
+}
+
+/**
  * Factory functions for creating standard button states.
  */
 object ActionButtonFactory {
@@ -52,34 +73,42 @@ object ActionButtonFactory {
         return ActionButtonUiState(
             text = "Check",
             isEnabled = hasAnswer,
-            type = ActionButtonType.CHECK
+            type = ActionButtonType.CHECK,
+            colorState = ActionButtonColorState.PRIMARY
         )
     }
 
     /**
-     * Creates a CONTINUE or FINISH button state.
+     * Creates a CONTINUE or FINISH button state with the specified color state.
      *
      * @param isLastExercise Whether this is the last exercise in the set.
+     * @param colorState The color state of the button.
      * @return An ActionButtonUiState for continuing to the next exercise.
      */
-    fun continue_(isLastExercise: Boolean): ActionButtonUiState {
+    fun continue_(
+        isLastExercise: Boolean,
+        colorState: ActionButtonColorState = ActionButtonColorState.PRIMARY
+    ): ActionButtonUiState {
         return ActionButtonUiState(
             text = if (isLastExercise) "Finish" else "Continue",
             isEnabled = true,
-            type = if (isLastExercise) ActionButtonType.FINISH else ActionButtonType.CONTINUE
+            type = if (isLastExercise) ActionButtonType.FINISH else ActionButtonType.CONTINUE,
+            colorState = colorState
         )
     }
 
     /**
-     * Creates a GOT IT button state.
+     * Creates a GOT IT button state with the specified color state.
      *
+     * @param colorState The color state of the button.
      * @return An ActionButtonUiState for acknowledging feedback.
      */
-    fun gotIt(): ActionButtonUiState {
+    fun gotIt(colorState: ActionButtonColorState = ActionButtonColorState.PRIMARY): ActionButtonUiState {
         return ActionButtonUiState(
             text = "Got It",
             isEnabled = true,
-            type = ActionButtonType.GOT_IT
+            type = ActionButtonType.GOT_IT,
+            colorState = colorState
         )
     }
 }

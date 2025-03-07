@@ -17,7 +17,9 @@ data class SelectLemmaExerciseUiState(
     override val instructions: String,
     val transliteration: String,
     val options: List<LetterOption>,
-    val selectedAnswer: String? = null
+    val selectedAnswer: String? = null,
+    val isChecked: Boolean = false,
+    val isCorrect: Boolean? = null
 ) : ExerciseUiState {
     override val type = ExerciseType.SELECT_LEMMA
     override val hasAnswer: Boolean get() = selectedAnswer != null
