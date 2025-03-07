@@ -1,9 +1,6 @@
 package com.koineos.app.ui.navigation
 
 import androidx.annotation.StringRes
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.NavigationBar
@@ -100,57 +97,59 @@ fun BottomNavBar(
         BottomNavItem.Read
     )
 
-    AnimatedVisibility(
-        visible = bottomBarState.value,
-        enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it }),
-        content = {
-            Column {
-                HorizontalDivider(thickness = 0.5.dp, color = Colors.Outline)
-                NavigationBar(containerColor = Colors.BottomNavBarBackground) {
-                    val currentDestination = navBackStackEntry?.destination
+//    AnimatedVisibility(
+//        visible = bottomBarState.value,
+//        enter = slideInVertically(initialOffsetY = { it }),
+//        exit = slideOutVertically(targetOffsetY = { it }),
+//        content = {
+    if (bottomBarState.value) {
+        Column {
+            HorizontalDivider(thickness = 0.5.dp, color = Colors.Outline)
+            NavigationBar(containerColor = Colors.BottomNavBarBackground) {
+                val currentDestination = navBackStackEntry?.destination
 
-                    items.forEach { item ->
-                        val isSelected = currentDestination?.hierarchy?.any {
-                            it.route == item.rootDestination.route
-                        } == true
+                items.forEach { item ->
+                    val isSelected = currentDestination?.hierarchy?.any {
+                        it.route == item.rootDestination.route
+                    } == true
 
-                        NavigationBarItem(
-                            icon = {
-                                IconComponent(
-                                    icon = item.icon,
-                                    contentDescription = stringProvider.getString(item.labelResId),
-                                    isSelected = isSelected,
-                                    tint = if (isSelected) Colors.BottomNavBarSelectedIconColor else Colors.BottomNavBarUnselectedIconColor
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = stringProvider.getString(item.labelResId),
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
-                            },
-                            selected = isSelected,
-                            colors = NavigationBarItemDefaults.colors(
-                                selectedIconColor = Colors.BottomNavBarSelectedIconColor,
-                                selectedTextColor = Colors.BottomNavBarSelectedTextColor,
-                                indicatorColor = Colors.BottomNavBarSelectedIndicatorColor,
-                                unselectedIconColor = Colors.BottomNavBarUnselectedIconColor,
-                                unselectedTextColor = Colors.BottomNavBarUnselectedTextColor
-                            ),
-                            onClick = {
-                                navController.navigate(item.rootDestination.route) {
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
+                    NavigationBarItem(
+                        icon = {
+                            IconComponent(
+                                icon = item.icon,
+                                contentDescription = stringProvider.getString(item.labelResId),
+                                isSelected = isSelected,
+                                tint = if (isSelected) Colors.BottomNavBarSelectedIconColor else Colors.BottomNavBarUnselectedIconColor
+                            )
+                        },
+                        label = {
+                            Text(
+                                text = stringProvider.getString(item.labelResId),
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
+                            )
+                        },
+                        selected = isSelected,
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = Colors.BottomNavBarSelectedIconColor,
+                            selectedTextColor = Colors.BottomNavBarSelectedTextColor,
+                            indicatorColor = Colors.BottomNavBarSelectedIndicatorColor,
+                            unselectedIconColor = Colors.BottomNavBarUnselectedIconColor,
+                            unselectedTextColor = Colors.BottomNavBarUnselectedTextColor
+                        ),
+                        onClick = {
+                            navController.navigate(item.rootDestination.route) {
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
                                 }
+                                launchSingleTop = true
+                                restoreState = true
                             }
-                        )
-                    }
+                        }
+                    )
                 }
             }
         }
-    )
+    }
+//        }
+//    )
 }

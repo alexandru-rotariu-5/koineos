@@ -34,7 +34,7 @@ abstract class BasePracticeSessionViewModel(
     private var domainExercises: List<Exercise> = emptyList()
 
     // Current state
-    private val _uiState = MutableStateFlow<PracticeScreenUiState>(PracticeScreenUiState.Loading)
+    protected val _uiState = MutableStateFlow<PracticeScreenUiState>(PracticeScreenUiState.Loading)
     val uiState: StateFlow<PracticeScreenUiState> = _uiState.asStateFlow()
 
     private var practiceGenerationJob: Job? = null
@@ -89,7 +89,7 @@ abstract class BasePracticeSessionViewModel(
      *
      * @param answer The user's answer
      */
-    fun onAnswerProvided(answer: Any) {
+    open fun onAnswerProvided(answer: Any) {
         val currentState = _uiState.value as? PracticeScreenUiState.Loaded ?: return
         val currentExerciseId = currentState.currentExercise.id
 
@@ -183,7 +183,7 @@ abstract class BasePracticeSessionViewModel(
     /**
      * Dismisses the current feedback, keeping the same exercise.
      */
-    private fun dismissFeedback() {
+    open fun dismissFeedback() {
         _uiState.update { state ->
             if (state is PracticeScreenUiState.Loaded) {
                 state.copy(

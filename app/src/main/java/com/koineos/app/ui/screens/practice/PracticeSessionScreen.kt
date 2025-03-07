@@ -181,7 +181,7 @@ private fun PracticeContentState(
         ) {
             ExerciseContentFactory.CreateExerciseContent(
                 exerciseState = state.currentExercise,
-                onAnswerSelected = onAnswerSelected
+                onAnswerSelected = onAnswerSelected,
             )
         }
 

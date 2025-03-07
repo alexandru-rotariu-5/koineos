@@ -21,7 +21,7 @@ data class SelectLemmaExercise(
 
     override val type = ExerciseType.SELECT_LEMMA
 
-    override val instructions: String = "Select the correct character for \"$transliteration\""
+    override val instructions: String = "Select the correct character for \"$transliteration\"."
 
     override fun validateAnswer(userAnswer: Any): Boolean {
         return if (userAnswer is String) {
@@ -40,7 +40,7 @@ data class SelectLemmaExercise(
             )
         } else {
             ExerciseFeedback.incorrect(
-                correctAnswer = "${correctLetter.uppercase} ${correctLetter.lowercase}",
+                correctAnswer = correctLetter.lowercase,
                 explanationText = "The transliteration '$transliteration' corresponds to ${correctLetter.name}"
             )
         }

@@ -7,9 +7,9 @@ import com.koineos.app.presentation.model.practice.ExerciseUiState
 import com.koineos.app.presentation.model.practice.alphabet.MatchPairsExerciseUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectLemmaExerciseUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
+import com.koineos.app.ui.screens.alphabet.components.exercises.MatchPairsExerciseContent
 import com.koineos.app.ui.screens.alphabet.components.exercises.SelectLemmaExerciseContent
 import com.koineos.app.ui.screens.alphabet.components.exercises.SelectTransliterationExerciseContent
-import com.koineos.app.ui.screens.practice.components.exercises.MatchPairsExerciseContent
 
 /**
  * Factory that creates the appropriate exercise content composable
@@ -57,10 +57,7 @@ object ExerciseContentFactory {
                     MatchPairsExerciseContent(
                         exerciseState = exerciseState,
                         onMatchCreated = { letterId, transliteration ->
-                            val newMatches = exerciseState.matchedPairs.toMutableMap().apply {
-                                this[letterId] = transliteration
-                            }
-                            onAnswerSelected(newMatches)
+                            onAnswerSelected(Pair(letterId, transliteration))
                         },
                         modifier = modifier
                     )

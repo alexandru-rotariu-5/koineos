@@ -63,7 +63,7 @@ class ExerciseStateMapper @Inject constructor() {
         exercise: SelectTransliterationExercise,
         currentAnswer: Any?
     ): SelectTransliterationExerciseUiState {
-        val letterDisplay = "${exercise.letter.uppercase} ${exercise.letter.lowercase}"
+        val letterDisplay = exercise.letter.lowercase
 
         return SelectTransliterationExerciseUiState(
             id = exercise.id,
@@ -90,7 +90,7 @@ class ExerciseStateMapper @Inject constructor() {
         val options = exercise.options.map { letter ->
             SelectLemmaExerciseUiState.LetterOption(
                 id = "${letter.uppercase}${letter.lowercase}",
-                display = "${letter.uppercase} ${letter.lowercase}"
+                display = letter.lowercase
             )
         }
 
@@ -118,7 +118,7 @@ class ExerciseStateMapper @Inject constructor() {
         val pairsToMatch = exercise.letterPairs.associate { pair ->
             val option = MatchPairsExerciseUiState.MatchOption(
                 id = pair.letter.id,
-                display = "${pair.letter.uppercase} ${pair.letter.lowercase}"
+                display = pair.letter.lowercase
             )
             option to pair.transliteration
         }

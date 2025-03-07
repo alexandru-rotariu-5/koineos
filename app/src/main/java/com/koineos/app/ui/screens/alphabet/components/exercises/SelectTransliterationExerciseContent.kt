@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
 import com.koineos.app.ui.components.core.CardPadding
 import com.koineos.app.ui.components.core.RegularCard
@@ -52,32 +53,23 @@ fun SelectTransliterationExerciseContent(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Spacer(modifier = Modifier.height(Dimensions.spacingXLarge))
-
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
+            verticalArrangement = Arrangement.Center
         ) {
-            RegularCard(
-                contentPadding = CardPadding.Large
-            ) {
-                Column(
-                    modifier = Modifier
-                        .padding(vertical = Dimensions.paddingLarge),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = exerciseState.letterDisplay,
-                        style = Typography.displayLarge.copy(
-                            fontFamily = KoineFont,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        textAlign = TextAlign.Center,
-                        color = Colors.Primary
-                    )
-                }
-            }
+            Text(
+                text = exerciseState.letterDisplay,
+                style = Typography.displayLarge.copy(
+                    fontFamily = KoineFont,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 120.sp
+                ),
+                textAlign = TextAlign.Center,
+                color = Colors.Primary
+            )
+
+            Spacer(modifier = Modifier.height(Dimensions.spacingLargest))
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -121,7 +113,7 @@ private fun SelectTransliterationExerciseContentPreview() {
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",
                     instructions = "What sound does this make?",
-                    letterDisplay = "Α α",
+                    letterDisplay = "α",
                     letterName = "alpha",
                     options = listOf("a", "b", "g"),
                     selectedAnswer = null
@@ -142,7 +134,7 @@ private fun SelectTransliterationExerciseWithSelectionPreview() {
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",
                     instructions = "What sound does this make?",
-                    letterDisplay = "Α α",
+                    letterDisplay = "α",
                     letterName = "alpha",
                     options = listOf("a", "b", "g"),
                     selectedAnswer = "a"

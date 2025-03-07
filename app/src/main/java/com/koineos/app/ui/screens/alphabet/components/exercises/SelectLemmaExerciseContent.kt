@@ -75,7 +75,7 @@ fun SelectLemmaExerciseContent(
                     ) {
                         Text(
                             text = option.display,
-                            style = Typography.headlineMedium.copy(
+                            style = Typography.displayLarge.copy(
                                 fontFamily = KoineFont,
                                 fontWeight = FontWeight.Bold
                             ),
@@ -103,10 +103,10 @@ private fun SelectLemmaExerciseContentPreview() {
                     instructions = "Select the correct character for \"b\"",
                     transliteration = "b",
                     options = listOf(
-                        SelectLemmaExerciseUiState.LetterOption(id = "alpha", display = "Α α"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "beta", display = "Β β"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "gamma", display = "Γ γ"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "Δ δ")
+                        SelectLemmaExerciseUiState.LetterOption(id = "alpha", display = "α"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "beta", display = "β"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "gamma", display = "γ"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "δ")
                     ),
                     selectedAnswer = null
                 ),
@@ -128,12 +128,12 @@ private fun SelectLemmaExerciseWithSelectionPreview() {
                     instructions = "Select the correct character for \"b\"",
                     transliteration = "b",
                     options = listOf(
-                        SelectLemmaExerciseUiState.LetterOption(id = "alpha", display = "Α α"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "beta", display = "Β β"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "gamma", display = "Γ γ"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "Δ δ")
+                        SelectLemmaExerciseUiState.LetterOption(id = "alpha", display = "α"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "beta", display = "β"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "gamma", display = "γ"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "δ")
                     ),
-                    selectedAnswer = "Β β"
+                    selectedAnswer = "β"
                 ),
                 onAnswerSelected = {},
                 modifier = Modifier.padding(Dimensions.paddingLarge)

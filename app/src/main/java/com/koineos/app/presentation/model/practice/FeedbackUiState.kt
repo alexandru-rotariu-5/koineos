@@ -52,7 +52,7 @@ data class FeedbackUiState(
          *
          * @return A FeedbackUiState for partial feedback.
          */
-        fun partialMatch(): FeedbackUiState {
+        fun incorrectMatch(): FeedbackUiState {
             return FeedbackUiState(
                 isCorrect = false,
                 message = "Give it another try",

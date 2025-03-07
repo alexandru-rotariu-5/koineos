@@ -17,7 +17,7 @@ data class MatchPairsExercise(
 
     override val type = ExerciseType.MATCH_PAIRS
 
-    override val instructions: String = "Tap the matching pairs"
+    override val instructions: String = "Tap the matching pairs."
 
     /**
      * For matching exercises, this validates whether a specific pair is matched correctly.
@@ -57,19 +57,6 @@ data class MatchPairsExercise(
     override fun getCorrectAnswerDisplay(): String {
         return letterPairs.joinToString(", ") { pair ->
             "${pair.letter.uppercase}${pair.letter.lowercase} → ${pair.transliteration}"
-        }
-    }
-
-    /**
-     * Validates whether all pairs have been correctly matched.
-     *
-     * @param userAnswers Map of letter strings to transliteration strings
-     * @return True if all pairs are correctly matched, false otherwise
-     */
-    fun validateAllMatches(userAnswers: Map<String, String>): Boolean {
-        return letterPairs.all { pair ->
-            val letterStr = pair.letter.lowercase
-            userAnswers[letterStr] == pair.transliteration
         }
     }
 }

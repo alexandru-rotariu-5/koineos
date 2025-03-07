@@ -21,7 +21,7 @@ data class MatchPairsExerciseUiState(
 ) : ExerciseUiState {
     override val type = ExerciseType.MATCH_PAIRS
     override val hasAnswer: Boolean
-        get() = matchedPairs.isNotEmpty() || selectedOption != null
+        get() = matchedPairs.isNotEmpty()
 
     /**
      * Whether all pairs have been matched.
@@ -33,13 +33,13 @@ data class MatchPairsExerciseUiState(
      * Get all letter options available for matching.
      */
     val letterOptions: List<MatchOption>
-        get() = pairsToMatch.keys.toList()
+        get() = pairsToMatch.keys.toList().shuffled()
 
     /**
      * Get all transliteration options available for matching.
      */
     val transliterationOptions: List<String>
-        get() = pairsToMatch.values.toList()
+        get() = pairsToMatch.values.toList().shuffled()
 
     /**
      * Represents an option (typically a letter) in the matching exercise.

@@ -1,8 +1,5 @@
 package com.koineos.app.ui.components.topbar
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Surface
@@ -48,11 +45,12 @@ fun TransparentTopBar(
         }
     }
 
-    AnimatedVisibility(
-        visible = topBarState.value,
-        enter = slideInVertically(initialOffsetY = { -it }),
-        exit = slideOutVertically(targetOffsetY = { -it })
-    ) {
+//    AnimatedVisibility(
+//        visible = topBarState.value,
+//        enter = slideInVertically(initialOffsetY = { -it }),
+//        exit = slideOutVertically(targetOffsetY = { -it })
+//    ) {
+    if (topBarState.value) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = Colors.Primary
@@ -87,4 +85,5 @@ fun TransparentTopBar(
             }
         }
     }
+//    }
 }
