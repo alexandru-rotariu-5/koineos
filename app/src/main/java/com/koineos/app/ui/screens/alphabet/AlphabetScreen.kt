@@ -32,13 +32,13 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.koineos.app.R
-import com.koineos.app.presentation.model.AccentMarkUiState
-import com.koineos.app.presentation.model.AlphabetUiState
-import com.koineos.app.presentation.model.BreathingMarkUiState
-import com.koineos.app.presentation.model.CategoryUiState
-import com.koineos.app.presentation.model.DiphthongUiState
-import com.koineos.app.presentation.model.ImproperDiphthongUiState
-import com.koineos.app.presentation.model.LetterUiState
+import com.koineos.app.presentation.model.alphabet.AccentMarkUiState
+import com.koineos.app.presentation.model.alphabet.AlphabetScreenUiState
+import com.koineos.app.presentation.model.alphabet.BreathingMarkUiState
+import com.koineos.app.presentation.model.alphabet.CategoryUiState
+import com.koineos.app.presentation.model.alphabet.DiphthongUiState
+import com.koineos.app.presentation.model.alphabet.ImproperDiphthongUiState
+import com.koineos.app.presentation.model.alphabet.LetterUiState
 import com.koineos.app.presentation.viewmodel.AlphabetViewModel
 import com.koineos.app.ui.components.core.RegularButton
 import com.koineos.app.ui.screens.alphabet.components.AccentMarkCard
@@ -55,7 +55,8 @@ import com.koineos.app.ui.utils.rememberShimmerBrush
 
 @Composable
 fun AlphabetScreen(
-    viewModel: AlphabetViewModel = hiltViewModel()
+    viewModel: AlphabetViewModel = hiltViewModel(),
+    onNavigateToPractice: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val scrollState = rememberLazyListState()
@@ -74,17 +75,19 @@ fun AlphabetScreen(
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(Colors.Surface)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Colors.Surface)
+        ) {
             HeaderContent(
                 modifier = Modifier,
                 elevation = headerElevation,
-                onLearnClick = {}
+                onLearnClick = onNavigateToPractice
             )
             when (uiState) {
-                is AlphabetUiState.Loaded -> {
-                    val loadedState = uiState as AlphabetUiState.Loaded
+                is AlphabetScreenUiState.Loaded -> {
+                    val loadedState = uiState as AlphabetScreenUiState.Loaded
                     AlphabetContent(
                         categories = loadedState.categories,
                         scrollState = scrollState,
@@ -107,13 +110,14 @@ fun AlphabetScreen(
                     }
                 }
 
-                AlphabetUiState.Loading -> LoadingState()
-                AlphabetUiState.Error -> ErrorState()
+                AlphabetScreenUiState.Loading -> LoadingState()
+                AlphabetScreenUiState.Error -> ErrorState()
             }
         }
     }
 }
 
+// Rest of the existing AlphabetScreen implementation remains the same
 @Composable
 private fun HeaderContent(
     modifier: Modifier = Modifier,
@@ -143,6 +147,7 @@ private fun HeaderContent(
     }
 }
 
+// Remaining implementation...
 @Composable
 private fun AlphabetContent(
     categories: List<CategoryUiState>,

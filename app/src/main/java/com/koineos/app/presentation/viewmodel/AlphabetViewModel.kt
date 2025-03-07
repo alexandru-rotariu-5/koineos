@@ -9,15 +9,15 @@ import com.koineos.app.domain.model.BreathingMark
 import com.koineos.app.domain.model.Diphthong
 import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
-import com.koineos.app.domain.usecase.GetAlphabetContentUseCase
-import com.koineos.app.presentation.model.AccentMarkUiState
-import com.koineos.app.presentation.model.AlphabetEntityUiState
-import com.koineos.app.presentation.model.AlphabetUiState
-import com.koineos.app.presentation.model.BreathingMarkUiState
-import com.koineos.app.presentation.model.CategoryUiState
-import com.koineos.app.presentation.model.DiphthongUiState
-import com.koineos.app.presentation.model.ImproperDiphthongUiState
-import com.koineos.app.presentation.model.LetterUiState
+import com.koineos.app.domain.usecase.alphabet.GetAlphabetContentUseCase
+import com.koineos.app.presentation.model.alphabet.AccentMarkUiState
+import com.koineos.app.presentation.model.alphabet.AlphabetEntityUiState
+import com.koineos.app.presentation.model.alphabet.AlphabetScreenUiState
+import com.koineos.app.presentation.model.alphabet.BreathingMarkUiState
+import com.koineos.app.presentation.model.alphabet.CategoryUiState
+import com.koineos.app.presentation.model.alphabet.DiphthongUiState
+import com.koineos.app.presentation.model.alphabet.ImproperDiphthongUiState
+import com.koineos.app.presentation.model.alphabet.LetterUiState
 import com.koineos.app.ui.utils.StringProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,10 +38,10 @@ class AlphabetViewModel @Inject constructor(
     private val stringProvider: StringProvider
 ) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<AlphabetUiState> by lazy {
-        MutableStateFlow(AlphabetUiState.Loading)
+    private val _uiState: MutableStateFlow<AlphabetScreenUiState> by lazy {
+        MutableStateFlow(AlphabetScreenUiState.Loading)
     }
-    val uiState: StateFlow<AlphabetUiState> = _uiState
+    val uiState: StateFlow<AlphabetScreenUiState> = _uiState
 
     init {
         loadAlphabetContent()
@@ -49,7 +49,7 @@ class AlphabetViewModel @Inject constructor(
 
     fun onAlphabetEntityClick(entityId: String) {
         val currentState = _uiState.value
-        if (currentState is AlphabetUiState.Loaded) {
+        if (currentState is AlphabetScreenUiState.Loaded) {
             _uiState.update {
                 currentState.copy(selectedEntityId = entityId)
             }
@@ -58,7 +58,7 @@ class AlphabetViewModel @Inject constructor(
 
     fun onInfoDialogDismiss() {
         val currentState = _uiState.value
-        if (currentState is AlphabetUiState.Loaded) {
+        if (currentState is AlphabetScreenUiState.Loaded) {
             _uiState.update {
                 currentState.copy(selectedEntityId = null)
             }
@@ -96,11 +96,11 @@ class AlphabetViewModel @Inject constructor(
                                 }
                             )
                         }
-                        _uiState.update { AlphabetUiState.Loaded(uiCategories) }
+                        _uiState.update { AlphabetScreenUiState.Loaded(uiCategories) }
                     }
                 },
                 onFailure = {
-                    _uiState.update { AlphabetUiState.Error }
+                    _uiState.update { AlphabetScreenUiState.Error }
                 }
             )
         }

@@ -25,14 +25,12 @@ fun LearnScreen(
     coursesProgress: Float,
     onNavigateToCourses: () -> Unit,
     onNavigateToVocabulary: () -> Unit,
-    onNavigateToPractice: () -> Unit,
     onNavigateToHandbook: () -> Unit
 ) {
     LearnScreenContent(
         coursesProgress = coursesProgress,
         onNavigateToVocabulary = onNavigateToVocabulary,
         onNavigateToCourses = onNavigateToCourses,
-        onNavigateToPractice = onNavigateToPractice,
         onNavigateToHandbook = onNavigateToHandbook
     )
 }
@@ -42,7 +40,6 @@ private fun LearnScreenContent(
     coursesProgress: Float,
     onNavigateToVocabulary: () -> Unit,
     onNavigateToCourses: () -> Unit,
-    onNavigateToPractice: () -> Unit,
     onNavigateToHandbook: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -69,16 +66,6 @@ private fun LearnScreenContent(
                     icon = AppIcon.Path,
                     progress = coursesProgress,
                     onClick = onNavigateToCourses
-                )
-
-                // Practice Card
-                GridFeatureCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = stringResource(R.string.learn_feature_practice_title),
-                    description = stringResource(R.string.learn_feature_practice_description),
-                    icon = AppIcon.Practice,
-                    progress = 0f,
-                    onClick = onNavigateToPractice
                 )
             }
 
@@ -119,7 +106,6 @@ private fun LearnScreenPreview() {
             coursesProgress = 0f,
             onNavigateToVocabulary = {},
             onNavigateToCourses = {},
-            onNavigateToPractice = {},
             onNavigateToHandbook = {}
         )
     }
@@ -133,7 +119,6 @@ private fun LearnScreenProgressPreview() {
             coursesProgress = 0.45f,
             onNavigateToVocabulary = {},
             onNavigateToCourses = {},
-            onNavigateToPractice = {},
             onNavigateToHandbook = {}
         )
     }

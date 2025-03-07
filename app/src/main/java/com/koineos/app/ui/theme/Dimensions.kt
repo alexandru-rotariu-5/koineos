@@ -24,6 +24,7 @@ object Dimensions {
     val spacingXLarge = 24.dp
     val spacingXXLarge = 32.dp
     val spacingXXXLarge = 40.dp
+    val spacingLargest = 80.dp
     val spacingGrid = 12.dp
 
     // Corner radius
@@ -47,7 +48,8 @@ object Dimensions {
     val iconSizeLarge = 32.dp
     val toolbarHeight = 56.dp
     val bottomNavHeight = 56.dp
-    val cardElevation = 4.dp
+    val cardElevation = 2.dp
+    val regularCardBorder = 0.dp
     val roundedCorner = 8.dp
     val illustrationSize = 240.dp
     val dividerThickness = 0.5.dp

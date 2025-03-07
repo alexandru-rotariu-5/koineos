@@ -17,11 +17,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.koineos.app.presentation.model.AccentMarkUiState
-import com.koineos.app.presentation.model.BreathingMarkUiState
-import com.koineos.app.presentation.model.DiphthongUiState
-import com.koineos.app.presentation.model.ImproperDiphthongUiState
-import com.koineos.app.presentation.model.LetterUiState
+import com.koineos.app.presentation.model.alphabet.AccentMarkUiState
+import com.koineos.app.presentation.model.alphabet.BreathingMarkUiState
+import com.koineos.app.presentation.model.alphabet.DiphthongUiState
+import com.koineos.app.presentation.model.alphabet.ImproperDiphthongUiState
+import com.koineos.app.presentation.model.alphabet.LetterUiState
 import com.koineos.app.ui.components.core.CardPadding
 import com.koineos.app.ui.components.core.RegularCard
 import com.koineos.app.ui.components.core.RegularLinearProgressIndicator
@@ -49,6 +49,7 @@ fun AlphabetEntityCard(
         backgroundColor = if (isMastered) Colors.PrimaryContainer else Colors.RegularCardBackground,
         contentPadding = CardPadding.Large,
         specialTopPadding = CardPadding.Medium,
+        border = null,
         onClick = onClick
     ) {
         Column(
@@ -58,7 +59,7 @@ fun AlphabetEntityCard(
             // Primary Text (Greek symbols)
             Text(
                 text = primaryText,
-                style = AlphabetEntityTextStyle,
+                style = AlphabetEntityMainTextStyle,
                 color = if (isMastered) Colors.Primary else Colors.OnSurface,
                 textAlign = TextAlign.Center
             )
@@ -182,7 +183,7 @@ fun AccentMarkCard(
 /**
  * Predefined text style for alphabet cards
  */
-val AlphabetEntityTextStyle = TextStyle(
+val AlphabetEntityMainTextStyle = TextStyle(
     fontFamily = KoineFont,
     fontWeight = FontWeight.Normal,
     fontSize = 20.sp,
@@ -204,6 +205,7 @@ fun AlphabetEntityShimmerCard(
     RegularCard(
         modifier = modifier,
         backgroundColor = Colors.RegularCardBackground,
+        border = null,
         contentPadding = CardPadding.Large
     ) {
         Column(

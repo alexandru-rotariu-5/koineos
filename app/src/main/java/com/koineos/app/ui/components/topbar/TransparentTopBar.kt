@@ -1,8 +1,5 @@
 package com.koineos.app.ui.components.topbar
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Surface
@@ -17,6 +14,7 @@ import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.navigation.alphabet.AlphabetDestination
 import com.koineos.app.ui.navigation.home.HomeDestination
 import com.koineos.app.ui.navigation.learn.LearnDestination
+import com.koineos.app.ui.navigation.practice.PracticeDestination
 import com.koineos.app.ui.navigation.read.ReadDestination
 import com.koineos.app.ui.theme.Colors
 
@@ -36,6 +34,7 @@ fun TransparentTopBar(
     when (navBackStackEntry?.destination?.route) {
         HomeDestination.HomeScreen.route,
         LearnDestination.LearnHome.route,
+        PracticeDestination.PracticeHome.route,
         AlphabetDestination.AlphabetHome.route,
         ReadDestination.ReadHome.route -> {
             topBarState.value = true
@@ -46,11 +45,12 @@ fun TransparentTopBar(
         }
     }
 
-    AnimatedVisibility(
-        visible = topBarState.value,
-        enter = slideInVertically(initialOffsetY = { -it }),
-        exit = slideOutVertically(targetOffsetY = { -it })
-    ) {
+//    AnimatedVisibility(
+//        visible = topBarState.value,
+//        enter = slideInVertically(initialOffsetY = { -it }),
+//        exit = slideOutVertically(targetOffsetY = { -it })
+//    ) {
+    if (topBarState.value) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
             color = Colors.Primary
@@ -60,6 +60,7 @@ fun TransparentTopBar(
                     showLogo = currentDestination?.route == HomeDestination.HomeScreen.route,
                     title = when (currentDestination?.route) {
                         LearnDestination.LearnHome.route -> "Learn"
+                        PracticeDestination.PracticeHome.route -> "Practice"
                         AlphabetDestination.AlphabetHome.route -> "Alphabet"
                         ReadDestination.ReadHome.route -> "Read"
                         else -> null
@@ -84,4 +85,5 @@ fun TransparentTopBar(
             }
         }
     }
+//    }
 }

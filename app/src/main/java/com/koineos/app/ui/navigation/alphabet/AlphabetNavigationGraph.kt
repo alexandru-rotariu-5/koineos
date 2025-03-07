@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
 import com.koineos.app.ui.navigation.RootDestination
+import com.koineos.app.ui.navigation.practice.PracticeDestination
 import com.koineos.app.ui.screens.alphabet.AlphabetScreen
 import com.koineos.app.ui.utils.AnimationUtils
 
@@ -30,7 +31,11 @@ fun NavGraphBuilder.alphabetGraph(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None }
         ) {
-            AlphabetScreen()
+            AlphabetScreen(
+                onNavigateToPractice = {
+                    navController.navigate(PracticeDestination.AlphabetPracticeSession.route)
+                }
+            )
         }
     }
 }
