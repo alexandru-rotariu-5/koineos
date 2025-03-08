@@ -99,22 +99,18 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
         val isCorrect = currentExercise.isCorrectMatch(letterId, transliteration)
 
         if (isCorrect) {
-            // Update matched pairs
             val newMatchedPairs = currentExercise.matchedPairs.toMutableMap().apply {
                 put(letterId, transliteration)
             }
 
-            // Create updated exercise state
             val updatedExercises = currentState.exercises.toMutableList()
             val updatedExercise = currentExercise.copy(matchedPairs = newMatchedPairs)
             updatedExercises[currentState.currentExerciseIndex] = updatedExercise
 
-            // Update user answers
             val newUserAnswers = currentState.userAnswers.toMutableMap().apply {
                 put(currentExercise.id, newMatchedPairs)
             }
 
-            // Check if all pairs are matched
             val allPairsMatched = updatedExercise.isComplete
 
             _uiState.update { state ->
@@ -122,7 +118,6 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
                     state.copy(
                         exercises = updatedExercises,
                         userAnswers = newUserAnswers,
-                        // Show feedback and enable continue button only when all pairs are matched
                         flowState = if (allPairsMatched) PracticeFlowState.FEEDBACK else PracticeFlowState.IN_PROGRESS,
                         feedback = if (allPairsMatched)
                             FeedbackUiState.correct("Great job matching all pairs!")
@@ -134,7 +129,6 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
                 } else state
             }
 
-            // Add match result to exercise results
             if (allPairsMatched) {
                 val newResults = currentState.exerciseResults.toMutableMap().apply {
                     put(currentExercise.id, true)
@@ -147,7 +141,6 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
                 }
             }
         } else {
-            // Show incorrect feedback
             _uiState.update { state ->
                 if (state is PracticeScreenUiState.Loaded) {
                     state.copy(

@@ -43,6 +43,7 @@ import com.koineos.app.ui.components.core.RegularButton
 import com.koineos.app.ui.components.practice.FeedbackPanel
 import com.koineos.app.ui.components.practice.PracticeActionButton
 import com.koineos.app.ui.components.practice.PracticeTopBar
+import com.koineos.app.ui.screens.practice.components.AnimatedExerciseContent
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineosTheme
@@ -181,8 +182,7 @@ private fun PracticeContentState(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(scrollState)
-                .padding(horizontal = Dimensions.paddingLarge),
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Instructions
@@ -193,24 +193,31 @@ private fun PracticeContentState(
                 ),
                 textAlign = TextAlign.Start,
                 color = Colors.OnSurface,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Dimensions.paddingLarge),
             )
 
             // Exercise content
-            Box(
+            AnimatedExerciseContent(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f)
-                    .padding(vertical = Dimensions.paddingLarge),
-                contentAlignment = Alignment.Center
-            ) {
-                ExerciseContentFactory.CreateExerciseContent(
-                    exerciseState = state.currentExercise,
-                    onAnswerSelected = onAnswerSelected,
-                )
+                    .weight(1f),
+                currentIndex = state.currentExerciseIndex,
+            ) { index ->
+                if (index < state.exercises.size) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        ExerciseContentFactory.CreateExerciseContent(
+                            exerciseState = state.exercises[index],
+                            onAnswerSelected = onAnswerSelected,
+                        )
+                    }
+                }
             }
 
-            // Action button - measure its height
             Spacer(modifier = Modifier.height(Dimensions.spacingLarge))
 
             PracticeActionButton(
@@ -219,6 +226,7 @@ private fun PracticeContentState(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = Dimensions.paddingLarge)
+                    .padding(horizontal = Dimensions.paddingLarge)
                     .onGloballyPositioned { coordinates ->
                         buttonHeightPx.intValue = coordinates.size.height
                     }

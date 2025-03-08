@@ -1,5 +1,6 @@
 package com.koineos.app.ui.screens.alphabet.components.exercises
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,6 +28,7 @@ import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
+import kotlinx.coroutines.delay
 
 /**
  * Exercise content for matching Greek letters with their transliterations.
@@ -50,12 +53,27 @@ fun MatchPairsExerciseContent(
     // Track the currently selected option from the right column (transliteration)
     var selectedTransliteration by remember { mutableStateOf<String?>(null) }
 
-    // Create lists of letter options and transliteration options
+    // For temporary animation states
+    var animatingPairId by remember { mutableStateOf<String?>(null) }
+    var animatingTransliteration by remember { mutableStateOf<String?>(null) }
+    var animationState by remember { mutableStateOf<PairAnimationState?>(null) }
+
+    // Animation timings
+    LaunchedEffect(animatingPairId, animatingTransliteration, animationState) {
+        if (animatingPairId != null && animatingTransliteration != null && animationState != null) {
+            delay(500)
+            animatingPairId = null
+            animatingTransliteration = null
+            animationState = null
+        }
+    }
+
     val letterOptions = remember { exerciseState.letterOptions }
     val transliterationOptions = remember { exerciseState.transliterationOptions }
 
     Row(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
+            .padding(horizontal = Dimensions.paddingLarge),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
     ) {
@@ -67,17 +85,55 @@ fun MatchPairsExerciseContent(
             letterOptions.forEach { option ->
                 val isMatched = option.id in exerciseState.matchedPairs.keys
                 val isSelected = option.id == selectedLetterOption?.id
+                val isAnimating = option.id == animatingPairId
+
+                val backgroundColor = when {
+                    isAnimating && animationState == PairAnimationState.CORRECT -> Colors.Success
+                    isAnimating && animationState == PairAnimationState.INCORRECT -> Colors.Error
+                    isSelected -> Colors.Primary
+                    else -> Colors.RegularCardBackground
+                }
+
+                val textColor = when {
+                    isAnimating && animationState == PairAnimationState.CORRECT -> Colors.OnSuccess
+                    isAnimating && animationState == PairAnimationState.INCORRECT -> Colors.OnError
+                    isSelected -> Colors.OnPrimary
+                    isMatched -> Colors.OnSurface.copy(alpha = 0.5f)
+                    else -> Colors.OnSurface
+                }
+
+                val borderColor = when {
+                    isAnimating && animationState == PairAnimationState.CORRECT -> Colors.Success
+                    isAnimating && animationState == PairAnimationState.INCORRECT -> Colors.Error
+                    isSelected -> Colors.Primary
+                    else -> Colors.RegularCardBorder
+                }
+
+                val border = BorderStroke(width = Dimensions.regularCardBorder, color = borderColor)
 
                 RegularCard(
                     onClick = {
-                        if (!isMatched) {
+                        if (!isMatched && !isAnimating) {
                             selectedLetterOption = option
 
                             // If there's already a transliteration selected, try to match
                             if (selectedTransliteration != null) {
+                                // Prepare for animation
+                                animatingPairId = option.id
+                                animatingTransliteration = selectedTransliteration
+
+                                // Check if correct
+                                val isCorrect = exerciseState.isCorrectMatch(option.id, selectedTransliteration!!)
+                                animationState = if (isCorrect) {
+                                    PairAnimationState.CORRECT
+                                } else {
+                                    PairAnimationState.INCORRECT
+                                }
+
+                                // Call the match handler
                                 onMatchCreated(option.id, selectedTransliteration!!)
 
-                                // Reset selections after attempting a match
+                                // Reset selections
                                 selectedLetterOption = null
                                 selectedTransliteration = null
                             }
@@ -85,11 +141,9 @@ fun MatchPairsExerciseContent(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = CardPadding.Large,
-                    backgroundColor = when {
-                        isMatched -> Colors.PrimaryContainer
-                        isSelected -> Colors.Primary
-                        else -> Colors.RegularCardBackground
-                    }
+                    backgroundColor = backgroundColor,
+                    border = border,
+                    enabled = !isMatched
                 ) {
                     Text(
                         text = option.display,
@@ -98,11 +152,7 @@ fun MatchPairsExerciseContent(
                             fontWeight = FontWeight.Bold
                         ),
                         textAlign = TextAlign.Center,
-                        color = when {
-                            isMatched -> Colors.Primary
-                            isSelected -> Colors.OnPrimary
-                            else -> Colors.OnSurface
-                        },
+                        color = textColor,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -117,17 +167,55 @@ fun MatchPairsExerciseContent(
             transliterationOptions.forEach { transliteration ->
                 val isMatched = transliteration in exerciseState.matchedPairs.values
                 val isSelected = transliteration == selectedTransliteration
+                val isAnimating = transliteration == animatingTransliteration
+
+                val backgroundColor = when {
+                    isAnimating && animationState == PairAnimationState.CORRECT -> Colors.Success
+                    isAnimating && animationState == PairAnimationState.INCORRECT -> Colors.Error
+                    isSelected -> Colors.Primary
+                    else -> Colors.RegularCardBackground
+                }
+
+                val textColor = when {
+                    isAnimating && animationState == PairAnimationState.CORRECT -> Colors.OnSuccess
+                    isAnimating && animationState == PairAnimationState.INCORRECT -> Colors.OnError
+                    isSelected -> Colors.OnPrimary
+                    isMatched -> Colors.OnSurface.copy(alpha = 0.5f)
+                    else -> Colors.OnSurface
+                }
+
+                val borderColor = when {
+                    isAnimating && animationState == PairAnimationState.CORRECT -> Colors.Success
+                    isAnimating && animationState == PairAnimationState.INCORRECT -> Colors.Error
+                    isSelected -> Colors.Primary
+                    else -> Colors.RegularCardBorder
+                }
+
+                val border = BorderStroke(width = Dimensions.regularCardBorder, color = borderColor)
 
                 RegularCard(
                     onClick = {
-                        if (!isMatched) {
+                        if (!isMatched && !isAnimating) {
                             selectedTransliteration = transliteration
 
                             // If there's already a letter selected, try to match
                             if (selectedLetterOption != null) {
+                                // Prepare for animation
+                                animatingPairId = selectedLetterOption!!.id
+                                animatingTransliteration = transliteration
+
+                                // Check if correct
+                                val isCorrect = exerciseState.isCorrectMatch(selectedLetterOption!!.id, transliteration)
+                                animationState = if (isCorrect) {
+                                    PairAnimationState.CORRECT
+                                } else {
+                                    PairAnimationState.INCORRECT
+                                }
+
+                                // Call the match handler
                                 onMatchCreated(selectedLetterOption!!.id, transliteration)
 
-                                // Reset selections after attempting a match
+                                // Reset selections
                                 selectedLetterOption = null
                                 selectedTransliteration = null
                             }
@@ -135,11 +223,9 @@ fun MatchPairsExerciseContent(
                     },
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = CardPadding.Large,
-                    backgroundColor = when {
-                        isMatched -> Colors.PrimaryContainer
-                        isSelected -> Colors.Primary
-                        else -> Colors.RegularCardBackground
-                    }
+                    backgroundColor = backgroundColor,
+                    border = border,
+                    enabled = !isMatched
                 ) {
                     Text(
                         text = transliteration,
@@ -148,17 +234,18 @@ fun MatchPairsExerciseContent(
                             fontWeight = FontWeight.Bold
                         ),
                         textAlign = TextAlign.Center,
-                        color = when {
-                            isMatched -> Colors.Primary
-                            isSelected -> Colors.OnPrimary
-                            else -> Colors.OnSurface
-                        },
+                        color = textColor,
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
             }
         }
     }
+}
+
+enum class PairAnimationState {
+    CORRECT,
+    INCORRECT
 }
 
 @Preview(showBackground = true)
@@ -189,8 +276,7 @@ private fun MatchPairsExerciseContentPreview() {
                     ),
                     selectedOption = null
                 ),
-                onMatchCreated = { _, _ -> },
-                modifier = Modifier.padding(Dimensions.paddingLarge)
+                onMatchCreated = { _, _ -> }
             )
         }
     }
@@ -226,8 +312,7 @@ private fun MatchPairsExerciseCompletePreview() {
                     ),
                     selectedOption = null
                 ),
-                onMatchCreated = { _, _ -> },
-                modifier = Modifier.padding(Dimensions.paddingLarge)
+                onMatchCreated = { _, _ -> }
             )
         }
     }

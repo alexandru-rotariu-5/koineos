@@ -36,6 +36,7 @@ import com.koineos.app.ui.theme.Dimensions
  * @param backgroundColor Background color of the card
  * @param elevation Elevation of the card
  * @param border Border to be applied to the card
+ * @param enabled Whether the card is enabled or disabled
  * @param content Content to be displayed inside the card
  */
 @Composable
@@ -46,15 +47,23 @@ fun RegularCard(
     specialTopPadding: CardPadding = contentPadding,
     backgroundColor: Color = Colors.RegularCardBackground,
     elevation: CardElevation = CardDefaults.cardElevation(defaultElevation = Dimensions.cardElevation),
-    border: BorderStroke? = null,
+    border: BorderStroke? = BorderStroke(width = Dimensions.regularCardBorder, color = Colors.RegularCardBorder),
+    enabled: Boolean = true,
     content: @Composable BoxScope.() -> Unit
 ) {
+    val actualBackgroundColor = if (enabled) {
+        backgroundColor
+    } else {
+        backgroundColor.copy(alpha = 0.5f)
+    }
+
     Card(
         modifier = modifier,
         onClick = onClick,
+        enabled = enabled,
         colors = CardDefaults.cardColors(
-            containerColor = backgroundColor,
-            disabledContainerColor = backgroundColor.copy(alpha = 0.38f)
+            containerColor = actualBackgroundColor,
+            disabledContainerColor = actualBackgroundColor,
         ),
         shape = RoundedCornerShape(Dimensions.cornerLarge),
         elevation = elevation,
@@ -62,7 +71,7 @@ fun RegularCard(
     ) {
         Box(
             modifier = Modifier
-                .background(backgroundColor)
+                .background(actualBackgroundColor)
                 .padding(horizontal = contentPadding.value)
                 .padding(bottom = contentPadding.value, top = specialTopPadding.value)
         ) {

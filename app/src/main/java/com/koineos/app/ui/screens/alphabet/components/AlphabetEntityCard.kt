@@ -49,7 +49,6 @@ fun AlphabetEntityCard(
         backgroundColor = if (isMastered) Colors.PrimaryContainer else Colors.RegularCardBackground,
         contentPadding = CardPadding.Large,
         specialTopPadding = CardPadding.Medium,
-        border = null,
         onClick = onClick
     ) {
         Column(
@@ -205,7 +204,6 @@ fun AlphabetEntityShimmerCard(
     RegularCard(
         modifier = modifier,
         backgroundColor = Colors.RegularCardBackground,
-        border = null,
         contentPadding = CardPadding.Large
     ) {
         Column(

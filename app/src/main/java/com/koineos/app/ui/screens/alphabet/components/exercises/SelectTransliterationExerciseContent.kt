@@ -1,5 +1,6 @@
 package com.koineos.app.ui.screens.alphabet.components.exercises
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,7 +41,8 @@ fun SelectTransliterationExerciseContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize()
+            .padding(horizontal = Dimensions.paddingLarge),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -82,6 +84,16 @@ fun SelectTransliterationExerciseContent(
                     else -> Colors.OnSurface
                 }
 
+                val borderColor = when {
+                    isSelected && exerciseState.isChecked -> {
+                        if (exerciseState.isCorrect == true) Colors.Success.copy(alpha = 0.7f) else Colors.Error.copy(alpha = 0.7f)
+                    }
+                    isSelected -> Colors.Primary.copy(alpha = 0.7f)
+                    else -> Colors.RegularCardBorder
+                }
+
+                val border = BorderStroke(width = Dimensions.regularCardBorder, color = borderColor)
+
                 RegularCard(
                     modifier = Modifier.weight(1f),
                     onClick = {
@@ -91,6 +103,7 @@ fun SelectTransliterationExerciseContent(
                     },
                     contentPadding = CardPadding.Medium,
                     backgroundColor = backgroundColor,
+                    border = border
                 ) {
                     Text(
                         text = option,
@@ -123,8 +136,7 @@ private fun SelectTransliterationExerciseContentPreview() {
                     options = listOf("a", "b", "g"),
                     selectedAnswer = null
                 ),
-                onAnswerSelected = {},
-                modifier = Modifier.padding(Dimensions.paddingLarge)
+                onAnswerSelected = {}
             )
         }
     }
@@ -144,8 +156,7 @@ private fun SelectTransliterationExerciseWithSelectionPreview() {
                     options = listOf("a", "b", "g"),
                     selectedAnswer = "a"
                 ),
-                onAnswerSelected = {},
-                modifier = Modifier.padding(Dimensions.paddingLarge)
+                onAnswerSelected = {}
             )
         }
     }
