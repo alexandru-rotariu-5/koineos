@@ -1,6 +1,5 @@
 package com.koineos.app.ui.screens.alphabet.components.exercises
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -102,15 +101,6 @@ fun MatchPairsExerciseContent(
                     else -> Colors.OnSurface
                 }
 
-                val borderColor = when {
-                    isAnimating && animationState == PairAnimationState.CORRECT -> Colors.Success
-                    isAnimating && animationState == PairAnimationState.INCORRECT -> Colors.Error
-                    isSelected -> Colors.Primary
-                    else -> Colors.RegularCardBorder
-                }
-
-                val border = BorderStroke(width = Dimensions.regularCardBorder, color = borderColor)
-
                 RegularCard(
                     onClick = {
                         if (!isMatched && !isAnimating) {
@@ -142,7 +132,6 @@ fun MatchPairsExerciseContent(
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = CardPadding.Large,
                     backgroundColor = backgroundColor,
-                    border = border,
                     enabled = !isMatched
                 ) {
                     Text(
@@ -184,15 +173,6 @@ fun MatchPairsExerciseContent(
                     else -> Colors.OnSurface
                 }
 
-                val borderColor = when {
-                    isAnimating && animationState == PairAnimationState.CORRECT -> Colors.Success
-                    isAnimating && animationState == PairAnimationState.INCORRECT -> Colors.Error
-                    isSelected -> Colors.Primary
-                    else -> Colors.RegularCardBorder
-                }
-
-                val border = BorderStroke(width = Dimensions.regularCardBorder, color = borderColor)
-
                 RegularCard(
                     onClick = {
                         if (!isMatched && !isAnimating) {
@@ -224,7 +204,6 @@ fun MatchPairsExerciseContent(
                     modifier = Modifier.fillMaxWidth(),
                     contentPadding = CardPadding.Large,
                     backgroundColor = backgroundColor,
-                    border = border,
                     enabled = !isMatched
                 ) {
                     Text(

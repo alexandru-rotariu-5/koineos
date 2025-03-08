@@ -230,7 +230,7 @@ private fun PracticeContentState(
                     .onGloballyPositioned { coordinates ->
                         buttonHeightPx.intValue = coordinates.size.height
                     }
-                    .zIndex(1f)
+                    .zIndex(0f)
             )
         }
 
@@ -247,7 +247,7 @@ private fun PracticeContentState(
                         (buttonHeightPx.intValue / density).dp + Dimensions.paddingLarge + Dimensions.spacingLarge
                     }
                 )
-                .zIndex(0f)
+                .zIndex(1f)
         )
     }
 }

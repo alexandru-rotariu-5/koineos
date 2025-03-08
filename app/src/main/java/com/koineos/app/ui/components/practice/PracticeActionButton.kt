@@ -49,9 +49,7 @@ fun PracticeActionButton(
         modifier = modifier.fillMaxWidth(),
         colors = RegularButtonColors(
             containerColor = buttonColor,
-            contentColor = buttonContentColor,
-            disabledContainerColor = buttonColor.copy(alpha = 0.12f),
-            disabledContentColor = buttonContentColor.copy(alpha = 0.38f)
+            contentColor = buttonContentColor
         )
     )
 }
