@@ -17,6 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -53,16 +54,28 @@ import com.koineos.app.ui.theme.Typography
  * Main practice session screen that orchestrates the practice flow.
  *
  * @param viewModel The ViewModel to use
- * @param onNavigateToResults Navigation callback for the results screen
  * @param onClose Callback when the practice session is closed
  */
 @Composable
 fun PracticeSessionScreen(
     viewModel: BasePracticeSessionViewModel,
-    onNavigateToResults: (String) -> Unit = {},
+    onNavigateToResults: (totalExercises: Int, correctAnswers: Int, incorrectAnswers: Int, completionTimeMs: Long, accuracyPercentage: Float) -> Unit = { _, _, _, _, _ -> },
     onClose: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    LaunchedEffect(uiState) {
+        if (uiState is PracticeScreenUiState.Completed) {
+            val completedState = uiState as PracticeScreenUiState.Completed
+            onNavigateToResults(
+                completedState.totalExercises,
+                completedState.correctAnswers,
+                completedState.incorrectAnswers,
+                completedState.completionTimeMs,
+                completedState.accuracyPercentage
+            )
+        }
+    }
 
     Scaffold(
         modifier = Modifier
@@ -98,10 +111,9 @@ fun PracticeSessionScreen(
                     onActionButtonClick = { viewModel.onActionButtonClick() }
                 )
 
-                is PracticeScreenUiState.Completed -> PracticeCompletedState(
-                    state = uiState as PracticeScreenUiState.Completed,
-                    onDone = onClose
-                )
+                is PracticeScreenUiState.Completed -> {
+                    // The navigation is handled in the LaunchedEffect
+                }
             }
         }
     }
@@ -242,61 +254,10 @@ private fun PracticeContentState(
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = Dimensions.paddingLarge)
-                .padding(
-                    bottom = with(buttonDensity) {
-                        (buttonHeightPx.intValue / density).dp + Dimensions.paddingLarge + Dimensions.spacingLarge
-                    }
-                )
+                .padding(bottom = with(buttonDensity) {
+                    (buttonHeightPx.intValue / density).dp + Dimensions.paddingLarge + Dimensions.spacingLarge
+                })
                 .zIndex(1f)
-        )
-    }
-}
-
-/**
- * Practice completed state showing results.
- */
-@Composable
-private fun PracticeCompletedState(
-    state: PracticeScreenUiState.Completed,
-    onDone: () -> Unit
-) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(Dimensions.paddingLarge),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Practice Completed!",
-            style = Typography.headlineMedium,
-            color = Colors.Primary,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.spacingXLarge))
-
-        Text(
-            text = "Score: ${state.correctAnswers} / ${state.totalExercises}",
-            style = Typography.titleLarge,
-            color = Colors.OnSurface,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
-
-        Text(
-            text = "Accuracy: ${state.accuracyPercentage.toInt()}%",
-            style = Typography.titleMedium,
-            color = Colors.OnSurface,
-            textAlign = TextAlign.Center
-        )
-
-        Spacer(modifier = Modifier.height(Dimensions.spacingXXLarge))
-
-        RegularButton(
-            onClick = onDone,
-            text = "Done"
         )
     }
 }
@@ -433,33 +394,6 @@ private fun PracticeContentWithFeedbackPreview() {
                         ),
                         onAnswerSelected = {},
                         onActionButtonClick = {}
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PracticeCompletedStatePreview() {
-    KoineosTheme {
-        Surface(color = Colors.Surface) {
-            Scaffold {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)
-                ) {
-                    PracticeCompletedState(
-                        state = PracticeScreenUiState.Completed(
-                            totalExercises = 15,
-                            correctAnswers = 12,
-                            incorrectAnswers = 3,
-                            completionTimeMs = 300000, // 5 minutes
-                            accuracyPercentage = 80f
-                        ),
-                        onDone = {}
                     )
                 }
             }

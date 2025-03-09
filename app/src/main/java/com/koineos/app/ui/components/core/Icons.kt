@@ -44,6 +44,11 @@ sealed class AppIcon(val unselectedDrawableId: Int, val selectedDrawableId: Int)
     // Alphabet
     data object Alphabet2 : AppIcon(R.drawable.ic_alphabet_2, R.drawable.ic_alphabet_2)
     data object Alphabet3 : AppIcon(R.drawable.ic_alphabet_3, R.drawable.ic_alphabet_3)
+
+    // Practice
+    data object Correct: AppIcon(R.drawable.ic_check_circle, R.drawable.ic_check_circle)
+    data object Incorrect: AppIcon(R.drawable.ic_x_circle, R.drawable.ic_x_circle)
+    data object Timer: AppIcon(R.drawable.ic_timer, R.drawable.ic_timer_filled)
 }
 
 @Composable

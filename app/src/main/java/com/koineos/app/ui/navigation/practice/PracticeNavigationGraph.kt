@@ -7,7 +7,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.koineos.app.presentation.viewmodel.AlphabetPracticeSessionViewModel
 import com.koineos.app.ui.navigation.RootDestination
@@ -45,27 +47,51 @@ fun NavGraphBuilder.practiceGraph(
         ) {
             PracticeSessionScreen(
                 viewModel = hiltViewModel<AlphabetPracticeSessionViewModel>(),
-                onNavigateToResults = {
-                    navController.navigate(PracticeDestination.PracticeSessionResults.route) {
+                onClose = {
+                    navController.popBackStack()
+                },
+                onNavigateToResults = { totalExercises, correctAnswers, incorrectAnswers, completionTimeMs, accuracyPercentage ->
+                    navController.navigate(
+                        PracticeDestination.PracticeSessionResults.createRoute(
+                            totalExercises,
+                            correctAnswers,
+                            incorrectAnswers,
+                            completionTimeMs,
+                            accuracyPercentage
+                        )
+                    ) {
                         popUpTo(PracticeDestination.AlphabetPracticeSession.route) {
                             inclusive = true
                         }
                     }
-                },
-                onClose = {
-                    navController.popBackStack()
                 }
             )
         }
 
         composable(
             route = PracticeDestination.PracticeSessionResults.route,
+            arguments = listOf(
+                navArgument("totalExercises") { type = NavType.IntType },
+                navArgument("correctAnswers") { type = NavType.IntType },
+                navArgument("incorrectAnswers") { type = NavType.IntType },
+                navArgument("completionTimeMs") { type = NavType.LongType },
+                navArgument("accuracyPercentage") { type = NavType.FloatType }
+            ),
             enterTransition = enterTransition,
             exitTransition = exitTransition
-        ) {
+        ) { backStackEntry ->
+            val arguments = backStackEntry.arguments!!
             PracticeSessionResultsScreen(
+                totalExercises = arguments.getInt("totalExercises"),
+                correctAnswers = arguments.getInt("correctAnswers"),
+                incorrectAnswers = arguments.getInt("incorrectAnswers"),
+                completionTimeMs = arguments.getLong("completionTimeMs"),
+                accuracyPercentage = arguments.getFloat("accuracyPercentage"),
                 onDone = {
-                    navController.popBackStack()
+                    navController.popBackStack(
+                        PracticeDestination.PracticeHome.route,
+                        inclusive = false
+                    )
                 }
             )
         }

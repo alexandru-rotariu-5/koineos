@@ -41,7 +41,7 @@ data class SelectTransliterationExercise(
         } else {
             ExerciseFeedback.incorrect(
                 correctAnswer = correctAnswer,
-                explanationText = "${letter.name} (${letter.uppercase} ${letter.lowercase}) is transliterated as '$correctAnswer'"
+                explanationText = "${letter.name} (${letter.uppercase} ${letter.lowercase}) is transliterated as '$correctAnswer'."
             )
         }
     }

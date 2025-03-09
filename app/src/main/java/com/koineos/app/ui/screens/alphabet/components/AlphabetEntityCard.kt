@@ -1,12 +1,10 @@
 package com.koineos.app.ui.screens.alphabet.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,7 +28,6 @@ import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
-import com.koineos.app.ui.utils.rememberShimmerBrush
 
 /**
  * A generic card component for displaying alphabet entities (letters, diphthongs, etc.)
@@ -189,70 +186,6 @@ val AlphabetEntityMainTextStyle = TextStyle(
     lineHeight = 24.sp,
     letterSpacing = 0.5.sp
 )
-
-/**
- * Shimmer loading state for alphabet entity cards
- */
-@Composable
-fun AlphabetEntityShimmerCard(
-    modifier: Modifier = Modifier,
-    symbolHeight: Int = 24,
-    showSecondaryText: Boolean = true
-) {
-    val shimmerBrush = rememberShimmerBrush()
-
-    RegularCard(
-        modifier = modifier,
-        backgroundColor = Colors.RegularCardBackground,
-        contentPadding = CardPadding.Large
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            // Symbol placeholder
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(symbolHeight.dp)
-                    .background(
-                        brush = shimmerBrush,
-                        shape = RoundedCornerShape(4.dp)
-                    )
-            )
-
-            Spacer(modifier = Modifier.height(Dimensions.spacingSmall))
-
-            if (showSecondaryText) {
-                // Secondary text placeholder
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth(0.4f)
-                        .height(16.dp)
-                        .background(
-                            brush = shimmerBrush,
-                            shape = RoundedCornerShape(4.dp)
-                        )
-                )
-
-                Spacer(modifier = Modifier.height(2.dp))
-            }
-
-            Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
-
-            // Progress bar placeholder
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(4.dp)
-                    .background(
-                        brush = shimmerBrush,
-                        shape = RoundedCornerShape(2.dp)
-                    )
-            )
-        }
-    }
-}
 
 @Preview(name = "Letter Card (Standard)")
 @Composable
@@ -418,18 +351,6 @@ private fun AccentMarkCardPreview() {
                     masteryLevel = 0.5f
                 ),
                 onClick = {},
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
-
-@Preview(name = "Shimmer Loading Card")
-@Composable
-private fun ShimmerCardPreview() {
-    KoineosTheme {
-        Column(modifier = Modifier.padding(16.dp)) {
-            AlphabetEntityShimmerCard(
                 modifier = Modifier.fillMaxWidth()
             )
         }

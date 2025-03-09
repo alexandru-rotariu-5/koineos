@@ -46,14 +46,13 @@ import java.util.concurrent.TimeUnit
  */
 @Composable
 fun PracticeSessionResultsScreen(
+    totalExercises: Int,
+    correctAnswers: Int,
+    incorrectAnswers: Int,
+    completionTimeMs: Long,
+    accuracyPercentage: Float,
     onDone: () -> Unit
 ) {
-    val totalExercises = 15
-    val correctAnswers = 12
-    val incorrectAnswers = 3
-    val completionTimeMs = 300000L
-    val accuracyPercentage = 80f
-
     Scaffold { paddingValues ->
         Column(
             modifier = Modifier
@@ -62,7 +61,10 @@ fun PracticeSessionResultsScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(Dimensions.paddingLarge),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(Dimensions.spacingXLarge)
+            verticalArrangement = Arrangement.spacedBy(
+                Dimensions.spacingXLarge,
+                alignment = Alignment.CenterVertically
+            )
         ) {
             ScoreHeader(
                 correctAnswers = correctAnswers,
@@ -79,8 +81,9 @@ fun PracticeSessionResultsScreen(
             )
 
             RegularButton(
+                modifier = Modifier.fillMaxWidth(),
                 onClick = onDone,
-                text = "Continue"
+                text = "Done"
             )
         }
     }
@@ -100,7 +103,7 @@ private fun ScoreHeader(
     ) {
         Text(
             text = "Great Job!",
-            style = Typography.headlineMedium,
+            style = Typography.headlineLarge,
             color = Colors.Primary,
             fontWeight = FontWeight.Bold
         )
@@ -110,6 +113,7 @@ private fun ScoreHeader(
         Text(
             text = "$correctAnswers out of $totalExercises correct",
             style = Typography.titleLarge,
+            fontWeight = FontWeight.Bold,
             color = Colors.OnSurface
         )
 
@@ -152,7 +156,7 @@ private fun TimeCard(completionTimeMs: Long) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconComponent(
-                icon = AppIcon.Alphabet3,
+                icon = AppIcon.Timer,
                 isSelected = true,
                 contentDescription = "Time",
                 tint = Colors.Primary,
@@ -162,7 +166,7 @@ private fun TimeCard(completionTimeMs: Long) {
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                text = "Time: ${minutes}m ${seconds}s",
+                text = "${minutes}m ${seconds}s",
                 style = Typography.titleMedium,
                 color = Colors.OnSurface
             )
@@ -198,13 +202,14 @@ private fun AccuracyCard(
             LinearProgressIndicator(
                 progress = { correctAnswers.toFloat() / totalExercises },
                 modifier = Modifier.fillMaxWidth(),
-                color = Colors.Primary,
-                trackColor = Colors.PrimaryContainer
+                color = Colors.Success,
+                trackColor = Colors.Error,
+                drawStopIndicator = {},
             )
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceAround
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -212,7 +217,7 @@ private fun AccuracyCard(
                     Icon(
                         painter = painterResource(id = R.drawable.ic_check),
                         contentDescription = "Correct",
-                        tint = Colors.Primary,
+                        tint = Colors.Success,
                         modifier = Modifier.size(24.dp)
                     )
 
@@ -225,7 +230,7 @@ private fun AccuracyCard(
                     Text(
                         text = "$correctAnswers",
                         style = Typography.titleLarge,
-                        color = Colors.Primary,
+                        color = Colors.Success,
                         fontWeight = FontWeight.Bold
                     )
                 }
@@ -253,31 +258,6 @@ private fun AccuracyCard(
                         fontWeight = FontWeight.Bold
                     )
                 }
-
-                // Total
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_alphabet_2),
-                        contentDescription = "Total",
-                        tint = Colors.OnSurfaceVariant,
-                        modifier = Modifier.size(24.dp)
-                    )
-
-                    Text(
-                        text = "Total",
-                        style = Typography.bodyMedium,
-                        color = Colors.OnSurface
-                    )
-
-                    Text(
-                        text = "$totalExercises",
-                        style = Typography.titleLarge,
-                        color = Colors.OnSurfaceVariant,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
             }
         }
     }
@@ -289,7 +269,12 @@ private fun PracticeResultsScreenPreview() {
     KoineosTheme {
         Surface(color = MaterialTheme.colorScheme.background) {
             PracticeSessionResultsScreen(
-                onDone = {}
+                totalExercises = 10,
+                correctAnswers = 7,
+                incorrectAnswers = 3,
+                completionTimeMs = 120000,
+                accuracyPercentage = 70f,
+                onDone = {},
             )
         }
     }

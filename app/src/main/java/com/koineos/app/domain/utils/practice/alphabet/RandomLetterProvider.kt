@@ -75,9 +75,25 @@ class RandomLetterProvider @Inject constructor(
             throw IllegalStateException("No letters available in the alphabet repository")
         }
 
-        // Ensure we don't request more letters than available
-        val safeCount = count.coerceAtMost(letters.size)
-        return letters.shuffled().take(safeCount)
+        // Group letters by whether they're sigma variants or not
+        val (sigmaLetters, nonSigmaLetters) = letters.partition { it.name.contains("sigma") }
+
+        // If we have sigma letters, select only one randomly
+        val selectedSigma = if (sigmaLetters.isNotEmpty()) listOf(sigmaLetters.random()) else emptyList()
+
+        // Shuffle the non-sigma letters
+        val shuffledNonSigmas = nonSigmaLetters.shuffled()
+
+        // Calculate how many non-sigma letters we need
+        val nonSigmasNeeded = (count - selectedSigma.size).coerceAtLeast(0)
+
+        // Take only as many non-sigma letters as needed and available
+        val selectedNonSigmas = shuffledNonSigmas.take(
+            nonSigmasNeeded.coerceAtMost(nonSigmaLetters.size)
+        )
+
+        // Combine and shuffle the final result
+        return (selectedSigma + selectedNonSigmas).shuffled()
     }
 
     override suspend fun getRandomEntityExcluding(excluded: List<Letter>): Letter {

@@ -17,5 +17,17 @@ sealed class PracticeDestination(val route: String) {
     /**
      * Practice session results screen shown after completing a practice session
      */
-    data object PracticeSessionResults : PracticeDestination("practice_session_results")
+    data object PracticeSessionResults : PracticeDestination(
+        "practice_session_results/{totalExercises}/{correctAnswers}/{incorrectAnswers}/{completionTimeMs}/{accuracyPercentage}"
+    ) {
+        fun createRoute(
+            totalExercises: Int,
+            correctAnswers: Int,
+            incorrectAnswers: Int,
+            completionTimeMs: Long,
+            accuracyPercentage: Float
+        ): String {
+            return "practice_session_results/$totalExercises/$correctAnswers/$incorrectAnswers/$completionTimeMs/$accuracyPercentage"
+        }
+    }
 }

@@ -13,10 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,7 +41,6 @@ import com.koineos.app.presentation.model.alphabet.LetterUiState
 import com.koineos.app.presentation.viewmodel.AlphabetViewModel
 import com.koineos.app.ui.components.core.RegularButton
 import com.koineos.app.ui.screens.alphabet.components.AccentMarkCard
-import com.koineos.app.ui.screens.alphabet.components.AlphabetEntityShimmerCard
 import com.koineos.app.ui.screens.alphabet.components.AlphabetInfoDialog
 import com.koineos.app.ui.screens.alphabet.components.BreathingMarkCard
 import com.koineos.app.ui.screens.alphabet.components.DiphthongCard
@@ -51,7 +49,6 @@ import com.koineos.app.ui.screens.alphabet.components.LetterCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.Typography
-import com.koineos.app.ui.utils.rememberShimmerBrush
 
 @Composable
 fun AlphabetScreen(
@@ -147,7 +144,6 @@ private fun HeaderContent(
     }
 }
 
-// Remaining implementation...
 @Composable
 private fun AlphabetContent(
     categories: List<CategoryUiState>,
@@ -275,58 +271,11 @@ private fun CategoryDivider() {
 
 @Composable
 private fun LoadingState() {
-    Column {
-        repeat(4) { categoryIndex ->
-            if (categoryIndex > 0) {
-                CategoryDivider()
-            }
-
-            Column {
-                if (categoryIndex > 0) {
-                    Box(
-                        modifier = Modifier
-                            .padding(
-                                horizontal = Dimensions.paddingLarge,
-                                vertical = Dimensions.paddingMedium
-                            )
-                            .background(
-                                brush = rememberShimmerBrush(),
-                                shape = RoundedCornerShape(4.dp)
-                            )
-                            .height(28.dp)
-                            .fillMaxWidth(0.4f)
-                    )
-                }
-
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(4),
-                    contentPadding = PaddingValues(
-                        top = Dimensions.paddingMedium,
-                        bottom = if (categoryIndex > 0) Dimensions.paddingLarge else Dimensions.paddingXLarge,
-                        start = Dimensions.paddingLarge,
-                        end = Dimensions.paddingLarge
-                    ),
-                    horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
-                    verticalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid)
-                ) {
-                    val itemCount = when (categoryIndex) {
-                        0 -> 24 // Letters
-                        1 -> 8  // Diphthongs
-                        2 -> 3  // Improper Diphthongs
-                        3 -> 2  // Breathing Marks
-                        else -> 3 // Accent Marks
-                    }
-
-                    items(itemCount) {
-                        AlphabetEntityShimmerCard(
-                            modifier = Modifier.fillMaxWidth(),
-                            showSecondaryText = categoryIndex != 3,
-                            symbolHeight = if (categoryIndex == 3) 32 else 24
-                        )
-                    }
-                }
-            }
-        }
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(color = Colors.Primary)
     }
 }
 

@@ -36,12 +36,12 @@ data class SelectLemmaExercise(
 
         return if (isCorrect) {
             ExerciseFeedback.correct(
-                "Excellent! '$transliteration' corresponds to ${correctLetter.name} (${correctLetter.uppercase} ${correctLetter.lowercase})"
+                "Excellent! '$transliteration' corresponds to ${correctLetter.name} (${correctLetter.uppercase} ${correctLetter.lowercase})."
             )
         } else {
             ExerciseFeedback.incorrect(
                 correctAnswer = correctLetter.lowercase,
-                explanationText = "The transliteration '$transliteration' corresponds to ${correctLetter.name}"
+                explanationText = "The transliteration '$transliteration' corresponds to ${correctLetter.name}."
             )
         }
     }

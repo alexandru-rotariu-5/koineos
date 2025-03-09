@@ -20,10 +20,13 @@ import com.koineos.app.presentation.model.alphabet.ImproperDiphthongUiState
 import com.koineos.app.presentation.model.alphabet.LetterUiState
 import com.koineos.app.ui.utils.StringProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -38,9 +41,7 @@ class AlphabetViewModel @Inject constructor(
     private val stringProvider: StringProvider
 ) : ViewModel() {
 
-    private val _uiState: MutableStateFlow<AlphabetScreenUiState> by lazy {
-        MutableStateFlow(AlphabetScreenUiState.Loading)
-    }
+    private val _uiState = MutableStateFlow<AlphabetScreenUiState>(AlphabetScreenUiState.Loading)
     val uiState: StateFlow<AlphabetScreenUiState> = _uiState
 
     init {
@@ -66,43 +67,66 @@ class AlphabetViewModel @Inject constructor(
     }
 
     private fun loadAlphabetContent() {
-        viewModelScope.launch {
-            getAlphabetContentUseCase().fold(
-                onSuccess = { contentFlow ->
-                    contentFlow.collect { categories ->
-                        val uiCategories = categories.map { category ->
-                            CategoryUiState(
-                                title = when (category.category) {
-                                    AlphabetCategory.LETTERS -> "Letters"
-                                    AlphabetCategory.DIPHTHONGS -> "Diphthongs"
-                                    AlphabetCategory.IMPROPER_DIPHTHONGS -> "Improper Diphthongs"
-                                    AlphabetCategory.BREATHING_MARKS -> "Breathing Marks"
-                                    AlphabetCategory.ACCENT_MARKS -> "Accent Marks"
-                                },
-                                entities = when (category.category) {
-                                    AlphabetCategory.LETTERS -> processLetters(category.entities)
-                                    AlphabetCategory.DIPHTHONGS -> processDiphthongs(category.entities)
-                                    AlphabetCategory.IMPROPER_DIPHTHONGS -> processImproperDiphthongs(
-                                        category.entities
-                                    )
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                getAlphabetContentUseCase().fold(
+                    onSuccess = { contentFlow ->
+                        val categories = contentFlow.first()
 
-                                    AlphabetCategory.BREATHING_MARKS -> processBreathingMarks(
-                                        category.entities
-                                    )
+                        val uiCategories = processCategories(categories)
 
-                                    AlphabetCategory.ACCENT_MARKS -> processAccentMarks(
-                                        category.entities
-                                    )
-                                }
-                            )
+                        withContext(Dispatchers.Main) {
+                            _uiState.update { AlphabetScreenUiState.Loaded(uiCategories) }
                         }
-                        _uiState.update { AlphabetScreenUiState.Loaded(uiCategories) }
+                    },
+                    onFailure = {
+                        withContext(Dispatchers.Main) {
+                            _uiState.update { AlphabetScreenUiState.Error }
+                        }
                     }
-                },
-                onFailure = {
+                )
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
                     _uiState.update { AlphabetScreenUiState.Error }
                 }
+            }
+        }
+    }
+
+    /**
+     * Process categories data to UI state
+     */
+    private fun processCategories(categories: List<com.koineos.app.domain.model.CategoryContent>): List<CategoryUiState> {
+        return categories.map { category ->
+            CategoryUiState(
+                title = getCategoryTitle(category.category),
+                entities = when (category.category) {
+                    AlphabetCategory.LETTERS -> processLetters(category.entities)
+                    AlphabetCategory.DIPHTHONGS -> processDiphthongs(category.entities)
+                    AlphabetCategory.IMPROPER_DIPHTHONGS -> processImproperDiphthongs(
+                        category.entities
+                    )
+                    AlphabetCategory.BREATHING_MARKS -> processBreathingMarks(
+                        category.entities
+                    )
+                    AlphabetCategory.ACCENT_MARKS -> processAccentMarks(
+                        category.entities
+                    )
+                }
             )
+        }
+    }
+
+    /**
+     * Get category title based on category type
+     */
+    private fun getCategoryTitle(category: AlphabetCategory): String {
+        return when (category) {
+            AlphabetCategory.LETTERS -> "Letters"
+            AlphabetCategory.DIPHTHONGS -> "Diphthongs"
+            AlphabetCategory.IMPROPER_DIPHTHONGS -> "Improper Diphthongs"
+            AlphabetCategory.BREATHING_MARKS -> "Breathing Marks"
+            AlphabetCategory.ACCENT_MARKS -> "Accent Marks"
         }
     }
 

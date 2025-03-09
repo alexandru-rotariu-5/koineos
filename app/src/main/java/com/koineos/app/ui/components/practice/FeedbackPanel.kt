@@ -15,19 +15,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import com.koineos.app.R
 import com.koineos.app.presentation.model.practice.FeedbackUiState
+import com.koineos.app.ui.components.core.AppIcon
+import com.koineos.app.ui.components.core.IconComponent
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
@@ -63,13 +62,7 @@ fun FeedbackPanel(
             val textColor = if (feedback.isCorrect) {
                 Colors.OnSuccessContainer
             } else {
-                Colors.OnErrorContainer
-            }
-
-            val iconResId = if (feedback.isCorrect) {
-                R.drawable.ic_check
-            } else {
-                R.drawable.ic_close
+                Colors.Error
             }
 
             Column(
@@ -78,59 +71,61 @@ fun FeedbackPanel(
                     .clip(RoundedCornerShape(Dimensions.cornerLarge))
                     .background(backgroundColor)
                     .padding(Dimensions.paddingLarge),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.Start,
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingMedium, Alignment.CenterHorizontally)
+                    horizontalArrangement = Arrangement.spacedBy(
+                        Dimensions.spacingMedium,
+                        Alignment.Start
+                    )
                 ) {
-                    Icon(
-                        painter = painterResource(id = iconResId),
+                    IconComponent(
+                        icon = if (feedback.isCorrect) AppIcon.Correct else AppIcon.Incorrect,
                         contentDescription = if (feedback.isCorrect) "Correct" else "Incorrect",
                         tint = textColor
                     )
 
+                    // Title
                     Text(
                         text = feedback.message,
-                        style = Typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                        style = Typography.titleLarge.copy(fontWeight = FontWeight.Bold),
                         color = textColor
                     )
                 }
 
                 // Correct answer (if answer was incorrect)
                 if (!feedback.isCorrect && feedback.correctAnswer != null) {
-                    Spacer(modifier = Modifier.height(Dimensions.spacingLarge))
+                    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
                     Text(
                         text = "Correct answer:",
                         style = Typography.bodyMedium,
                         color = textColor,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Start
                     )
-
-                    Spacer(modifier = Modifier.height(Dimensions.spacingSmall))
 
                     Text(
                         text = feedback.correctAnswer,
-                        style = Typography.bodyLarge.copy(
+                        style = Typography.titleLarge.copy(
                             fontFamily = KoineFont,
                             fontWeight = FontWeight.Bold
                         ),
                         color = textColor,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Start
                     )
                 }
 
                 // Explanation (if provided)
                 if (feedback.explanation != null) {
-                    Spacer(modifier = Modifier.height(Dimensions.spacingLarge))
+                    Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
                     Text(
                         text = feedback.explanation,
-                        style = Typography.bodyMedium,
+                        style = Typography.bodyLarge,
                         color = textColor.copy(alpha = 0.8f),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Start
                     )
                 }
             }
