@@ -19,9 +19,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import com.koineos.app.R
 import com.koineos.app.ui.components.core.AppIcon
-import com.koineos.app.ui.components.core.CardPadding
+import com.koineos.app.ui.components.cards.CardPadding
 import com.koineos.app.ui.components.core.IconComponent
-import com.koineos.app.ui.components.core.RegularCard
+import com.koineos.app.ui.components.cards.RegularCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.Typography

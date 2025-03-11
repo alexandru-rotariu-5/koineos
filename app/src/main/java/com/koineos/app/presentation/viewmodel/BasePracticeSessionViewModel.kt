@@ -37,7 +37,10 @@ abstract class BasePracticeSessionViewModel(
     private var domainExercises: List<Exercise> = emptyList()
 
     // Current state
-    protected val _uiState = MutableStateFlow<PracticeScreenUiState>(PracticeScreenUiState.Loading)
+    protected val _uiState: MutableStateFlow<PracticeScreenUiState> by lazy {
+        MutableStateFlow(PracticeScreenUiState.Loading)
+    }
+
     val uiState: StateFlow<PracticeScreenUiState> = _uiState.asStateFlow()
 
     private var practiceGenerationJob: Job? = null
@@ -93,27 +96,27 @@ abstract class BasePracticeSessionViewModel(
      * @param answer The user's answer
      */
     open fun onAnswerProvided(answer: Any) {
-        val currentState = _uiState.value as? PracticeScreenUiState.Loaded ?: return
-        val currentExerciseId = currentState.currentExercise.id
-
-        val newUserAnswers = currentState.userAnswers.toMutableMap().apply {
-            put(currentExerciseId, answer)
-        }
-
         _uiState.update { state ->
-            if (state is PracticeScreenUiState.Loaded) {
-                state.copy(
+            state.asLoaded()?.let { loadedState ->
+                val currentExerciseId = loadedState.currentExercise.id
+
+                val newUserAnswers = loadedState.userAnswers.toMutableMap().apply {
+                    put(currentExerciseId, answer)
+                }
+
+                loadedState.copy(
                     userAnswers = newUserAnswers,
                     actionButtonState = ActionButtonFactory.check(hasAnswer = true)
                 )
-            } else state
+            } ?: state
         }
     }
 
     fun onActionButtonClick() {
-        val currentState = _uiState.value as? PracticeScreenUiState.Loaded ?: return
+        val currentState = uiState.value
+        val loadedState = currentState.asLoaded() ?: return
 
-        when (currentState.actionButtonState.type) {
+        when (loadedState.actionButtonState.type) {
             ActionButtonType.CHECK -> checkAnswer()
             ActionButtonType.CONTINUE -> continueToNextExercise()
             ActionButtonType.GOT_IT -> dismissFeedback()
@@ -125,42 +128,41 @@ abstract class BasePracticeSessionViewModel(
      * Validates the user's answer for the current exercise.
      */
     private fun checkAnswer() {
-        val currentState = _uiState.value as? PracticeScreenUiState.Loaded ?: return
-        val currentExerciseIndex = currentState.currentExerciseIndex
-        val currentExerciseId = currentState.currentExercise.id
-        val userAnswer = currentState.userAnswers[currentExerciseId] ?: return
-
-        val currentExerciseDomain = if (currentExerciseIndex < domainExercises.size) {
-            domainExercises[currentExerciseIndex]
-        } else return
-
-        val feedback = validateExerciseAnswerUseCase(currentExerciseDomain, userAnswer)
-        val feedbackUiState = exerciseStateMapper.mapFeedbackToUiState(feedback)
-
-        val newResults = currentState.exerciseResults.toMutableMap().apply {
-            put(currentExerciseId, feedback.isCorrect)
-        }
-
-        val updatedExercises = currentState.exercises.toMutableList()
-
-        when (val currentExercise = updatedExercises[currentExerciseIndex]) {
-            is SelectLemmaExerciseUiState -> {
-                updatedExercises[currentExerciseIndex] = currentExercise.copy(
-                    isChecked = true,
-                    isCorrect = feedback.isCorrect
-                )
-            }
-            is SelectTransliterationExerciseUiState -> {
-                updatedExercises[currentExerciseIndex] = currentExercise.copy(
-                    isChecked = true,
-                    isCorrect = feedback.isCorrect
-                )
-            }
-        }
-
         _uiState.update { state ->
-            if (state is PracticeScreenUiState.Loaded) {
-                state.copy(
+            state.asLoaded()?.let { loadedState ->
+                val currentExerciseIndex = loadedState.currentExerciseIndex
+                val currentExerciseId = loadedState.currentExercise.id
+                val userAnswer = loadedState.userAnswers[currentExerciseId] ?: return@update state
+
+                val currentExerciseDomain = if (currentExerciseIndex < domainExercises.size) {
+                    domainExercises[currentExerciseIndex]
+                } else return@update state
+
+                val feedback = validateExerciseAnswerUseCase(currentExerciseDomain, userAnswer)
+                val feedbackUiState = exerciseStateMapper.mapFeedbackToUiState(feedback)
+
+                val newResults = loadedState.exerciseResults.toMutableMap().apply {
+                    put(currentExerciseId, feedback.isCorrect)
+                }
+
+                val updatedExercises = loadedState.exercises.toMutableList()
+
+                when (val currentExercise = updatedExercises[currentExerciseIndex]) {
+                    is SelectLemmaExerciseUiState -> {
+                        updatedExercises[currentExerciseIndex] = currentExercise.copy(
+                            isChecked = true,
+                            isCorrect = feedback.isCorrect
+                        )
+                    }
+                    is SelectTransliterationExerciseUiState -> {
+                        updatedExercises[currentExerciseIndex] = currentExercise.copy(
+                            isChecked = true,
+                            isCorrect = feedback.isCorrect
+                        )
+                    }
+                }
+
+                loadedState.copy(
                     exercises = updatedExercises,
                     exerciseResults = newResults,
                     flowState = PracticeFlowState.FEEDBACK,
@@ -172,10 +174,10 @@ abstract class BasePracticeSessionViewModel(
                             ActionButtonColorState.SUCCESS
                         else
                             ActionButtonColorState.ERROR
-                        ActionButtonFactory.continue_(state.isLastExercise, colorState)
+                        ActionButtonFactory.continue_(loadedState.isLastExercise, colorState)
                     }
                 )
-            } else state
+            } ?: state
         }
     }
 
@@ -183,25 +185,24 @@ abstract class BasePracticeSessionViewModel(
      * Moves to the next exercise in the practice set.
      */
     private fun continueToNextExercise() {
-        val currentState = _uiState.value as? PracticeScreenUiState.Loaded ?: return
+        _uiState.update { state ->
+            state.asLoaded()?.let { loadedState ->
+                if (loadedState.isLastExercise) {
+                    finishPractice()
+                    state // finishPractice will update the state separately
+                } else {
+                    val nextIndex = loadedState.currentExerciseIndex + 1
 
-        if (currentState.isLastExercise) {
-            finishPractice()
-        } else {
-            val nextIndex = currentState.currentExerciseIndex + 1
-
-            _uiState.update { state ->
-                if (state is PracticeScreenUiState.Loaded) {
-                    state.copy(
+                    loadedState.copy(
                         currentExerciseIndex = nextIndex,
                         flowState = PracticeFlowState.IN_PROGRESS,
                         feedback = null,
                         actionButtonState = ActionButtonFactory.check(
-                            hasAnswer = state.exercises[nextIndex].id in state.userAnswers
+                            hasAnswer = loadedState.exercises[nextIndex].id in loadedState.userAnswers
                         )
                     )
-                } else state
-            }
+                }
+            } ?: state
         }
     }
 
@@ -210,13 +211,11 @@ abstract class BasePracticeSessionViewModel(
      */
     open fun dismissFeedback() {
         _uiState.update { state ->
-            if (state is PracticeScreenUiState.Loaded) {
-                state.copy(
-                    flowState = PracticeFlowState.IN_PROGRESS,
-                    feedback = null,
-                    actionButtonState = ActionButtonFactory.check(hasAnswer = true)
-                )
-            } else state
+            state.asLoaded()?.copy(
+                flowState = PracticeFlowState.IN_PROGRESS,
+                feedback = null,
+                actionButtonState = ActionButtonFactory.check(hasAnswer = true)
+            ) ?: state
         }
     }
 
@@ -224,16 +223,17 @@ abstract class BasePracticeSessionViewModel(
      * Completes the practice session and shows results.
      */
     private fun finishPractice() {
-        val currentState = _uiState.value as? PracticeScreenUiState.Loaded ?: return
+        val currentState = uiState.value
+        val loadedState = currentState.asLoaded() ?: return
 
         viewModelScope.launch {
             val completionTimeMs = System.currentTimeMillis() - startTimeMs
 
             val practiceResult = completePracticeSetUseCase(
                 practiceSetId = practiceSetId,
-                totalExercises = currentState.totalExercises,
-                correctAnswers = currentState.correctAnswers,
-                incorrectAnswers = currentState.incorrectAnswers,
+                totalExercises = loadedState.totalExercises,
+                correctAnswers = loadedState.correctAnswers,
+                incorrectAnswers = loadedState.incorrectAnswers,
                 completionTimeMs = completionTimeMs
             )
 
@@ -257,4 +257,10 @@ abstract class BasePracticeSessionViewModel(
      * @return A pair of practice set ID and list of domain exercises
      */
     protected abstract suspend fun generatePracticeSet(): Pair<String, List<Exercise>>
+
+    /**
+     * Returns the loaded state of the [PracticeScreenUiState].
+     */
+    protected fun PracticeScreenUiState.asLoaded(): PracticeScreenUiState.Loaded? =
+        this as? PracticeScreenUiState.Loaded
 }

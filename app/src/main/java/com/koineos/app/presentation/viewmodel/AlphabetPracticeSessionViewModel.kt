@@ -9,7 +9,6 @@ import com.koineos.app.presentation.mapper.ExerciseStateMapper
 import com.koineos.app.presentation.model.practice.ActionButtonColorState
 import com.koineos.app.presentation.model.practice.ActionButtonFactory
 import com.koineos.app.presentation.model.practice.FeedbackUiState
-import com.koineos.app.presentation.model.practice.PracticeScreenUiState
 import com.koineos.app.presentation.model.practice.alphabet.MatchPairsExerciseUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectLemmaExerciseUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
@@ -50,118 +49,99 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
     override fun onAnswerProvided(answer: Any) {
         super.onAnswerProvided(answer)
 
-        val currentState = uiState.value as? PracticeScreenUiState.Loaded ?: return
-        val currentExerciseIndex = currentState.currentExerciseIndex
-
-        if (currentExerciseIndex >= currentState.exercises.size) return
-
-        val currentExercise = currentState.exercises[currentExerciseIndex]
-
-        // Handle match pair attempts specifically
-        if (answer is Pair<*, *> && currentExercise is MatchPairsExerciseUiState) {
-            val letterId = answer.first as? String ?: return
-            val transliteration = answer.second as? String ?: return
-            onMatchPairAttempted(letterId, transliteration)
-            return
-        }
-
-        // Handle other exercise types
-        val updatedExercises = currentState.exercises.toMutableList()
-
-        val updatedExercise = when (currentExercise) {
-            is SelectLemmaExerciseUiState -> {
-                currentExercise.copy(selectedAnswer = answer as? String)
-            }
-
-            is SelectTransliterationExerciseUiState -> {
-                currentExercise.copy(selectedAnswer = answer as? String)
-            }
-
-            else -> currentExercise
-        }
-
-        updatedExercises[currentExerciseIndex] = updatedExercise
-
+        // Handle specific exercise types that need special handling
         _uiState.update { state ->
-            if (state is PracticeScreenUiState.Loaded) {
-                state.copy(exercises = updatedExercises)
-            } else state
-        }
-    }
+            state.asLoaded()?.let { loadedState ->
+                val currentExerciseIndex = loadedState.currentExerciseIndex
 
-    /**
-     * Handle match pair selection and validation
-     */
-    private fun onMatchPairAttempted(letterId: String, transliteration: String) {
-        val currentState = _uiState.value as? PracticeScreenUiState.Loaded ?: return
-        val currentExercise = currentState.currentExercise as? MatchPairsExerciseUiState ?: return
+                if (currentExerciseIndex >= loadedState.exercises.size) return@update state
 
-        val isCorrect = currentExercise.isCorrectMatch(letterId, transliteration)
+                val currentExercise = loadedState.exercises[currentExerciseIndex]
 
-        if (isCorrect) {
-            val newMatchedPairs = currentExercise.matchedPairs.toMutableMap().apply {
-                put(letterId, transliteration)
-            }
+                // Handle match pair attempts specifically
+                if (answer is Pair<*, *> && currentExercise is MatchPairsExerciseUiState) {
+                    val letterId = answer.first as? String ?: return@update state
+                    val transliteration = answer.second as? String ?: return@update state
 
-            val updatedExercises = currentState.exercises.toMutableList()
-            val updatedExercise = currentExercise.copy(matchedPairs = newMatchedPairs)
-            updatedExercises[currentState.currentExerciseIndex] = updatedExercise
+                    val isCorrect = currentExercise.isCorrectMatch(letterId, transliteration)
 
-            val newUserAnswers = currentState.userAnswers.toMutableMap().apply {
-                put(currentExercise.id, newMatchedPairs)
-            }
+                    if (isCorrect) {
+                        val newMatchedPairs = currentExercise.matchedPairs.toMutableMap().apply {
+                            put(letterId, transliteration)
+                        }
 
-            val allPairsMatched = updatedExercise.isComplete
+                        val updatedExercises = loadedState.exercises.toMutableList()
+                        val updatedExercise = currentExercise.copy(matchedPairs = newMatchedPairs)
+                        updatedExercises[currentExerciseIndex] = updatedExercise
 
-            _uiState.update { state ->
-                if (state is PracticeScreenUiState.Loaded) {
-                    state.copy(
-                        exercises = updatedExercises,
-                        userAnswers = newUserAnswers,
-                        flowState = if (allPairsMatched) PracticeFlowState.FEEDBACK else PracticeFlowState.IN_PROGRESS,
-                        feedback = if (allPairsMatched)
-                            FeedbackUiState.correct("Great job matching all pairs!")
-                        else null,
-                        actionButtonState = if (allPairsMatched)
-                            ActionButtonFactory.continue_(state.isLastExercise, ActionButtonColorState.SUCCESS)
-                        else ActionButtonFactory.check(false)
-                    )
-                } else state
-            }
+                        val newUserAnswers = loadedState.userAnswers.toMutableMap().apply {
+                            put(currentExercise.id, newMatchedPairs)
+                        }
 
-            if (allPairsMatched) {
-                val newResults = currentState.exerciseResults.toMutableMap().apply {
-                    put(currentExercise.id, true)
+                        val allPairsMatched = updatedExercise.isComplete
+
+                        val updatedState = loadedState.copy(
+                            exercises = updatedExercises,
+                            userAnswers = newUserAnswers,
+                            flowState = if (allPairsMatched) PracticeFlowState.FEEDBACK else PracticeFlowState.IN_PROGRESS,
+                            feedback = if (allPairsMatched)
+                                FeedbackUiState.correct("Great job matching all pairs!")
+                            else null,
+                            actionButtonState = if (allPairsMatched)
+                                ActionButtonFactory.continue_(
+                                    loadedState.isLastExercise,
+                                    ActionButtonColorState.SUCCESS
+                                )
+                            else ActionButtonFactory.check(false)
+                        )
+
+                        if (allPairsMatched) {
+                            val newResults = updatedState.exerciseResults.toMutableMap().apply {
+                                put(currentExercise.id, true)
+                            }
+                            updatedState.copy(exerciseResults = newResults)
+                        } else {
+                            updatedState
+                        }
+                    } else {
+                        loadedState.copy(
+                            flowState = PracticeFlowState.FEEDBACK,
+                            feedback = FeedbackUiState.incorrectMatch(),
+                            actionButtonState = ActionButtonFactory.gotIt(ActionButtonColorState.ERROR)
+                        )
+                    }
+                } else {
+                    // For other exercise types, update the exercise with the selected answer
+                    val updatedExercises = loadedState.exercises.toMutableList()
+
+                    val updatedExercise = when (currentExercise) {
+                        is SelectLemmaExerciseUiState -> {
+                            currentExercise.copy(selectedAnswer = answer as? String)
+                        }
+
+                        is SelectTransliterationExerciseUiState -> {
+                            currentExercise.copy(selectedAnswer = answer as? String)
+                        }
+
+                        else -> currentExercise
+                    }
+
+                    updatedExercises[currentExerciseIndex] = updatedExercise
+                    loadedState.copy(exercises = updatedExercises)
                 }
-
-                _uiState.update { state ->
-                    if (state is PracticeScreenUiState.Loaded) {
-                        state.copy(exerciseResults = newResults)
-                    } else state
-                }
-            }
-        } else {
-            _uiState.update { state ->
-                if (state is PracticeScreenUiState.Loaded) {
-                    state.copy(
-                        flowState = PracticeFlowState.FEEDBACK,
-                        feedback = FeedbackUiState.incorrectMatch(),
-                        actionButtonState = ActionButtonFactory.gotIt(ActionButtonColorState.ERROR)
-                    )
-                } else state
-            }
+            } ?: state
         }
     }
 
     override fun dismissFeedback() {
         _uiState.update { state ->
-            if (state is PracticeScreenUiState.Loaded) {
-                state.copy(
-                    flowState = PracticeFlowState.IN_PROGRESS,
-                    feedback = null,
-                    actionButtonState = ActionButtonFactory.check(hasAnswer = state.currentExerciseAnswered)
+            state.asLoaded()?.copy(
+                flowState = PracticeFlowState.IN_PROGRESS,
+                feedback = null,
+                actionButtonState = ActionButtonFactory.check(
+                    hasAnswer = state.asLoaded()?.currentExerciseAnswered ?: false
                 )
-            } else state
+            ) ?: state
         }
     }
 }

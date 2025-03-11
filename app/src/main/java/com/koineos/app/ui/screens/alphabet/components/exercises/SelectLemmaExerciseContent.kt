@@ -18,8 +18,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import com.koineos.app.presentation.model.practice.alphabet.SelectLemmaExerciseUiState
-import com.koineos.app.ui.components.core.CardPadding
-import com.koineos.app.ui.components.core.RegularCard
+import com.koineos.app.ui.components.cards.CardPadding
+import com.koineos.app.ui.components.cards.DisabledRegularCard
+import com.koineos.app.ui.components.cards.ErrorRegularCard
+import com.koineos.app.ui.components.cards.RegularCard
+import com.koineos.app.ui.components.cards.SelectedRegularCard
+import com.koineos.app.ui.components.cards.SuccessRegularCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
@@ -40,7 +44,8 @@ fun SelectLemmaExerciseContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .padding(horizontal = Dimensions.paddingLarge),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -54,45 +59,67 @@ fun SelectLemmaExerciseContent(
         ) {
             items(exerciseState.options) { option ->
                 val isSelected = option.display == exerciseState.selectedAnswer
+                val isChecked = exerciseState.isChecked
+                val isCorrect = exerciseState.isCorrect == true
 
-                val backgroundColor = when {
-                    isSelected && exerciseState.isChecked -> {
-                        if (exerciseState.isCorrect == true) Colors.Success else Colors.Error
-                    }
-                    isSelected -> Colors.Primary
-                    else -> Colors.RegularCardBackground
-                }
-
-                val textColor = when {
-                    isSelected && exerciseState.isChecked -> {
-                        if (exerciseState.isCorrect == true) Colors.OnSuccess else Colors.OnError
-                    }
-                    isSelected -> Colors.OnPrimary
-                    else -> Colors.OnSurface
-                }
-
-                RegularCard(
-                    modifier = Modifier.fillMaxWidth(),
-                    onClick = {
-                        if (!exerciseState.isChecked) {
-                            onAnswerSelected(option.display)
-                        }
-                    },
-                    contentPadding = CardPadding.Large,
-                    backgroundColor = backgroundColor
-                ) {
+                val letterText = @Composable {
                     Text(
                         text = option.display,
                         style = Typography.displayLarge.copy(
                             fontFamily = KoineFont,
                             fontWeight = FontWeight.Bold
                         ),
-                        color = textColor,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = Dimensions.paddingMedium)
                     )
+                }
+
+                // Choose the appropriate card based on state
+                when {
+                    // For checked answers, show success or error
+                    isChecked && isSelected -> {
+                        if (isCorrect) {
+                            SuccessRegularCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentPadding = CardPadding.Large,
+                                content = { letterText() }
+                            )
+                        } else {
+                            ErrorRegularCard(
+                                modifier = Modifier.fillMaxWidth(),
+                                contentPadding = CardPadding.Large,
+                                content = { letterText() }
+                            )
+                        }
+                    }
+                    // For selected but not checked, show selected state
+                    isSelected -> {
+                        SelectedRegularCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { /* Do nothing, already selected */ },
+                            contentPadding = CardPadding.Large,
+                            content = { letterText() }
+                        )
+                    }
+                    // For unselected options in a checked exercise
+                    isChecked -> {
+                        DisabledRegularCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentPadding = CardPadding.Large,
+                            content = { letterText() }
+                        )
+                    }
+                    // Default state for options
+                    else -> {
+                        RegularCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = { onAnswerSelected(option.display) },
+                            contentPadding = CardPadding.Large,
+                            content = { letterText() }
+                        )
+                    }
                 }
             }
         }
@@ -140,6 +167,58 @@ private fun SelectLemmaExerciseWithSelectionPreview() {
                         SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "δ")
                     ),
                     selectedAnswer = "β"
+                ),
+                onAnswerSelected = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectLemmaExerciseWithCheckedCorrectPreview() {
+    KoineosTheme {
+        Surface(color = Colors.Surface) {
+            SelectLemmaExerciseContent(
+                exerciseState = SelectLemmaExerciseUiState(
+                    id = "exercise1",
+                    instructions = "Select the correct character for \"b\"",
+                    transliteration = "b",
+                    options = listOf(
+                        SelectLemmaExerciseUiState.LetterOption(id = "alpha", display = "α"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "beta", display = "β"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "gamma", display = "γ"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "δ")
+                    ),
+                    selectedAnswer = "β",
+                    isChecked = true,
+                    isCorrect = true
+                ),
+                onAnswerSelected = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectLemmaExerciseWithCheckedIncorrectPreview() {
+    KoineosTheme {
+        Surface(color = Colors.Surface) {
+            SelectLemmaExerciseContent(
+                exerciseState = SelectLemmaExerciseUiState(
+                    id = "exercise1",
+                    instructions = "Select the correct character for \"b\"",
+                    transliteration = "b",
+                    options = listOf(
+                        SelectLemmaExerciseUiState.LetterOption(id = "alpha", display = "α"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "beta", display = "β"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "gamma", display = "γ"),
+                        SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "δ")
+                    ),
+                    selectedAnswer = "α",
+                    isChecked = true,
+                    isCorrect = false
                 ),
                 onAnswerSelected = {}
             )

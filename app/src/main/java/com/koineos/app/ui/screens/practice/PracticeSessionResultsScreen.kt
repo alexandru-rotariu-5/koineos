@@ -33,7 +33,7 @@ import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.components.core.IconComponent
 import com.koineos.app.ui.components.core.NestedScreenScaffold
 import com.koineos.app.ui.components.core.RegularButton
-import com.koineos.app.ui.components.core.RegularCard
+import com.koineos.app.ui.components.cards.RegularCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineosTheme

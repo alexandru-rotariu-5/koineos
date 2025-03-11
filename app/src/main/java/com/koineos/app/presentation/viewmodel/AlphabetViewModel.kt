@@ -41,7 +41,10 @@ class AlphabetViewModel @Inject constructor(
     private val stringProvider: StringProvider
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<AlphabetScreenUiState>(AlphabetScreenUiState.Loading)
+    private val _uiState: MutableStateFlow<AlphabetScreenUiState> by lazy {
+        MutableStateFlow(AlphabetScreenUiState.Loading)
+    }
+
     val uiState: StateFlow<AlphabetScreenUiState> = _uiState
 
     init {
@@ -49,20 +52,14 @@ class AlphabetViewModel @Inject constructor(
     }
 
     fun onAlphabetEntityClick(entityId: String) {
-        val currentState = _uiState.value
-        if (currentState is AlphabetScreenUiState.Loaded) {
-            _uiState.update {
-                currentState.copy(selectedEntityId = entityId)
-            }
+        _uiState.update {
+            it.asLoaded()?.copy(selectedEntityId = entityId) ?: it
         }
     }
 
     fun onInfoDialogDismiss() {
-        val currentState = _uiState.value
-        if (currentState is AlphabetScreenUiState.Loaded) {
-            _uiState.update {
-                currentState.copy(selectedEntityId = null)
-            }
+        _uiState.update {
+            it.asLoaded()?.copy(selectedEntityId = null) ?: it
         }
     }
 
@@ -72,7 +69,6 @@ class AlphabetViewModel @Inject constructor(
                 getAlphabetContentUseCase().fold(
                     onSuccess = { contentFlow ->
                         val categories = contentFlow.first()
-
                         val uiCategories = processCategories(categories)
 
                         withContext(Dispatchers.Main) {
@@ -236,4 +232,10 @@ class AlphabetViewModel @Inject constructor(
             )
         }.sortedBy { it.order }
     }
+
+    /**
+     * Returns the loaded state of the [AlphabetScreenUiState].
+     */
+    private fun AlphabetScreenUiState.asLoaded(): AlphabetScreenUiState.Loaded? =
+        this as? AlphabetScreenUiState.Loaded
 }

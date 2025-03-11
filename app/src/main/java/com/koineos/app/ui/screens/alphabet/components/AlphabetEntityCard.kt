@@ -20,8 +20,9 @@ import com.koineos.app.presentation.model.alphabet.BreathingMarkUiState
 import com.koineos.app.presentation.model.alphabet.DiphthongUiState
 import com.koineos.app.presentation.model.alphabet.ImproperDiphthongUiState
 import com.koineos.app.presentation.model.alphabet.LetterUiState
-import com.koineos.app.ui.components.core.CardPadding
-import com.koineos.app.ui.components.core.RegularCard
+import com.koineos.app.ui.components.cards.CardPadding
+import com.koineos.app.ui.components.cards.RegularCardState
+import com.koineos.app.ui.components.cards.RegularCardWithCustomState
 import com.koineos.app.ui.components.core.RegularLinearProgressIndicator
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
@@ -41,9 +42,21 @@ fun AlphabetEntityCard(
     masteryLevel: Float,
     onClick: () -> Unit,
 ) {
-    RegularCard(
+    // Create a custom card state for the mastered state
+    val cardState = if (isMastered) {
+        RegularCardState(
+            backgroundColor = Colors.PrimaryContainer,
+            contentColor = Colors.Primary,
+            border = RegularCardState.Default.border,
+            elevation = Dimensions.cardElevation
+        )
+    } else {
+        RegularCardState.Default
+    }
+
+    RegularCardWithCustomState(
         modifier = modifier,
-        backgroundColor = if (isMastered) Colors.PrimaryContainer else Colors.RegularCardBackground,
+        cardState = cardState,
         contentPadding = CardPadding.Large,
         specialTopPadding = CardPadding.Medium,
         onClick = onClick

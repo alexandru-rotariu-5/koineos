@@ -18,8 +18,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
-import com.koineos.app.ui.components.core.CardPadding
-import com.koineos.app.ui.components.core.RegularCard
+import com.koineos.app.ui.components.cards.CardPadding
+import com.koineos.app.ui.components.cards.DisabledRegularCard
+import com.koineos.app.ui.components.cards.ErrorRegularCard
+import com.koineos.app.ui.components.cards.RegularCard
+import com.koineos.app.ui.components.cards.SelectedRegularCard
+import com.koineos.app.ui.components.cards.SuccessRegularCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
@@ -41,7 +45,8 @@ fun SelectTransliterationExerciseContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
+            .fillMaxSize()
             .padding(horizontal = Dimensions.paddingLarge),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -67,45 +72,67 @@ fun SelectTransliterationExerciseContent(
 
             displayOptions.forEach { option ->
                 val isSelected = option == exerciseState.selectedAnswer
+                val isChecked = exerciseState.isChecked
+                val isCorrect = exerciseState.isCorrect == true
 
-                val backgroundColor = when {
-                    isSelected && exerciseState.isChecked -> {
-                        if (exerciseState.isCorrect == true) Colors.Success else Colors.Error
-                    }
-                    isSelected -> Colors.Primary
-                    else -> Colors.RegularCardBackground
-                }
-
-                val textColor = when {
-                    isSelected && exerciseState.isChecked -> {
-                        if (exerciseState.isCorrect == true) Colors.OnSuccess else Colors.OnError
-                    }
-                    isSelected -> Colors.OnPrimary
-                    else -> Colors.OnSurface
-                }
-
-                RegularCard(
-                    modifier = Modifier.weight(1f),
-                    onClick = {
-                        if (!exerciseState.isChecked) {
-                            onAnswerSelected(option)
-                        }
-                    },
-                    contentPadding = CardPadding.Medium,
-                    backgroundColor = backgroundColor
-                ) {
+                val optionText = @Composable {
                     Text(
                         text = option,
                         style = Typography.headlineLarge.copy(
                             fontFamily = MainFont,
                             fontWeight = FontWeight.Bold
                         ),
-                        color = textColor,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = Dimensions.paddingMedium)
                     )
+                }
+
+                // Choose the appropriate card based on state
+                when {
+                    // For checked answers, show success or error
+                    isChecked && isSelected -> {
+                        if (isCorrect) {
+                            SuccessRegularCard(
+                                modifier = Modifier.weight(1f),
+                                contentPadding = CardPadding.Medium,
+                                content = { optionText() }
+                            )
+                        } else {
+                            ErrorRegularCard(
+                                modifier = Modifier.weight(1f),
+                                contentPadding = CardPadding.Medium,
+                                content = { optionText() }
+                            )
+                        }
+                    }
+                    // For selected but not checked, show selected state
+                    isSelected -> {
+                        SelectedRegularCard(
+                            modifier = Modifier.weight(1f),
+                            onClick = { /* Do nothing, already selected */ },
+                            contentPadding = CardPadding.Medium,
+                            content = { optionText() }
+                        )
+                    }
+                    // For unselected options in a checked exercise
+                    isChecked -> {
+                        DisabledRegularCard(
+                            modifier = Modifier.weight(1f),
+                            contentPadding = CardPadding.Medium,
+                            content = { optionText() }
+                        )
+                    }
+                    // Default state for options
+                    else -> {
+                        RegularCard(
+                            modifier = Modifier.weight(1f),
+                            onClick = { onAnswerSelected(option) },
+                            contentPadding = CardPadding.Medium,
+                            content = { optionText() }
+                        )
+                    }
                 }
             }
         }
@@ -145,6 +172,50 @@ private fun SelectTransliterationExerciseWithSelectionPreview() {
                     letterName = "alpha",
                     options = listOf("a", "b", "g"),
                     selectedAnswer = "a"
+                ),
+                onAnswerSelected = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectTransliterationExerciseWithCheckedCorrectPreview() {
+    KoineosTheme {
+        Surface(color = Colors.Surface) {
+            SelectTransliterationExerciseContent(
+                exerciseState = SelectTransliterationExerciseUiState(
+                    id = "exercise1",
+                    instructions = "What sound does this make?",
+                    letterDisplay = "α",
+                    letterName = "alpha",
+                    options = listOf("a", "b", "g"),
+                    selectedAnswer = "a",
+                    isChecked = true,
+                    isCorrect = true
+                ),
+                onAnswerSelected = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectTransliterationExerciseWithCheckedIncorrectPreview() {
+    KoineosTheme {
+        Surface(color = Colors.Surface) {
+            SelectTransliterationExerciseContent(
+                exerciseState = SelectTransliterationExerciseUiState(
+                    id = "exercise1",
+                    instructions = "What sound does this make?",
+                    letterDisplay = "α",
+                    letterName = "alpha",
+                    options = listOf("a", "b", "g"),
+                    selectedAnswer = "b",
+                    isChecked = true,
+                    isCorrect = false
                 ),
                 onAnswerSelected = {}
             )
