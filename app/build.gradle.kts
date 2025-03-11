@@ -92,4 +92,7 @@ dependencies {
 
     // Google Fonts
     implementation(libs.androidx.ui.text.google.fonts)
+
+    // Accompanist
+    implementation(libs.accompanist.systemuicontroller)
 }

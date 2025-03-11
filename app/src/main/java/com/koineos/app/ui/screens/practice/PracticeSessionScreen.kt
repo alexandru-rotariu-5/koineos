@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,18 +27,13 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.koineos.app.domain.model.practice.PracticeFlowState
 import com.koineos.app.domain.utils.practice.ExerciseContentFactory
-import com.koineos.app.presentation.model.practice.ActionButtonFactory
-import com.koineos.app.presentation.model.practice.ActionButtonType
-import com.koineos.app.presentation.model.practice.ActionButtonUiState
-import com.koineos.app.presentation.model.practice.FeedbackUiState
 import com.koineos.app.presentation.model.practice.PracticeScreenUiState
-import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
 import com.koineos.app.presentation.viewmodel.BasePracticeSessionViewModel
+import com.koineos.app.ui.components.core.NestedScreenScaffold
 import com.koineos.app.ui.components.core.RegularButton
 import com.koineos.app.ui.components.practice.FeedbackPanel
 import com.koineos.app.ui.components.practice.PracticeActionButton
@@ -47,13 +41,13 @@ import com.koineos.app.ui.components.practice.PracticeTopBar
 import com.koineos.app.ui.screens.practice.components.AnimatedExerciseContent
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
-import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
 
 /**
  * Main practice session screen that orchestrates the practice flow.
  *
  * @param viewModel The ViewModel to use
+ * @param onNavigateToResults Callback when the practice session is completed
  * @param onClose Callback when the practice session is closed
  */
 @Composable
@@ -64,15 +58,33 @@ fun PracticeSessionScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    NestedScreenScaffold {
+        PracticeSessionContent(
+            uiState = uiState,
+            onNavigateToResults = onNavigateToResults,
+            onAnswerSelected = viewModel::onAnswerProvided,
+            onActionButtonClick = viewModel::onActionButtonClick,
+            onClose = onClose
+        )
+    }
+}
+
+@Composable
+private fun PracticeSessionContent(
+    uiState: PracticeScreenUiState,
+    onNavigateToResults: (totalExercises: Int, correctAnswers: Int, incorrectAnswers: Int, completionTimeMs: Long, accuracyPercentage: Float) -> Unit = { _, _, _, _, _ -> },
+    onAnswerSelected: (Any) -> Unit = {},
+    onActionButtonClick: () -> Unit = {},
+    onClose: () -> Unit,
+) {
     LaunchedEffect(uiState) {
         if (uiState is PracticeScreenUiState.Completed) {
-            val completedState = uiState as PracticeScreenUiState.Completed
             onNavigateToResults(
-                completedState.totalExercises,
-                completedState.correctAnswers,
-                completedState.incorrectAnswers,
-                completedState.completionTimeMs,
-                completedState.accuracyPercentage
+                uiState.totalExercises,
+                uiState.correctAnswers,
+                uiState.incorrectAnswers,
+                uiState.completionTimeMs,
+                uiState.accuracyPercentage
             )
         }
     }
@@ -84,9 +96,8 @@ fun PracticeSessionScreen(
             .imePadding(),
         topBar = {
             if (uiState is PracticeScreenUiState.Loaded) {
-                val state = uiState as PracticeScreenUiState.Loaded
                 PracticeTopBar(
-                    progress = state.progressPercentage,
+                    progress = uiState.progressPercentage,
                     onClose = onClose
                 )
             }
@@ -101,14 +112,14 @@ fun PracticeSessionScreen(
             when (uiState) {
                 is PracticeScreenUiState.Loading -> LoadingState()
                 is PracticeScreenUiState.Error -> ErrorState(
-                    message = (uiState as PracticeScreenUiState.Error).message,
-                    onRetry = (uiState as PracticeScreenUiState.Error).retry
+                    message = uiState.message,
+                    onRetry = uiState.retry
                 )
 
                 is PracticeScreenUiState.Loaded -> PracticeContentState(
-                    state = uiState as PracticeScreenUiState.Loaded,
-                    onAnswerSelected = { answer -> viewModel.onAnswerProvided(answer) },
-                    onActionButtonClick = { viewModel.onActionButtonClick() }
+                    state = uiState,
+                    onAnswerSelected = onAnswerSelected,
+                    onActionButtonClick = { onActionButtonClick() }
                 )
 
                 is PracticeScreenUiState.Completed -> {
@@ -259,144 +270,5 @@ private fun PracticeContentState(
                 })
                 .zIndex(1f)
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PracticeScreenLoadingPreview() {
-    KoineosTheme {
-        Surface(color = Colors.Surface) {
-            Scaffold {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)
-                ) {
-                    LoadingState()
-                }
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PracticeScreenErrorPreview() {
-    KoineosTheme {
-        Surface(color = Colors.Surface) {
-            Scaffold {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)
-                ) {
-                    ErrorState(
-                        message = "Failed to load practice exercises. Please check your connection and try again.",
-                        onRetry = {}
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PracticeContentStatePreview() {
-    KoineosTheme {
-        Surface(color = Colors.Surface) {
-            Scaffold(
-                topBar = {
-                    PracticeTopBar(
-                        progress = 0.3f,
-                        onClose = {}
-                    )
-                }
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)
-                ) {
-                    PracticeContentState(
-                        state = PracticeScreenUiState.Loaded(
-                            currentExerciseIndex = 2,
-                            exercises = listOf(
-                                SelectTransliterationExerciseUiState(
-                                    id = "exercise1",
-                                    instructions = "What sound does this make?",
-                                    letterDisplay = "Γ γ",
-                                    letterName = "gamma",
-                                    options = listOf("a", "b", "g", "d"),
-                                    selectedAnswer = null
-                                )
-                            ),
-                            userAnswers = emptyMap(),
-                            exerciseResults = emptyMap(),
-                            flowState = PracticeFlowState.IN_PROGRESS,
-                            feedback = null,
-                            actionButtonState = ActionButtonFactory.check(false)
-                        ),
-                        onAnswerSelected = {},
-                        onActionButtonClick = {}
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PracticeContentWithFeedbackPreview() {
-    KoineosTheme {
-        Surface(color = Colors.Surface) {
-            Scaffold(
-                topBar = {
-                    PracticeTopBar(
-                        progress = 0.3f,
-                        onClose = {}
-                    )
-                }
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(it)
-                ) {
-                    PracticeContentState(
-                        state = PracticeScreenUiState.Loaded(
-                            currentExerciseIndex = 2,
-                            exercises = listOf(
-                                SelectTransliterationExerciseUiState(
-                                    id = "exercise1",
-                                    instructions = "What sound does this make?",
-                                    letterDisplay = "Γ γ",
-                                    letterName = "gamma",
-                                    options = listOf("a", "b", "g", "d"),
-                                    selectedAnswer = "g"
-                                )
-                            ),
-                            userAnswers = mapOf("exercise1" to "g"),
-                            exerciseResults = mapOf("exercise1" to true),
-                            flowState = PracticeFlowState.FEEDBACK,
-                            feedback = FeedbackUiState(
-                                isCorrect = true,
-                                message = "Correct!",
-                                explanation = "The letter gamma (Γ γ) makes the 'g' sound."
-                            ),
-                            actionButtonState = ActionButtonUiState(
-                                text = "Continue",
-                                isEnabled = true,
-                                type = ActionButtonType.CONTINUE
-                            )
-                        ),
-                        onAnswerSelected = {},
-                        onActionButtonClick = {}
-                    )
-                }
-            }
-        }
     }
 }

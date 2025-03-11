@@ -1,13 +1,12 @@
 package com.koineos.app.ui.navigation.learn
 
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.koineos.app.ui.components.core.NestedScreenScaffold
 import com.koineos.app.ui.navigation.RootDestination
 import com.koineos.app.ui.screens.learn.LearnScreen
 import com.koineos.app.ui.utils.AnimationUtils
@@ -16,9 +15,7 @@ import com.koineos.app.ui.utils.AnimationUtils
  * Navigation graph for the Learn section
  */
 fun NavGraphBuilder.learnGraph(
-    navController: NavHostController,
-    enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = AnimationUtils.defaultEnterTransition,
-    exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = AnimationUtils.defaultExitTransition
+    navController: NavHostController
 ) {
     navigation(
         startDestination = LearnDestination.LearnHome.route,
@@ -30,33 +27,34 @@ fun NavGraphBuilder.learnGraph(
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None }
         ) {
-            LearnScreen(
-                coursesProgress = 0f,
-                onNavigateToCourses = { navController.navigate(LearnDestination.Courses.route) },
-                onNavigateToVocabulary = { navController.navigate(LearnDestination.Vocabulary.route) },
-                onNavigateToHandbook = { navController.navigate(LearnDestination.Handbook.route) }
-            )
+            LearnScreen(navController = navController)
         }
 
         // Courses screen
         composable(
             route = LearnDestination.Courses.route,
-            enterTransition = enterTransition,
-            exitTransition = exitTransition
-        ) {}
+            enterTransition = AnimationUtils.slideUpEnter,
+            exitTransition = AnimationUtils.slideDownExit
+        ) {
+            NestedScreenScaffold {}
+        }
 
         // Vocabulary screen
         composable(
             route = LearnDestination.Vocabulary.route,
-            enterTransition = enterTransition,
-            exitTransition = exitTransition
-        ) {}
+            enterTransition = AnimationUtils.slideUpEnter,
+            exitTransition = AnimationUtils.slideDownExit
+        ) {
+            NestedScreenScaffold {}
+        }
 
         // Handbook screen
         composable(
             route = LearnDestination.Handbook.route,
-            enterTransition = enterTransition,
-            exitTransition = exitTransition,
-        ) {}
+            enterTransition = AnimationUtils.slideUpEnter,
+            exitTransition = AnimationUtils.slideDownExit
+        ) {
+            NestedScreenScaffold {}
+        }
     }
 }

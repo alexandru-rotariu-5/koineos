@@ -1,10 +1,8 @@
 package com.koineos.app.ui.navigation.practice
 
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -12,6 +10,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.koineos.app.presentation.viewmodel.AlphabetPracticeSessionViewModel
+import com.koineos.app.ui.components.core.RootScreenScaffold
 import com.koineos.app.ui.navigation.RootDestination
 import com.koineos.app.ui.screens.practice.PracticeSessionResultsScreen
 import com.koineos.app.ui.screens.practice.PracticeSessionScreen
@@ -19,15 +18,9 @@ import com.koineos.app.ui.utils.AnimationUtils
 
 /**
  * Navigation graph for the Practice feature
- *
- * @param navController The navigation controller
- * @param enterTransition The enter transition for screens in this graph
- * @param exitTransition The exit transition for screens in this graph
  */
 fun NavGraphBuilder.practiceGraph(
-    navController: NavHostController,
-    enterTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition = AnimationUtils.slideUpEnter,
-    exitTransition: AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition = AnimationUtils.slideDownExit
+    navController: NavHostController
 ) {
     navigation(
         startDestination = PracticeDestination.PracticeHome.route,
@@ -38,18 +31,21 @@ fun NavGraphBuilder.practiceGraph(
             route = PracticeDestination.PracticeHome.route,
             enterTransition = { EnterTransition.None },
             exitTransition = { ExitTransition.None }
-        ) {}
+        ) {
+            RootScreenScaffold(
+                navController = navController,
+                showLogo = false,
+                title = "Practice"
+            ) {}
+        }
 
         composable(
             route = PracticeDestination.AlphabetPracticeSession.route,
-            enterTransition = enterTransition,
-            exitTransition = exitTransition
+            enterTransition = AnimationUtils.slideUpEnter,
+            exitTransition = AnimationUtils.slideDownExit
         ) {
             PracticeSessionScreen(
                 viewModel = hiltViewModel<AlphabetPracticeSessionViewModel>(),
-                onClose = {
-                    navController.popBackStack()
-                },
                 onNavigateToResults = { totalExercises, correctAnswers, incorrectAnswers, completionTimeMs, accuracyPercentage ->
                     navController.navigate(
                         PracticeDestination.PracticeSessionResults.createRoute(
@@ -60,11 +56,14 @@ fun NavGraphBuilder.practiceGraph(
                             accuracyPercentage
                         )
                     ) {
-                        popUpTo(PracticeDestination.AlphabetPracticeSession.route) {
+                        popUpTo(RootDestination.PracticeRoot.route) {
                             inclusive = true
                         }
                     }
-                }
+                },
+                onClose = {
+                    navController.popBackStack()
+                },
             )
         }
 
@@ -77,8 +76,8 @@ fun NavGraphBuilder.practiceGraph(
                 navArgument("completionTimeMs") { type = NavType.LongType },
                 navArgument("accuracyPercentage") { type = NavType.FloatType }
             ),
-            enterTransition = enterTransition,
-            exitTransition = exitTransition
+            enterTransition = AnimationUtils.slideUpEnter,
+            exitTransition = AnimationUtils.slideDownExit
         ) { backStackEntry ->
             val arguments = backStackEntry.arguments!!
             PracticeSessionResultsScreen(
@@ -88,10 +87,7 @@ fun NavGraphBuilder.practiceGraph(
                 completionTimeMs = arguments.getLong("completionTimeMs"),
                 accuracyPercentage = arguments.getFloat("accuracyPercentage"),
                 onDone = {
-                    navController.popBackStack(
-                        PracticeDestination.PracticeHome.route,
-                        inclusive = false
-                    )
+                    navController.popBackStack()
                 }
             )
         }

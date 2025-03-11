@@ -11,24 +11,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.koineos.app.ui.components.core.RootScreenScaffold
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
 
 @Composable
-fun HomeScreen() {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.background(Colors.Surface)
+fun HomeScreen(
+    navController: NavHostController
+) {
+    RootScreenScaffold(
+        navController = navController,
+        showLogo = true
     ) {
-        Text(
-            text = "Home",
+        Column(
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
-            textAlign = TextAlign.Center,
-            style = Typography.headlineMedium
-        )
+                .background(Colors.Surface)
+        ) {
+            Text(
+                text = "Home",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                textAlign = TextAlign.Center,
+                style = Typography.headlineMedium
+            )
+        }
     }
 }
 
@@ -36,10 +48,6 @@ fun HomeScreen() {
 @Composable
 private fun HomeScreenPreview() {
     KoineosTheme {
-        Column(
-            modifier = Modifier.background(Colors.Surface)
-        ) {
-            HomeScreen()
-        }
+        HomeScreen(navController = rememberNavController())
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +18,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.koineos.app.R
 import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.components.core.IconComponent
+import com.koineos.app.ui.components.core.NestedScreenScaffold
 import com.koineos.app.ui.components.core.RegularButton
 import com.koineos.app.ui.components.core.RegularCard
 import com.koineos.app.ui.theme.Colors
@@ -41,8 +42,6 @@ import java.util.concurrent.TimeUnit
 
 /**
  * Screen that displays practice session results.
- *
- * @param onDone Callback when the user is done viewing results
  */
 @Composable
 fun PracticeSessionResultsScreen(
@@ -53,39 +52,60 @@ fun PracticeSessionResultsScreen(
     accuracyPercentage: Float,
     onDone: () -> Unit
 ) {
-    Scaffold { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(Dimensions.paddingLarge),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                Dimensions.spacingXLarge,
-                alignment = Alignment.CenterVertically
-            )
-        ) {
-            ScoreHeader(
-                correctAnswers = correctAnswers,
-                totalExercises = totalExercises,
-                accuracyPercentage = accuracyPercentage
-            )
+    NestedScreenScaffold {
+        PracticeSessionResultsContent(
+            totalExercises = totalExercises,
+            correctAnswers = correctAnswers,
+            incorrectAnswers = incorrectAnswers,
+            completionTimeMs = completionTimeMs,
+            accuracyPercentage = accuracyPercentage,
+            paddingValues = it,
+            onDone = onDone
+        )
+    }
+}
 
-            TimeCard(completionTimeMs)
+@Composable
+private fun PracticeSessionResultsContent(
+    totalExercises: Int,
+    correctAnswers: Int,
+    incorrectAnswers: Int,
+    completionTimeMs: Long,
+    accuracyPercentage: Float,
+    paddingValues: PaddingValues,
+    onDone: () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .verticalScroll(rememberScrollState())
+            .padding(Dimensions.paddingLarge),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(
+            Dimensions.spacingXLarge,
+            alignment = Alignment.CenterVertically
+        )
+    ) {
+        ScoreHeader(
+            correctAnswers = correctAnswers,
+            totalExercises = totalExercises,
+            accuracyPercentage = accuracyPercentage
+        )
 
-            AccuracyCard(
-                correctAnswers = correctAnswers,
-                incorrectAnswers = incorrectAnswers,
-                totalExercises = totalExercises
-            )
+        TimeCard(completionTimeMs)
 
-            RegularButton(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = onDone,
-                text = "Done"
-            )
-        }
+        AccuracyCard(
+            correctAnswers = correctAnswers,
+            incorrectAnswers = incorrectAnswers,
+            totalExercises = totalExercises
+        )
+
+        RegularButton(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = onDone,
+            text = "Done"
+        )
     }
 }
 

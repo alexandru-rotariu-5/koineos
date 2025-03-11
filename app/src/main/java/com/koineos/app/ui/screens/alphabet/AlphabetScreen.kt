@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -30,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.koineos.app.R
 import com.koineos.app.presentation.model.alphabet.AccentMarkUiState
 import com.koineos.app.presentation.model.alphabet.AlphabetScreenUiState
@@ -40,6 +40,9 @@ import com.koineos.app.presentation.model.alphabet.ImproperDiphthongUiState
 import com.koineos.app.presentation.model.alphabet.LetterUiState
 import com.koineos.app.presentation.viewmodel.AlphabetViewModel
 import com.koineos.app.ui.components.core.RegularButton
+import com.koineos.app.ui.components.core.RootScreenScaffold
+import com.koineos.app.ui.navigation.RootDestination
+import com.koineos.app.ui.navigation.practice.PracticeDestination
 import com.koineos.app.ui.screens.alphabet.components.AccentMarkCard
 import com.koineos.app.ui.screens.alphabet.components.AlphabetInfoDialog
 import com.koineos.app.ui.screens.alphabet.components.BreathingMarkCard
@@ -52,10 +55,29 @@ import com.koineos.app.ui.theme.Typography
 
 @Composable
 fun AlphabetScreen(
-    viewModel: AlphabetViewModel = hiltViewModel(),
-    onNavigateToPractice: () -> Unit = {}
+    navController: NavHostController,
+    viewModel: AlphabetViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    RootScreenScaffold(
+        navController = navController,
+        title = "Alphabet"
+    ) {
+        AlphabetScreenContent(
+            uiState = uiState,
+            viewModel = viewModel,
+            onNavigateToPractice = { navController.navigate(PracticeDestination.AlphabetPracticeSession.route) }
+        )
+    }
+}
+
+@Composable
+private fun AlphabetScreenContent(
+    uiState: AlphabetScreenUiState,
+    viewModel: AlphabetViewModel,
+    onNavigateToPractice: () -> Unit
+) {
     val scrollState = rememberLazyListState()
 
     val headerElevation by remember {
@@ -84,16 +106,15 @@ fun AlphabetScreen(
             )
             when (uiState) {
                 is AlphabetScreenUiState.Loaded -> {
-                    val loadedState = uiState as AlphabetScreenUiState.Loaded
                     AlphabetContent(
-                        categories = loadedState.categories,
+                        categories = uiState.categories,
                         scrollState = scrollState,
                         onEntityClick = viewModel::onAlphabetEntityClick
                     )
 
                     // Get the selected entity if any
-                    val selectedEntity = loadedState.selectedEntityId?.let { selectedId ->
-                        loadedState.categories
+                    val selectedEntity = uiState.selectedEntityId?.let { selectedId ->
+                        uiState.categories
                             .flatMap { it.entities }
                             .find { it.id == selectedId }
                     }
@@ -114,14 +135,13 @@ fun AlphabetScreen(
     }
 }
 
-// Rest of the existing AlphabetScreen implementation remains the same
 @Composable
 private fun HeaderContent(
     modifier: Modifier = Modifier,
     elevation: Float,
     onLearnClick: () -> Unit,
 ) {
-    Surface(
+    androidx.compose.material3.Surface(
         modifier = modifier
             .fillMaxWidth()
             .zIndex(1f),

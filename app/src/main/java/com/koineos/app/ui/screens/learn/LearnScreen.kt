@@ -13,8 +13,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.koineos.app.R
 import com.koineos.app.ui.components.core.AppIcon
+import com.koineos.app.ui.components.core.RootScreenScaffold
+import com.koineos.app.ui.navigation.learn.LearnDestination
 import com.koineos.app.ui.screens.learn.components.GridFeatureCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
@@ -22,17 +26,20 @@ import com.koineos.app.ui.theme.KoineosTheme
 
 @Composable
 fun LearnScreen(
-    coursesProgress: Float,
-    onNavigateToCourses: () -> Unit,
-    onNavigateToVocabulary: () -> Unit,
-    onNavigateToHandbook: () -> Unit
+    navController: NavHostController
 ) {
-    LearnScreenContent(
-        coursesProgress = coursesProgress,
-        onNavigateToVocabulary = onNavigateToVocabulary,
-        onNavigateToCourses = onNavigateToCourses,
-        onNavigateToHandbook = onNavigateToHandbook
-    )
+    RootScreenScaffold(
+        navController = navController,
+        showLogo = false,
+        title = "Learn"
+    ) {
+        LearnScreenContent(
+            coursesProgress = 0.3f,
+            onNavigateToVocabulary = { navController.navigate(LearnDestination.Vocabulary.route) },
+            onNavigateToCourses = { navController.navigate(LearnDestination.Courses.route) },
+            onNavigateToHandbook = { navController.navigate(LearnDestination.Handbook.route) }
+        )
+    }
 }
 
 @Composable
@@ -103,10 +110,7 @@ private fun LearnScreenContent(
 private fun LearnScreenPreview() {
     KoineosTheme {
         LearnScreen(
-            coursesProgress = 0f,
-            onNavigateToVocabulary = {},
-            onNavigateToCourses = {},
-            onNavigateToHandbook = {}
+            navController = rememberNavController()
         )
     }
 }
@@ -116,10 +120,7 @@ private fun LearnScreenPreview() {
 private fun LearnScreenProgressPreview() {
     KoineosTheme {
         LearnScreen(
-            coursesProgress = 0.45f,
-            onNavigateToVocabulary = {},
-            onNavigateToCourses = {},
-            onNavigateToHandbook = {}
+            navController = rememberNavController()
         )
     }
 }
