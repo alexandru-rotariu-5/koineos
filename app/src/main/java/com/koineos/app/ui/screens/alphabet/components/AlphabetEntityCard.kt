@@ -181,7 +181,7 @@ fun AccentMarkCard(
  */
 val AlphabetEntityMainTextStyle = TextStyle(
     fontFamily = KoineFont,
-    fontWeight = FontWeight.Normal,
+    fontWeight = FontWeight.Medium,
     fontSize = 20.sp,
     lineHeight = 24.sp,
     letterSpacing = 0.5.sp

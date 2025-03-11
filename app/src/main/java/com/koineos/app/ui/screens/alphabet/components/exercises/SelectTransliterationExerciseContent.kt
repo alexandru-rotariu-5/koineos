@@ -24,6 +24,7 @@ import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
+import com.koineos.app.ui.theme.MainFont
 import com.koineos.app.ui.theme.Typography
 
 /**
@@ -50,7 +51,7 @@ fun SelectTransliterationExerciseContent(
             style = Typography.displayLarge.copy(
                 fontFamily = KoineFont,
                 fontWeight = FontWeight.Bold,
-                fontSize = 120.sp
+                fontSize = 160.sp
             ),
             textAlign = TextAlign.Center,
             color = Colors.Primary
@@ -95,7 +96,8 @@ fun SelectTransliterationExerciseContent(
                 ) {
                     Text(
                         text = option,
-                        style = Typography.headlineMedium.copy(
+                        style = Typography.headlineLarge.copy(
+                            fontFamily = MainFont,
                             fontWeight = FontWeight.Bold
                         ),
                         color = textColor,

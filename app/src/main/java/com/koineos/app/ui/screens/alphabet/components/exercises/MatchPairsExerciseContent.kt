@@ -136,7 +136,7 @@ fun MatchPairsExerciseContent(
                 ) {
                     Text(
                         text = option.display,
-                        style = Typography.headlineMedium.copy(
+                        style = Typography.headlineLarge.copy(
                             fontFamily = KoineFont,
                             fontWeight = FontWeight.Bold
                         ),
@@ -208,7 +208,7 @@ fun MatchPairsExerciseContent(
                 ) {
                     Text(
                         text = transliteration,
-                        style = Typography.headlineMedium.copy(
+                        style = Typography.headlineLarge.copy(
                             fontFamily = KoineFont,
                             fontWeight = FontWeight.Bold
                         ),
