@@ -41,4 +41,24 @@ interface LetterProvider : ExerciseContentProvider<Letter> {
      * @return A list of transliterations that are different from the correct one.
      */
     suspend fun getIncorrectTransliterationOptions(correctTransliteration: String, count: Int): List<String>
+
+    /**
+     * Provides incorrect letter options, excluding any sigma variants if the correct letter is a sigma variant.
+     * Used to prevent duplicate uppercase sigmas in the same exercise.
+     *
+     * @param correctLetter The correct letter (a sigma variant)
+     * @param count The number of incorrect options to provide
+     * @return A list of letters that are different from the correct letter and don't include other sigma variants
+     */
+    suspend fun getIncorrectLetterOptionsExcludingSigmaVariants(correctLetter: Letter, count: Int): List<Letter>
+
+    /**
+     * Provides incorrect letter options, ensuring that at most one sigma variant is included.
+     * Used to prevent duplicate uppercase sigmas in the same exercise.
+     *
+     * @param correctLetter The correct letter (not a sigma variant)
+     * @param count The number of incorrect options to provide
+     * @return A list of letters with at most one sigma variant
+     */
+    suspend fun getIncorrectLetterOptionsWithoutMultipleSigmas(correctLetter: Letter, count: Int): List<Letter>
 }

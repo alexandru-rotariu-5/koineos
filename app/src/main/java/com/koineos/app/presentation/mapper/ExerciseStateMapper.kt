@@ -31,7 +31,7 @@ class ExerciseStateMapper @Inject constructor() {
         return when (exercise) {
             is SelectTransliterationExercise -> mapSelectTransliterationExercise(exercise, currentAnswer)
             is SelectLemmaExercise -> mapSelectLemmaExercise(exercise, currentAnswer)
-            is MatchPairsExercise -> mapLetterMatchingExercise(exercise, currentAnswer)
+            is MatchPairsExercise -> mapMatchPairsExercise(exercise, currentAnswer)
             else -> throw IllegalArgumentException("Unsupported exercise type: ${exercise::class.java.simpleName}")
         }
     }
@@ -52,78 +52,64 @@ class ExerciseStateMapper @Inject constructor() {
         )
     }
 
-    /**
-     * Maps a select transliteration exercise to UI state.
-     *
-     * @param exercise The domain exercise model.
-     * @param currentAnswer The current user answer, if any.
-     * @return The UI state for the exercise.
-     */
     private fun mapSelectTransliterationExercise(
         exercise: SelectTransliterationExercise,
         currentAnswer: Any?
     ): SelectTransliterationExerciseUiState {
-        val letterDisplay = exercise.letter.lowercase
-
         return SelectTransliterationExerciseUiState(
             id = exercise.id,
             instructions = exercise.instructions,
-            letterDisplay = letterDisplay,
+            letterDisplay = exercise.displayLetter,
             letterName = exercise.letter.name,
             options = exercise.options,
-            selectedAnswer = currentAnswer as? String
+            selectedAnswer = currentAnswer as? String,
+            useUppercase = exercise.useUppercase
         )
     }
 
-    /**
-     * Maps a select lemma exercise to UI state.
-     *
-     * @param exercise The domain exercise model.
-     * @param currentAnswer The current user answer, if any.
-     * @return The UI state for the exercise.
-     */
     private fun mapSelectLemmaExercise(
         exercise: SelectLemmaExercise,
         currentAnswer: Any?
     ): SelectLemmaExerciseUiState {
-        // Convert domain letter options to UI letter options
+        // Apply case to transliteration
+        val displayTransliteration = if (exercise.useUppercase)
+            exercise.transliteration.uppercase()
+        else
+            exercise.transliteration
+
+        // Convert domain letter options to UI letter options with proper case
         val options = exercise.options.map { letter ->
             SelectLemmaExerciseUiState.LetterOption(
-                id = "${letter.uppercase}${letter.lowercase}",
-                display = letter.lowercase
+                id = letter.id,
+                display = if (exercise.useUppercase) letter.uppercase else letter.lowercase,
+                useUppercase = exercise.useUppercase
             )
         }
 
         return SelectLemmaExerciseUiState(
             id = exercise.id,
             instructions = exercise.instructions,
-            transliteration = exercise.transliteration,
+            transliteration = displayTransliteration,
             options = options,
-            selectedAnswer = currentAnswer as? String
+            selectedAnswer = currentAnswer as? String,
+            useUppercase = exercise.useUppercase
         )
     }
 
-    /**
-     * Maps a letter matching exercise to a match pairs UI state.
-     *
-     * @param exercise The domain exercise model.
-     * @param currentAnswer The current user answer, if any.
-     * @return The UI state for the exercise.
-     */
-    private fun mapLetterMatchingExercise(
+    private fun mapMatchPairsExercise(
         exercise: MatchPairsExercise,
         currentAnswer: Any?
     ): MatchPairsExerciseUiState {
-        // Create a map of match options to their transliterations
+        // Create a map of match options to their transliterations with proper case
         val pairsToMatch = exercise.letterPairs.associate { pair ->
             val option = MatchPairsExerciseUiState.MatchOption(
                 id = pair.letter.id,
-                display = pair.letter.lowercase
+                display = pair.displayLetter,
+                useUppercase = pair.useUppercase
             )
-            option to pair.transliteration
+            option to pair.displayTransliteration
         }
 
-        // The current answer for matching exercises is a Map<String, String>
         @Suppress("UNCHECKED_CAST")
         val matchedPairs = (currentAnswer as? Map<String, String>) ?: emptyMap()
 
@@ -131,8 +117,7 @@ class ExerciseStateMapper @Inject constructor() {
             id = exercise.id,
             instructions = exercise.instructions,
             pairsToMatch = pairsToMatch,
-            matchedPairs = matchedPairs,
-            selectedOption = null // This is set during UI interaction
+            matchedPairs = matchedPairs
         )
     }
 }

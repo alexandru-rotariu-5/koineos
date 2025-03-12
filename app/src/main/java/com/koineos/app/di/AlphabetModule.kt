@@ -14,6 +14,8 @@ import com.koineos.app.domain.usecase.alphabet.UpdateAlphabetEntityMasteryUseCas
 import com.koineos.app.domain.utils.practice.PracticeManager
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetExerciseGenerator
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetPracticeSetGenerator
+import com.koineos.app.domain.utils.practice.alphabet.DefaultLetterCaseProvider
+import com.koineos.app.domain.utils.practice.alphabet.LetterCaseProvider
 import com.koineos.app.domain.utils.practice.alphabet.LetterProvider
 import com.koineos.app.domain.utils.practice.alphabet.RandomLetterProvider
 import dagger.Module
@@ -95,11 +97,19 @@ object AlphabetModule {
 
     @Provides
     @Singleton
+    fun provideLetterCaseProvider(): LetterCaseProvider {
+        Log.d(TAG, "Providing LetterCaseProvider")
+        return DefaultLetterCaseProvider()
+    }
+
+    @Provides
+    @Singleton
     fun provideAlphabetExerciseGenerator(
-        letterProvider: LetterProvider
+        letterProvider: LetterProvider,
+        letterCaseProvider: LetterCaseProvider
     ): AlphabetExerciseGenerator {
         Log.d(TAG, "Providing AlphabetExerciseGenerator")
-        return AlphabetExerciseGenerator(letterProvider)
+        return AlphabetExerciseGenerator(letterProvider, letterCaseProvider)
     }
 
     @Provides

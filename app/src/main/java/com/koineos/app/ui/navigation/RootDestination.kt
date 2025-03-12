@@ -14,20 +14,6 @@ sealed interface RootDestination {
     }
 
     /**
-     * Learn section root
-     */
-    data object LearnRoot : RootDestination {
-        override val route = "learn_root"
-    }
-
-    /**
-     * Practice section root
-     */
-    data object PracticeRoot : RootDestination {
-        override val route = "practice_root"
-    }
-
-    /**
      * Alphabet section root
      */
     data object AlphabetRoot : RootDestination {
@@ -35,9 +21,16 @@ sealed interface RootDestination {
     }
 
     /**
-     * Read section root
+     * Vocabulary section root
      */
-    data object ReadRoot : RootDestination {
-        override val route = "read_root"
+    data object VocabularyRoot : RootDestination {
+        override val route = "vocabulary_root"
+    }
+
+    /**
+     * Learn section root
+     */
+    data object LearnRoot : RootDestination {
+        override val route = "learn_root"
     }
 }

@@ -19,11 +19,6 @@ data class MatchPairsExercise(
 
     override val instructions: String = "Tap the matching pairs."
 
-    /**
-     * For matching exercises, this validates whether a specific pair is matched correctly.
-     * The userAnswer should be a Pair<String, String> where the first string is the letter
-     * and the second string is the transliteration.
-     */
     override fun validateAnswer(userAnswer: Any): Boolean {
         if (userAnswer !is Pair<*, *>) return false
 
@@ -31,15 +26,11 @@ data class MatchPairsExercise(
         val transliterationStr = userAnswer.second as? String ?: return false
 
         return letterPairs.any { pair ->
-            (pair.letter.lowercase == letterStr || pair.letter.uppercase == letterStr) &&
-                    pair.transliteration == transliterationStr
+            letterStr == pair.displayLetter &&
+                    transliterationStr == pair.displayTransliteration
         }
     }
 
-    /**
-     * For matching exercises, instead of validating the entire exercise at once,
-     * this provides feedback for a specific pair match attempt.
-     */
     override fun getFeedback(userAnswer: Any): ExerciseFeedback {
         val isCorrect = validateAnswer(userAnswer)
 
@@ -50,13 +41,9 @@ data class MatchPairsExercise(
         }
     }
 
-    /**
-     * This isn't typically used for matching exercises since we provide
-     * feedback for each pair individually.
-     */
     override fun getCorrectAnswerDisplay(): String {
         return letterPairs.joinToString(", ") { pair ->
-            "${pair.letter.uppercase}${pair.letter.lowercase} → ${pair.transliteration}"
+            "${pair.displayLetter} → ${pair.displayTransliteration}"
         }
     }
 }
@@ -66,8 +53,16 @@ data class MatchPairsExercise(
  *
  * @property letter The Greek letter.
  * @property transliteration The transliteration of the letter.
+ * @property useUppercase Whether to use uppercase or lowercase for the letter.
  */
 data class LetterTransliterationPair(
     val letter: Letter,
-    val transliteration: String
-)
+    val transliteration: String,
+    val useUppercase: Boolean
+) {
+    val displayLetter: String
+        get() = if (useUppercase) letter.uppercase else letter.lowercase
+
+    val displayTransliteration: String
+        get() = if (useUppercase) transliteration.uppercase() else transliteration
+}

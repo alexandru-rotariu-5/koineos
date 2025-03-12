@@ -5,11 +5,6 @@ package com.koineos.app.ui.navigation.practice
  */
 sealed class PracticeDestination(val route: String) {
     /**
-     * Main Practice screen showing available practice features
-     */
-    data object PracticeHome : PracticeDestination("practice")
-
-    /**
      * Alphabet practice session screen
      */
     data object AlphabetPracticeSession : PracticeDestination("alphabet_practice_session")

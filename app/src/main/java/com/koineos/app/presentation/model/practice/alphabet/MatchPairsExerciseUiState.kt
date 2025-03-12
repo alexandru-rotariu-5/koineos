@@ -46,10 +46,12 @@ data class MatchPairsExerciseUiState(
      *
      * @property id Identifier for the option.
      * @property display Display value for the option (e.g., the letter).
+     * @property useUppercase Whether to use uppercase or lowercase for the letter.
      */
     data class MatchOption(
         val id: String,
-        val display: String
+        val display: String,
+        val useUppercase: Boolean = false
     )
 
     /**

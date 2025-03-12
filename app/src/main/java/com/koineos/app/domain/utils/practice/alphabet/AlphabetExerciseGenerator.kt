@@ -20,7 +20,8 @@ import javax.inject.Singleton
  */
 @Singleton
 class AlphabetExerciseGenerator @Inject constructor(
-    private val letterProvider: LetterProvider
+    private val letterProvider: LetterProvider,
+    private val letterCaseProvider: LetterCaseProvider
 ) : ExerciseGenerator<Letter> {
 
     companion object {
@@ -70,54 +71,65 @@ class AlphabetExerciseGenerator @Inject constructor(
         )
     }
 
-    /**
-     * Generates a transliteration selection exercise for the given letter.
-     */
     private suspend fun generateSelectTransliterationExercise(letter: Letter): SelectTransliterationExercise {
-        // Get incorrect options for the multiple choice
+        // Determine case for this exercise
+        val useUppercase = letterCaseProvider.shouldUseUppercase()
+
+        // Get incorrect options
         val incorrectOptions = letterProvider.getIncorrectTransliterationOptions(
             letter.transliteration,
             DEFAULT_TRANSLITERATION_OPTION_COUNT - 1
         )
 
-        // Combine correct and incorrect options and shuffle
-        val options = (incorrectOptions + letter.transliteration).shuffled()
+        // Apply case to options if needed
+        val processedOptions = incorrectOptions.map {
+            if (useUppercase) it.uppercase() else it
+        }
+
+        // Add correct answer with proper case
+        val correctAnswer = if (useUppercase) letter.transliteration.uppercase() else letter.transliteration
+
+        // Combine and shuffle
+        val options = (processedOptions + correctAnswer).shuffled()
 
         return SelectTransliterationExercise(
             id = UUID.randomUUID().toString(),
             letter = letter,
             options = options,
-            correctAnswer = letter.transliteration
+            correctAnswer = correctAnswer,
+            useUppercase = useUppercase
         )
     }
 
-    /**
-     * Generates a lemma selection exercise for the given letter.
-     */
     private suspend fun generateSelectLemmaExercise(letter: Letter): SelectLemmaExercise {
-        // Get incorrect options for the multiple choice
+        // Determine case for this exercise
+        val useUppercase = letterCaseProvider.shouldUseUppercase()
+
+        // Get incorrect options
         val incorrectOptions = letterProvider.getIncorrectLetterOptions(
             letter,
             DEFAULT_LEMMA_OPTION_COUNT - 1
         )
 
-        // Combine correct and incorrect options and shuffle
+        // Combine and shuffle
         val options = (incorrectOptions + letter).shuffled()
 
         return SelectLemmaExercise(
             id = UUID.randomUUID().toString(),
             transliteration = letter.transliteration,
             options = options,
-            correctLetter = letter
+            correctLetter = letter,
+            useUppercase = useUppercase
         )
     }
 
-    /**
-     * Generates a letter matching exercise with the given letters.
-     */
     private fun generateLetterMatchingExercise(letters: List<Letter>): MatchPairsExercise {
-        // Create pairs of letters and their transliterations
-        val pairs = letters.map { LetterTransliterationPair(it, it.transliteration) }
+        // Create pairs with appropriate case for each
+        val pairs = letters.map { letter ->
+            // Each pair can have its own case independently
+            val useUppercase = letterCaseProvider.shouldUseUppercase()
+            LetterTransliterationPair(letter, letter.transliteration, useUppercase)
+        }
 
         return MatchPairsExercise(
             id = UUID.randomUUID().toString(),

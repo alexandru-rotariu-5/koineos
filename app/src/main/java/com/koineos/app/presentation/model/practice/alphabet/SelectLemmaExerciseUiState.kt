@@ -19,7 +19,8 @@ data class SelectLemmaExerciseUiState(
     val options: List<LetterOption>,
     val selectedAnswer: String? = null,
     val isChecked: Boolean = false,
-    val isCorrect: Boolean? = null
+    val isCorrect: Boolean? = null,
+    val useUppercase: Boolean = false
 ) : ExerciseUiState {
     override val type = ExerciseType.SELECT_LEMMA
     override val hasAnswer: Boolean get() = selectedAnswer != null
@@ -29,9 +30,11 @@ data class SelectLemmaExerciseUiState(
      *
      * @property id Identifier for the option.
      * @property display Display value for the option (the letter).
+     * @property useUppercase Whether to use uppercase or lowercase for the letter.
      */
     data class LetterOption(
         val id: String,
-        val display: String
+        val display: String,
+        val useUppercase: Boolean = false
     )
 }

@@ -8,8 +8,7 @@ import androidx.navigation.NavBackStackEntry
 import com.koineos.app.ui.navigation.alphabet.AlphabetDestination
 import com.koineos.app.ui.navigation.home.HomeDestination
 import com.koineos.app.ui.navigation.learn.LearnDestination
-import com.koineos.app.ui.navigation.practice.PracticeDestination
-import com.koineos.app.ui.navigation.read.ReadDestination
+import com.koineos.app.ui.navigation.vocabulary.VocabularyDestination
 
 object AnimationUtils {
     private const val DEFAULT_ANIMATION_DURATION = 300
@@ -19,10 +18,9 @@ object AnimationUtils {
      */
     private val ROOT_ROUTES = setOf(
         HomeDestination.HomeScreen.route,
-        LearnDestination.LearnHome.route,
-        PracticeDestination.PracticeHome.route,
         AlphabetDestination.AlphabetHome.route,
-        ReadDestination.ReadHome.route
+        VocabularyDestination.VocabularyHome.route,
+        LearnDestination.LearnHome.route,
     )
 
     /**

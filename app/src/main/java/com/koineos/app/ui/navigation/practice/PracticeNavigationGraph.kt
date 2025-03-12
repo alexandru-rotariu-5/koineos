@@ -1,7 +1,5 @@
 package com.koineos.app.ui.navigation.practice
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -10,7 +8,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.koineos.app.presentation.viewmodel.AlphabetPracticeSessionViewModel
-import com.koineos.app.ui.components.core.RootScreenScaffold
 import com.koineos.app.ui.navigation.RootDestination
 import com.koineos.app.ui.screens.practice.PracticeSessionResultsScreen
 import com.koineos.app.ui.screens.practice.PracticeSessionScreen
@@ -23,22 +20,9 @@ fun NavGraphBuilder.practiceGraph(
     navController: NavHostController
 ) {
     navigation(
-        startDestination = PracticeDestination.PracticeHome.route,
-        route = RootDestination.PracticeRoot.route
+        startDestination = PracticeDestination.AlphabetPracticeSession.route,
+        route = "practice_session"
     ) {
-        // Main Practice screen
-        composable(
-            route = PracticeDestination.PracticeHome.route,
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None }
-        ) {
-            RootScreenScaffold(
-                navController = navController,
-                showLogo = false,
-                title = "Practice"
-            ) {}
-        }
-
         composable(
             route = PracticeDestination.AlphabetPracticeSession.route,
             enterTransition = AnimationUtils.slideUpEnter,
@@ -56,7 +40,7 @@ fun NavGraphBuilder.practiceGraph(
                             accuracyPercentage
                         )
                     ) {
-                        popUpTo(RootDestination.PracticeRoot.route) {
+                        popUpTo(RootDestination.AlphabetRoot.route) {
                             inclusive = true
                         }
                     }

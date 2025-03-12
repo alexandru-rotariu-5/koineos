@@ -21,7 +21,8 @@ data class SelectTransliterationExerciseUiState(
     val options: List<String>,
     val selectedAnswer: String? = null,
     val isChecked: Boolean = false,
-    val isCorrect: Boolean? = null
+    val isCorrect: Boolean? = null,
+    val useUppercase: Boolean = false
 ) : ExerciseUiState {
     override val type = ExerciseType.SELECT_TRANSLITERATION
     override val hasAnswer: Boolean get() = selectedAnswer != null

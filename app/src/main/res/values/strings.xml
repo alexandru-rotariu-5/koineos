@@ -3,10 +3,9 @@
 
     <!-- Bottom Nav Bar -->
     <string name="bottom_nav_bar_home">Home</string>
-    <string name="bottom_nav_bar_learn">Learn</string>
-    <string name="bottom_nav_bar_practice">Practice</string>
     <string name="bottom_nav_bar_alphabet">Alphabet</string>
-    <string name="bottom_nav_bar_read">Read</string>
+    <string name="bottom_nav_bar_vocabulary">Vocabulary</string>
+    <string name="bottom_nav_bar_learn">Learn</string>
 
     <!-- Feature Card -->
     <string name="feature_progress_percentage">%1$d%% completed</string>

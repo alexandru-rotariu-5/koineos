@@ -7,7 +7,7 @@ import com.koineos.app.ui.navigation.alphabet.alphabetGraph
 import com.koineos.app.ui.navigation.home.homeGraph
 import com.koineos.app.ui.navigation.learn.learnGraph
 import com.koineos.app.ui.navigation.practice.practiceGraph
-import com.koineos.app.ui.navigation.read.readGraph
+import com.koineos.app.ui.navigation.vocabulary.vocabularyGraph
 import com.koineos.app.ui.utils.AnimationUtils
 
 /**
@@ -29,16 +29,16 @@ fun MainNavigationGraph(
         // Home section graph
         homeGraph(navController)
 
+        // Alphabet section graph
+        alphabetGraph(navController)
+
+        // Vocabulary section graph
+        vocabularyGraph(navController)
+
         // Learn section graph
         learnGraph(navController)
 
         // Practice section graph
         practiceGraph(navController)
-
-        // Alphabet section graph
-        alphabetGraph(navController)
-
-        // Read section graph
-        readGraph(navController)
     }
 }

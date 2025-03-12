@@ -33,28 +33,22 @@ sealed class BottomNavItem(
         labelResId = R.string.bottom_nav_bar_home
     )
 
-    data object Learn : BottomNavItem(
-        rootDestination = RootDestination.LearnRoot,
-        icon = AppIcon.Learn,
-        labelResId = R.string.bottom_nav_bar_learn
-    )
-
-    data object Practice : BottomNavItem(
-        rootDestination = RootDestination.PracticeRoot,
-        icon = AppIcon.Practice,
-        labelResId = R.string.bottom_nav_bar_practice
-    )
-
     data object Alphabet : BottomNavItem(
         rootDestination = RootDestination.AlphabetRoot,
         icon = AppIcon.Alphabet,
         labelResId = R.string.bottom_nav_bar_alphabet
     )
 
-    data object Read : BottomNavItem(
-        rootDestination = RootDestination.ReadRoot,
-        icon = AppIcon.Read,
-        labelResId = R.string.bottom_nav_bar_read
+    data object Vocabulary : BottomNavItem(
+        rootDestination = RootDestination.VocabularyRoot,
+        icon = AppIcon.Vocabulary,
+        labelResId = R.string.bottom_nav_bar_vocabulary
+    )
+
+    data object Learn : BottomNavItem(
+        rootDestination = RootDestination.LearnRoot,
+        icon = AppIcon.Learn,
+        labelResId = R.string.bottom_nav_bar_learn
     )
 }
 
@@ -70,10 +64,9 @@ fun BottomNavBar(
 
     val items = listOf(
         BottomNavItem.Home,
-        BottomNavItem.Learn,
-        BottomNavItem.Practice,
         BottomNavItem.Alphabet,
-        BottomNavItem.Read
+        BottomNavItem.Vocabulary,
+        BottomNavItem.Learn,
     )
 
     Column {

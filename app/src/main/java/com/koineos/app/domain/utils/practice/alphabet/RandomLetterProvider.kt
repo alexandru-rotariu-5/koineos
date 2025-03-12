@@ -142,11 +142,12 @@ class RandomLetterProvider @Inject constructor(
         return getRandomEntity()
     }
 
-    override suspend fun getIncorrectLetterOptions(
-        correctLetter: Letter,
-        count: Int
-    ): List<Letter> {
-        return getRandomEntitiesExcluding(count, listOf(correctLetter))
+    override suspend fun getIncorrectLetterOptions(correctLetter: Letter, count: Int): List<Letter> {
+        return if (correctLetter.name.contains("sigma")) {
+            getIncorrectLetterOptionsExcludingSigmaVariants(correctLetter, count)
+        } else {
+            getIncorrectLetterOptionsWithoutMultipleSigmas(correctLetter, count)
+        }
     }
 
     override suspend fun getIncorrectTransliterationOptions(
@@ -167,5 +168,60 @@ class RandomLetterProvider @Inject constructor(
         val safeCount = count.coerceAtMost(incorrectOptions.size)
 
         return incorrectOptions.shuffled().take(safeCount)
+    }
+
+    override suspend fun getIncorrectLetterOptionsExcludingSigmaVariants(correctLetter: Letter, count: Int): List<Letter> {
+        ensureCacheInitialized()
+        val letters = letterCache
+            ?: throw IllegalStateException("No letters available in the alphabet repository")
+        if (letters.isEmpty()) {
+            throw IllegalStateException("No letters available in the alphabet repository")
+        }
+
+        val availableLetters = letters.filter {
+            it.id != correctLetter.id && !it.name.contains("sigma")
+        }
+        if (availableLetters.isEmpty()) {
+            throw IllegalStateException("No letters available after exclusion")
+        }
+
+        // Ensure we don't request more letters than available
+        val safeCount = count.coerceAtMost(availableLetters.size)
+        return availableLetters.shuffled().take(safeCount)
+    }
+
+    override suspend fun getIncorrectLetterOptionsWithoutMultipleSigmas(correctLetter: Letter, count: Int): List<Letter> {
+        ensureCacheInitialized()
+        val letters = letterCache
+            ?: throw IllegalStateException("No letters available in the alphabet repository")
+        if (letters.isEmpty()) {
+            throw IllegalStateException("No letters available in the alphabet repository")
+        }
+
+        // Filter out the correct letter
+        val availableNonSigmaLetters = letters.filter {
+            it.id != correctLetter.id && !it.name.contains("sigma")
+        }
+
+        // Get all sigma variants
+        val sigmaVariants = letters.filter {
+            it.id != correctLetter.id && it.name.contains("sigma")
+        }
+
+        // Start with non-sigma letters
+        val candidates = availableNonSigmaLetters.shuffled()
+
+        // If we need more letters and we have sigmas available, add exactly one
+        val result = candidates.take(
+            (count).coerceAtMost(availableNonSigmaLetters.size)
+        ).toMutableList()
+
+        // If we still need more options and we haven't filled the count, add one sigma variant
+        if (result.size < count && sigmaVariants.isNotEmpty()) {
+            result.add(sigmaVariants.random())
+        }
+
+        // If we're still short, just return what we have
+        return result.take(count)
     }
 }
