@@ -26,7 +26,7 @@ fun NavGraphBuilder.practiceGraph(
         composable(
             route = PracticeDestination.AlphabetPracticeSession.route,
             enterTransition = AnimationUtils.slideUpEnter,
-            exitTransition = AnimationUtils.slideDownExit
+            popExitTransition = AnimationUtils.slideDownExit
         ) {
             PracticeSessionScreen(
                 viewModel = hiltViewModel<AlphabetPracticeSessionViewModel>(),

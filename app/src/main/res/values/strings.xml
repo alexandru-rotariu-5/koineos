@@ -25,7 +25,7 @@
     <string name="learn_feature_handbook_description">Access complete reference materials</string>
 
     <!-- Alphabet Screen -->
-    <string name="alphabet_screen_learn_button">Learn the letters</string>
+    <string name="alphabet_screen_learn_button">Learn the alphabet</string>
 
     <!-- Letter Notes -->
     <string name="note_alpha">Pronounced as \'a\' in \'father\'.</string>

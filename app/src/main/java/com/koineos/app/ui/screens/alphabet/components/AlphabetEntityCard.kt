@@ -47,8 +47,11 @@ fun AlphabetEntityCard(
         RegularCardState(
             backgroundColor = Colors.AlphabetCardMasteredBackground,
             contentColor = Colors.AlphabetCardMasteredContent,
-            border = BorderStroke(Dimensions.regularCardBorder, Colors.AlphabetCardMasteredBorder),
-            elevation = Dimensions.cardElevation
+            border = BorderStroke(
+                Dimensions.alphabetCardMasteredBorder,
+                Colors.AlphabetCardMasteredBorder
+            ),
+            elevation = Dimensions.alphabetCardMasteredElevation
         )
     } else {
         RegularCardState.Default
