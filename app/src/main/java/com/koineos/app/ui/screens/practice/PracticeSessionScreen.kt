@@ -211,7 +211,7 @@ private fun PracticeContentState(
             // Instructions
             Text(
                 text = state.currentExercise.instructions,
-                style = Typography.titleLarge.copy(
+                style = Typography.headlineSmall.copy(
                     fontWeight = FontWeight.Bold
                 ),
                 textAlign = TextAlign.Start,

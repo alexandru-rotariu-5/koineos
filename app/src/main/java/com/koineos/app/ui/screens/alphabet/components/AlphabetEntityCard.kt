@@ -45,9 +45,9 @@ fun AlphabetEntityCard(
 ) {
     val cardState = if (isMastered) {
         RegularCardState(
-            backgroundColor = Colors.SecondaryContainer,
-            contentColor = Colors.Secondary,
-            border = BorderStroke(Dimensions.regularCardBorder, Colors.Secondary),
+            backgroundColor = Colors.AlphabetCardMasteredBackground,
+            contentColor = Colors.AlphabetCardMasteredContent,
+            border = BorderStroke(Dimensions.regularCardBorder, Colors.AlphabetCardMasteredBorder),
             elevation = Dimensions.cardElevation
         )
     } else {
@@ -69,7 +69,7 @@ fun AlphabetEntityCard(
             Text(
                 text = primaryText,
                 style = AlphabetEntityMainTextStyle,
-                color = if (isMastered) Colors.OnSecondaryContainer else Colors.OnSurface,
+                color = if (isMastered) Colors.AlphabetCardMasteredContent else Colors.OnSurface,
                 textAlign = TextAlign.Center
             )
 
@@ -80,7 +80,7 @@ fun AlphabetEntityCard(
                 text = secondaryText,
                 style = Typography.bodyMedium,
                 color = if (isMastered)
-                    Colors.OnSecondaryContainer.copy(alpha = 0.7f)
+                    Colors.AlphabetCardMasteredContent.copy(alpha = 0.7f)
                 else
                     Colors.OnSurface.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center
@@ -92,7 +92,7 @@ fun AlphabetEntityCard(
             RegularLinearProgressIndicator(
                 modifier = Modifier.fillMaxWidth(),
                 progress = masteryLevel,
-                color = Colors.Secondary,
+                color = Colors.AlphabetCardProgressIndicator,
                 trackColor = Colors.RegularProgressIndicatorTrack,
             )
         }

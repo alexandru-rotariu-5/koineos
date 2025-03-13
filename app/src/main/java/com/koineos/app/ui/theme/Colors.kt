@@ -22,7 +22,7 @@ object Colors {
     val OnPrimaryContainer = Color(0xFF001D4C)
 
     val OnSecondary = Color(0xFFFFFFFF)
-    val SecondaryContainer = Color(0xFFFDE3E1)
+    val SecondaryContainer = Color(0xFFFCECEA)
     val OnSecondaryContainer = Color(0xFFA92A2B)
 
     val Surface = Color(0xFFFFFFFF)
@@ -47,6 +47,11 @@ object Colors {
     val RegularCardBackground = Color(0xFFFFFFFF)
     val RegularCardBorder = Color(0xFFDDE0E3)
     val OnRegularCard = Color(0xFF4B4B4B)
+
+    val AlphabetCardMasteredBackground = PrimaryContainer
+    val AlphabetCardMasteredBorder = Primary
+    val AlphabetCardProgressIndicator = Primary
+    val AlphabetCardMasteredContent = PrimaryDark
 
     val RegularProgressIndicatorTrack = Color(0xFFE5E5E5)
 
