@@ -22,11 +22,11 @@ object Colors {
     val OnPrimaryContainer = Color(0xFF001D4C)
 
     val OnSecondary = Color(0xFFFFFFFF)
-    val SecondaryContainer = Color(0xFFFFDAD5)
-    val OnSecondaryContainer = Color(0xFF410002)
+    val SecondaryContainer = Color(0xFFFDE3E1)
+    val OnSecondaryContainer = Color(0xFFA92A2B)
 
     val Surface = Color(0xFFFFFFFF)
-    val OnSurface = Color(0xFF1C1B1F)
+    val OnSurface = Color(0xFF4B4B4B)
     val SurfaceVariant = Color(0xFFE4E4E7)
     val OnSurfaceVariant = Color(0xFF49454F)
 
@@ -46,6 +46,9 @@ object Colors {
 
     val RegularCardBackground = Color(0xFFFFFFFF)
     val RegularCardBorder = Color(0xFFDDE0E3)
+    val OnRegularCard = Color(0xFF4B4B4B)
+
+    val RegularProgressIndicatorTrack = Color(0xFFE5E5E5)
 
     val DialogBackground = Color(0xFFFFFFFF)
 

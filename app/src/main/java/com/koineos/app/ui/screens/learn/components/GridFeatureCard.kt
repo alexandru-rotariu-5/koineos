@@ -16,6 +16,7 @@ import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.components.cards.CardPadding
 import com.koineos.app.ui.components.core.IconComponent
 import com.koineos.app.ui.components.cards.RegularCard
+import com.koineos.app.ui.components.core.RegularLinearProgressIndicator
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineosTheme
@@ -65,8 +66,8 @@ fun GridFeatureCard(
             )
 
             if (progress > 0f) {
-                LinearProgressIndicator(
-                    progress = { progress },
+                RegularLinearProgressIndicator(
+                    progress = progress,
                     modifier = Modifier.fillMaxWidth(),
                     color = Colors.Primary,
                     trackColor = Colors.PrimaryContainer

@@ -8,9 +8,11 @@ import com.koineos.app.data.repository.DefaultAlphabetMasteryRepository
 import com.koineos.app.data.repository.DefaultAlphabetRepository
 import com.koineos.app.domain.repository.AlphabetMasteryRepository
 import com.koineos.app.domain.repository.AlphabetRepository
+import com.koineos.app.domain.service.MasteryUpdateService
 import com.koineos.app.domain.usecase.alphabet.GenerateAlphabetPracticeSetUseCase
 import com.koineos.app.domain.usecase.alphabet.GetAlphabetContentUseCase
-import com.koineos.app.domain.usecase.alphabet.UpdateAlphabetEntityMasteryUseCase
+import com.koineos.app.domain.usecase.alphabet.UpdateAlphabetEntityMasteryLevelsUseCase
+import com.koineos.app.domain.utils.practice.EntityTargetIdentifier
 import com.koineos.app.domain.utils.practice.PracticeManager
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetExerciseGenerator
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetPracticeSetGenerator
@@ -79,15 +81,6 @@ object AlphabetModule {
 
     @Provides
     @Singleton
-    fun provideUpdateAlphabetMasteryUseCase(
-        alphabetMasteryRepository: AlphabetMasteryRepository
-    ): UpdateAlphabetEntityMasteryUseCase {
-        Log.d(TAG, "Providing UpdateAlphabetEntityMasteryUseCase")
-        return UpdateAlphabetEntityMasteryUseCase(alphabetMasteryRepository)
-    }
-
-    @Provides
-    @Singleton
     fun provideLetterProvider(
         alphabetRepository: AlphabetRepository
     ): LetterProvider {
@@ -129,5 +122,33 @@ object AlphabetModule {
     ): GenerateAlphabetPracticeSetUseCase {
         Log.d(TAG, "Providing GenerateAlphabetPracticeSetUseCase")
         return GenerateAlphabetPracticeSetUseCase(practiceManager)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMasteryUpdateService(): MasteryUpdateService {
+        Log.d(TAG, "Providing MasteryUpdateService")
+        return MasteryUpdateService()
+    }
+
+    @Provides
+    @Singleton
+    fun provideEntityTargetIdentifier(): EntityTargetIdentifier {
+        Log.d(TAG, "Providing EntityTargetIdentifier")
+        return EntityTargetIdentifier()
+    }
+
+    @Provides
+    fun provideUpdateAlphabetEntityMasteryLevelsUseCase(
+        masteryUpdateService: MasteryUpdateService,
+        entityTargetIdentifier: EntityTargetIdentifier,
+        alphabetMasteryRepository: AlphabetMasteryRepository
+    ): UpdateAlphabetEntityMasteryLevelsUseCase {
+        Log.d(TAG, "Providing UpdateAlphabetEntityMasteryLevelsUseCase")
+        return UpdateAlphabetEntityMasteryLevelsUseCase(
+            masteryUpdateService,
+            entityTargetIdentifier,
+            alphabetMasteryRepository
+        )
     }
 }

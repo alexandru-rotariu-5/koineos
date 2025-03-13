@@ -1,5 +1,6 @@
 package com.koineos.app.ui.screens.alphabet.components
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,12 +43,11 @@ fun AlphabetEntityCard(
     masteryLevel: Float,
     onClick: () -> Unit,
 ) {
-    // Create a custom card state for the mastered state
     val cardState = if (isMastered) {
         RegularCardState(
-            backgroundColor = Colors.PrimaryContainer,
-            contentColor = Colors.Primary,
-            border = RegularCardState.Default.border,
+            backgroundColor = Colors.SecondaryContainer,
+            contentColor = Colors.Secondary,
+            border = BorderStroke(Dimensions.regularCardBorder, Colors.Secondary),
             elevation = Dimensions.cardElevation
         )
     } else {
@@ -69,7 +69,7 @@ fun AlphabetEntityCard(
             Text(
                 text = primaryText,
                 style = AlphabetEntityMainTextStyle,
-                color = if (isMastered) Colors.Primary else Colors.OnSurface,
+                color = if (isMastered) Colors.OnSecondaryContainer else Colors.OnSurface,
                 textAlign = TextAlign.Center
             )
 
@@ -80,7 +80,7 @@ fun AlphabetEntityCard(
                 text = secondaryText,
                 style = Typography.bodyMedium,
                 color = if (isMastered)
-                    Colors.Primary.copy(alpha = 0.7f)
+                    Colors.OnSecondaryContainer.copy(alpha = 0.7f)
                 else
                     Colors.OnSurface.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center
@@ -92,8 +92,8 @@ fun AlphabetEntityCard(
             RegularLinearProgressIndicator(
                 modifier = Modifier.fillMaxWidth(),
                 progress = masteryLevel,
-                color = Colors.Primary,
-                trackColor = Colors.PrimaryContainer,
+                color = Colors.Secondary,
+                trackColor = Colors.RegularProgressIndicatorTrack,
             )
         }
     }

@@ -18,6 +18,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -41,7 +42,6 @@ import com.koineos.app.presentation.model.alphabet.LetterUiState
 import com.koineos.app.presentation.viewmodel.AlphabetViewModel
 import com.koineos.app.ui.components.core.RegularButton
 import com.koineos.app.ui.components.core.RootScreenScaffold
-import com.koineos.app.ui.navigation.RootDestination
 import com.koineos.app.ui.navigation.practice.PracticeDestination
 import com.koineos.app.ui.screens.alphabet.components.AccentMarkCard
 import com.koineos.app.ui.screens.alphabet.components.AlphabetInfoDialog
@@ -59,6 +59,10 @@ fun AlphabetScreen(
     viewModel: AlphabetViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.onScreenResumed()
+    }
 
     RootScreenScaffold(
         navController = navController,

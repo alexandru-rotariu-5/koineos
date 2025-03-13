@@ -47,8 +47,22 @@ class AlphabetViewModel @Inject constructor(
 
     val uiState: StateFlow<AlphabetScreenUiState> = _uiState
 
+    private var isInitialLoad = true
+
     init {
         loadAlphabetContent()
+    }
+
+    /**
+     * Call this when returning to the screen from another destination
+     * It will only refresh content if we're returning to the screen, not on initial load
+     */
+    fun onScreenResumed() {
+        if (!isInitialLoad) {
+            // Only reload if this isn't the first time we're seeing the screen
+            loadAlphabetContent()
+        }
+        isInitialLoad = false
     }
 
     fun onAlphabetEntityClick(entityId: String) {

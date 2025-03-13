@@ -71,7 +71,12 @@ fun NavGraphBuilder.practiceGraph(
                 completionTimeMs = arguments.getLong("completionTimeMs"),
                 accuracyPercentage = arguments.getFloat("accuracyPercentage"),
                 onDone = {
-                    navController.popBackStack()
+                    navController.navigate(RootDestination.AlphabetRoot.route) {
+                        popUpTo(RootDestination.AlphabetRoot.route) {
+                            inclusive = true
+                        }
+                        launchSingleTop = true
+                    }
                 }
             )
         }

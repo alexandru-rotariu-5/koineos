@@ -1,19 +1,24 @@
 package com.koineos.app.presentation.viewmodel
 
+import androidx.lifecycle.viewModelScope
 import com.koineos.app.domain.model.practice.Exercise
 import com.koineos.app.domain.model.practice.PracticeFlowState
 import com.koineos.app.domain.usecase.CompletePracticeSetUseCase
 import com.koineos.app.domain.usecase.ValidateExerciseAnswerUseCase
 import com.koineos.app.domain.usecase.alphabet.GenerateAlphabetPracticeSetUseCase
+import com.koineos.app.domain.usecase.alphabet.UpdateAlphabetEntityMasteryLevelsUseCase
 import com.koineos.app.presentation.mapper.ExerciseStateMapper
 import com.koineos.app.presentation.model.practice.ActionButtonColorState
 import com.koineos.app.presentation.model.practice.ActionButtonFactory
 import com.koineos.app.presentation.model.practice.FeedbackUiState
+import com.koineos.app.presentation.model.practice.PracticeScreenUiState
 import com.koineos.app.presentation.model.practice.alphabet.MatchPairsExerciseUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectLemmaExerciseUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -23,6 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AlphabetPracticeSessionViewModel @Inject constructor(
     private val generateAlphabetPracticeSetUseCase: GenerateAlphabetPracticeSetUseCase,
+    private val updateAlphabetEntityMasteryLevelsUseCase: UpdateAlphabetEntityMasteryLevelsUseCase,
     validateExerciseAnswerUseCase: ValidateExerciseAnswerUseCase,
     completePracticeSetUseCase: CompletePracticeSetUseCase,
     exerciseStateMapper: ExerciseStateMapper
@@ -142,6 +148,42 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
                     hasAnswer = state.asLoaded()?.currentExerciseAnswered ?: false
                 )
             ) ?: state
+        }
+    }
+
+    override fun finishPractice() {
+        val currentState = uiState.value
+        val loadedState = currentState.asLoaded() ?: return
+
+        viewModelScope.launch {
+            val completionTimeMs = System.currentTimeMillis() - startTimeMs
+
+            // Map UI exercise results to domain exercises
+            val exerciseResults = loadedState.exerciseResults.entries.associate { (exerciseId, result) ->
+                domainExercises.first { it.id == exerciseId } to result
+            }
+
+            // Update alphabet entity mastery levels
+            updateAlphabetEntityMasteryLevelsUseCase(exerciseResults)
+
+            val practiceResult = completePracticeSetUseCase(
+                practiceSetId = practiceSetId,
+                totalExercises = loadedState.totalExercises,
+                correctAnswers = loadedState.correctAnswers,
+                incorrectAnswers = loadedState.incorrectAnswers,
+                completionTimeMs = completionTimeMs
+            )
+
+            _uiState.value = PracticeScreenUiState.Loading
+            delay(300) // Small delay for transition effect
+
+            _uiState.value = PracticeScreenUiState.Completed(
+                totalExercises = practiceResult.totalExercises,
+                correctAnswers = practiceResult.correctAnswers,
+                incorrectAnswers = practiceResult.incorrectAnswers,
+                completionTimeMs = practiceResult.completionTimeMs,
+                accuracyPercentage = practiceResult.accuracyPercentage
+            )
         }
     }
 }

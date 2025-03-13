@@ -27,14 +27,14 @@ import kotlinx.coroutines.launch
  */
 abstract class BasePracticeSessionViewModel(
     private val validateExerciseAnswerUseCase: ValidateExerciseAnswerUseCase,
-    private val completePracticeSetUseCase: CompletePracticeSetUseCase,
+    val completePracticeSetUseCase: CompletePracticeSetUseCase,
     private val exerciseStateMapper: ExerciseStateMapper
 ) : ViewModel() {
 
     // Session data
-    private var practiceSetId: String = ""
-    private var startTimeMs: Long = 0L
-    private var domainExercises: List<Exercise> = emptyList()
+    var practiceSetId: String = ""
+    var startTimeMs: Long = 0L
+    var domainExercises: List<Exercise> = emptyList()
 
     // Current state
     protected val _uiState: MutableStateFlow<PracticeScreenUiState> by lazy {
@@ -222,7 +222,7 @@ abstract class BasePracticeSessionViewModel(
     /**
      * Completes the practice session and shows results.
      */
-    private fun finishPractice() {
+    protected open fun finishPractice() {
         val currentState = uiState.value
         val loadedState = currentState.asLoaded() ?: return
 

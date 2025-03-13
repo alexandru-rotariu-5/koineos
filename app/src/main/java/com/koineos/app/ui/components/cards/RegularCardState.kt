@@ -29,7 +29,7 @@ data class RegularCardState(
          */
         val Default = RegularCardState(
             backgroundColor = Colors.RegularCardBackground,
-            contentColor = Colors.OnSurface,
+            contentColor = Colors.OnRegularCard,
             elevation = Dimensions.cardElevation,
             border = BorderStroke(Dimensions.regularCardBorder, Colors.RegularCardBorder),
             alpha = 1.0f
@@ -40,7 +40,7 @@ data class RegularCardState(
          */
         val Disabled = RegularCardState(
             backgroundColor = Colors.RegularCardBackground,
-            contentColor = Colors.OnSurface.copy(alpha = 0.38f),
+            contentColor = Colors.OnRegularCard.copy(alpha = 0.38f),
             elevation = 0.dp,
             border = BorderStroke(Dimensions.regularCardBorder, Colors.RegularCardBorder.copy(alpha = 0.38f)),
             alpha = 0.5f

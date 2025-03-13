@@ -1,9 +1,11 @@
 package com.koineos.app.ui.components.core
 
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import com.koineos.app.ui.theme.Colors
 
 /**
@@ -19,13 +21,14 @@ fun RegularLinearProgressIndicator(
     modifier: Modifier = Modifier,
     progress: Float = 0f,
     color: Color = Colors.Primary,
-    trackColor: Color = Colors.PrimaryContainer
+    trackColor: Color = Colors.RegularProgressIndicatorTrack
 ) {
     LinearProgressIndicator(
-        modifier = modifier,
+        modifier = modifier.height(height = 8.dp),
         progress = { progress },
         color = color,
         trackColor = trackColor,
-//        drawStopIndicator = {}
+        gapSize = (-12).dp,
+        drawStopIndicator = {}
     )
 }
