@@ -100,6 +100,8 @@ class ExerciseStateMapper @Inject constructor() {
         exercise: MatchPairsExercise,
         currentAnswer: Any?
     ): MatchPairsExerciseUiState {
+        val useUppercase = exercise.letterPairs.firstOrNull()?.useUppercase ?: false
+
         // Create a map of match options to their transliterations with proper case
         val pairsToMatch = exercise.letterPairs.associate { pair ->
             val option = MatchPairsExerciseUiState.MatchOption(
@@ -117,7 +119,8 @@ class ExerciseStateMapper @Inject constructor() {
             id = exercise.id,
             instructions = exercise.instructions,
             pairsToMatch = pairsToMatch,
-            matchedPairs = matchedPairs
+            matchedPairs = matchedPairs,
+            useUppercase = useUppercase
         )
     }
 }

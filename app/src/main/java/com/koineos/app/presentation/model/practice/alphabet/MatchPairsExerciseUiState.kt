@@ -11,13 +11,15 @@ import com.koineos.app.presentation.model.practice.ExerciseUiState
  * @property pairsToMatch Map of letter options to their correct transliterations.
  * @property matchedPairs Current matched pairs (letter id to transliteration).
  * @property selectedOption Currently selected option, if any.
+ * @property useUppercase Whether to use uppercase or lowercase for the exercise.
  */
 data class MatchPairsExerciseUiState(
     override val id: String,
     override val instructions: String,
     val pairsToMatch: Map<MatchOption, String>,
     val matchedPairs: Map<String, String> = emptyMap(),
-    val selectedOption: String? = null
+    val selectedOption: String? = null,
+    val useUppercase: Boolean = false
 ) : ExerciseUiState {
     override val type = ExerciseType.MATCH_PAIRS
     override val hasAnswer: Boolean

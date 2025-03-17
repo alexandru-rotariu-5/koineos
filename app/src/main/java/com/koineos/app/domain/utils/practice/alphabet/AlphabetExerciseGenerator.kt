@@ -124,10 +124,10 @@ class AlphabetExerciseGenerator @Inject constructor(
     }
 
     private fun generateLetterMatchingExercise(letters: List<Letter>): MatchPairsExercise {
+        val useUppercase = letterCaseProvider.shouldUseUppercase()
+
         // Create pairs with appropriate case for each
         val pairs = letters.map { letter ->
-            // Each pair can have its own case independently
-            val useUppercase = letterCaseProvider.shouldUseUppercase()
             LetterTransliterationPair(letter, letter.transliteration, useUppercase)
         }
 

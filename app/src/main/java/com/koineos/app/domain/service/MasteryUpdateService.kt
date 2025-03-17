@@ -17,33 +17,43 @@ class MasteryUpdateService @Inject constructor() {
 
         // Threshold below which mastery will be reset to 0%
         private const val MASTERY_RESET_THRESHOLD = 0.03f
+
+        // Maximum allowed mastery increase per correct answer
+        // This directly caps how much mastery can increase in a single exercise
+        private const val MAX_MASTERY_INCREASE_PER_EXERCISE = 0.05f
     }
 
     /**
      * Calculates the new mastery level after a correct answer.
-     *
-     * Formula: NewMastery = CurrentMastery + (1.0 - CurrentMastery) × LearningRate × ExerciseWeight
-     * With threshold for completion.
-     *
-     * @param currentMastery Current mastery level (0.0-1.0)
-     * @param exerciseType Type of exercise
-     * @return New mastery level
+     * Applies a cap to the final mastery increase rather than the intermediate calculation.
      */
     fun calculateMasteryAfterCorrectAnswer(
         currentMastery: Float,
         exerciseType: ExerciseType
     ): Float {
         val exerciseWeight = getExerciseWeight(exerciseType)
+
+        // Use base learning rate
         val learningRate = MasteryConstants.BASE_LEARNING_RATE
 
-        // Base increment that ensures minimum progress
-        val minimumIncrement = 0.05f * exerciseWeight
+        // Calculate the raw increment
+        val rawIncrement = (1.0f - currentMastery) * learningRate * exerciseWeight
 
-        // Variable component that decreases with mastery
-        val variableIncrement = (1.0f - currentMastery) * learningRate * exerciseWeight
+        // Ensure minimum progress
+        val minimumIncrement = 0.01f * exerciseWeight
+        val actualIncrement = maxOf(minimumIncrement, rawIncrement)
 
-        // Combined increment ensures progress even at high mastery
-        var newMastery = currentMastery + maxOf(minimumIncrement, variableIncrement)
+        // CRITICAL CHANGE: Calculate raw new mastery, then cap the total increase
+        val rawNewMastery = currentMastery + actualIncrement
+
+        // Calculate how much mastery would increase
+        val masteryIncrease = rawNewMastery - currentMastery
+
+        // Apply cap to the total increase
+        val cappedIncrease = minOf(masteryIncrease, MAX_MASTERY_INCREASE_PER_EXERCISE * exerciseWeight)
+
+        // Final mastery is current mastery plus capped increase
+        var newMastery = currentMastery + cappedIncrease
 
         // Apply completion threshold
         if (newMastery >= MASTERY_COMPLETION_THRESHOLD) {
@@ -55,13 +65,6 @@ class MasteryUpdateService @Inject constructor() {
 
     /**
      * Calculates the new mastery level after an incorrect answer.
-     *
-     * Formula: NewMastery = CurrentMastery - (CurrentMastery × ForgetRate × ExerciseWeight)
-     * With threshold for reset.
-     *
-     * @param currentMastery Current mastery level (0.0-1.0)
-     * @param exerciseType Type of exercise
-     * @return New mastery level
      */
     fun calculateMasteryAfterIncorrectAnswer(
         currentMastery: Float,
@@ -70,14 +73,12 @@ class MasteryUpdateService @Inject constructor() {
         val exerciseWeight = getExerciseWeight(exerciseType)
         val forgetRate = MasteryConstants.BASE_FORGET_RATE
 
-        // Maximum decrement to prevent excessive punishment
-        val maximumDecrement = 0.15f * exerciseWeight
+        // Calculate decrement
+        val decrement = currentMastery * forgetRate * exerciseWeight
 
-        // Variable component based on current mastery
-        val variableDecrement = currentMastery * forgetRate * exerciseWeight
-
-        // Use the smaller of the two to avoid excessive punishment
-        var newMastery = currentMastery - minOf(maximumDecrement, variableDecrement)
+        // Cap the maximum decrement
+        val maxDecrement = 0.15f * exerciseWeight
+        var newMastery = currentMastery - minOf(decrement, maxDecrement)
 
         // Apply reset threshold
         if (newMastery <= MASTERY_RESET_THRESHOLD) {
@@ -89,9 +90,6 @@ class MasteryUpdateService @Inject constructor() {
 
     /**
      * Gets the weight for a specific exercise type.
-     *
-     * @param exerciseType The exercise type
-     * @return The weight for the exercise type
      */
     private fun getExerciseWeight(exerciseType: ExerciseType): Float {
         return when (exerciseType) {

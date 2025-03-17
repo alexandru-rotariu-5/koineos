@@ -8,6 +8,8 @@ import com.koineos.app.data.repository.DefaultAlphabetMasteryRepository
 import com.koineos.app.data.repository.DefaultAlphabetRepository
 import com.koineos.app.domain.repository.AlphabetMasteryRepository
 import com.koineos.app.domain.repository.AlphabetRepository
+import com.koineos.app.domain.service.BatchManagementService
+import com.koineos.app.domain.service.EntitySelectionService
 import com.koineos.app.domain.service.MasteryUpdateService
 import com.koineos.app.domain.usecase.alphabet.GenerateAlphabetPracticeSetUseCase
 import com.koineos.app.domain.usecase.alphabet.GetAlphabetContentUseCase
@@ -16,10 +18,10 @@ import com.koineos.app.domain.utils.practice.EntityTargetIdentifier
 import com.koineos.app.domain.utils.practice.PracticeManager
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetExerciseGenerator
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetPracticeSetGenerator
+import com.koineos.app.domain.utils.practice.alphabet.BatchAwareLetterProvider
 import com.koineos.app.domain.utils.practice.alphabet.DefaultLetterCaseProvider
 import com.koineos.app.domain.utils.practice.alphabet.LetterCaseProvider
 import com.koineos.app.domain.utils.practice.alphabet.LetterProvider
-import com.koineos.app.domain.utils.practice.alphabet.RandomLetterProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -81,11 +83,33 @@ object AlphabetModule {
 
     @Provides
     @Singleton
+    fun provideBatchManagementService(): BatchManagementService {
+        Log.d(TAG, "Providing BatchManagementService")
+        return BatchManagementService()
+    }
+
+    @Provides
+    @Singleton
+    fun provideEntitySelectionService(): EntitySelectionService {
+        Log.d(TAG, "Providing EntitySelectionService")
+        return EntitySelectionService()
+    }
+
+    @Provides
+    @Singleton
     fun provideLetterProvider(
-        alphabetRepository: AlphabetRepository
+        alphabetRepository: AlphabetRepository,
+        alphabetMasteryRepository: AlphabetMasteryRepository,
+        batchManagementService: BatchManagementService,
+        entitySelectionService: EntitySelectionService
     ): LetterProvider {
-        Log.d(TAG, "Providing LetterProvider")
-        return RandomLetterProvider(alphabetRepository)
+        Log.d(TAG, "Providing BatchAwareLetterProvider")
+        return BatchAwareLetterProvider(
+            alphabetRepository,
+            alphabetMasteryRepository,
+            batchManagementService,
+            entitySelectionService
+        )
     }
 
     @Provides
