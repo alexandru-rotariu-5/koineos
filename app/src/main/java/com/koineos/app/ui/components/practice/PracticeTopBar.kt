@@ -1,5 +1,7 @@
 package com.koineos.app.ui.components.practice
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -50,7 +52,8 @@ fun PracticeTopBar(
                 progress = progress,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = Dimensions.paddingMedium)
+                    .padding(end = Dimensions.paddingMedium),
+                animationSpec = tween(300, easing = FastOutSlowInEasing)
             )
 
             IconButton(

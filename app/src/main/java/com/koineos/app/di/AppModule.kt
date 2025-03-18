@@ -5,7 +5,6 @@ import com.koineos.app.domain.usecase.CompletePracticeSetUseCase
 import com.koineos.app.domain.usecase.ValidateExerciseAnswerUseCase
 import com.koineos.app.domain.utils.practice.PracticeManager
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetPracticeSetGenerator
-import com.koineos.app.domain.utils.practice.alphabet.RandomLetterProvider
 import com.koineos.app.ui.utils.AndroidStringProvider
 import com.koineos.app.ui.utils.StringProvider
 import dagger.Module
@@ -33,10 +32,9 @@ object AppModule {
     @Provides
     @Singleton
     fun providePracticeManager(
-        alphabetPracticeSetGenerator: AlphabetPracticeSetGenerator,
-        letterProvider: RandomLetterProvider
+        alphabetPracticeSetGenerator: AlphabetPracticeSetGenerator
     ): PracticeManager {
-        return PracticeManager(alphabetPracticeSetGenerator, letterProvider)
+        return PracticeManager(alphabetPracticeSetGenerator)
     }
 
     @Provides

@@ -1,5 +1,6 @@
 package com.koineos.app.ui.screens.practice
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +21,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -38,6 +41,7 @@ import com.koineos.app.ui.components.core.RegularButton
 import com.koineos.app.ui.components.practice.FeedbackPanel
 import com.koineos.app.ui.components.practice.PracticeActionButton
 import com.koineos.app.ui.components.practice.PracticeTopBar
+import com.koineos.app.ui.components.practice.QuitPracticeConfirmationDialog
 import com.koineos.app.ui.screens.practice.components.AnimatedExerciseContent
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
@@ -57,6 +61,18 @@ fun PracticeSessionScreen(
     onClose: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var showQuitConfirmation by remember { mutableStateOf(false) }
+
+    BackHandler {
+        showQuitConfirmation = true
+    }
+
+    if (showQuitConfirmation) {
+        QuitPracticeConfirmationDialog(
+            onConfirm = onClose,
+            onDismiss = { showQuitConfirmation = false }
+        )
+    }
 
     NestedScreenScaffold {
         PracticeSessionContent(
@@ -64,7 +80,7 @@ fun PracticeSessionScreen(
             onNavigateToResults = onNavigateToResults,
             onAnswerSelected = viewModel::onAnswerProvided,
             onActionButtonClick = viewModel::onActionButtonClick,
-            onClose = onClose
+            onClose = { showQuitConfirmation = true }
         )
     }
 }

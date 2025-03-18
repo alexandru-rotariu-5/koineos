@@ -1,5 +1,8 @@
 package com.koineos.app.ui.components.core
 
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.Composable
@@ -21,11 +24,18 @@ fun RegularLinearProgressIndicator(
     modifier: Modifier = Modifier,
     progress: Float = 0f,
     color: Color = Colors.Primary,
-    trackColor: Color = Colors.RegularProgressIndicatorTrack
+    trackColor: Color = Colors.RegularProgressIndicatorTrack,
+    animationSpec: FiniteAnimationSpec<Float> = tween(300)
 ) {
+    val animatedProgress = animateFloatAsState(
+        targetValue = progress,
+        animationSpec = animationSpec,
+        label = "progress_animation"
+    )
+
     LinearProgressIndicator(
         modifier = modifier.height(height = 8.dp),
-        progress = { progress },
+        progress = { animatedProgress.value },
         color = color,
         trackColor = trackColor,
         gapSize = (-12).dp,
