@@ -36,7 +36,7 @@ import kotlinx.coroutines.delay
 
 /**
  * Exercise content for matching Greek entities with their transliterations.
- * Supports all entity types (letters, diphthongs, etc.).
+ * Supports all entity types (letters, diphthongs, etc.) with breathing and accent marks.
  *
  * @param exerciseState The UI state for this exercise
  * @param onMatchCreated Callback when a match is created - called with entityID and transliteration
@@ -83,7 +83,7 @@ fun MatchPairsExerciseContent(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
     ) {
-        // Left column - Entity options
+        // Left column - Entity options (potentially with breathing/accent marks)
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
@@ -95,7 +95,7 @@ fun MatchPairsExerciseContent(
 
                 val entityText = @Composable {
                     Text(
-                        text = option.display,
+                        text = option.display, // This includes any applied marks
                         style = Typography.headlineLarge.copy(
                             fontFamily = KoineFont,
                             fontWeight = FontWeight.Bold
@@ -179,7 +179,7 @@ fun MatchPairsExerciseContent(
             }
         }
 
-        // Right column - Transliteration options
+        // Right column - Transliteration options (potentially with breathing/accent mark notations)
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
@@ -191,7 +191,7 @@ fun MatchPairsExerciseContent(
 
                 val transliterationText = @Composable {
                     Text(
-                        text = transliteration,
+                        text = transliteration, // This includes any breathing/accent notations
                         style = Typography.headlineLarge.copy(
                             fontFamily = KoineFont,
                             fontWeight = FontWeight.Bold
@@ -289,7 +289,7 @@ private fun MatchPairsExerciseContentPreview() {
         Surface(color = Colors.Surface) {
             val letterOptions = listOf(
                 MatchPairsExerciseUiState.MatchOption(
-                    id = "alpha", display = "α",
+                    id = "alpha", display = "ἀ", // With smooth breathing
                     entityType = AlphabetCategory.LETTERS.toString(),
                     useUppercase = false
                 ),
@@ -315,7 +315,7 @@ private fun MatchPairsExerciseContentPreview() {
                     id = "exercise1",
                     instructions = "Tap the matching pairs",
                     pairsToMatch = mapOf(
-                        letterOptions[0] to "a",
+                        letterOptions[0] to "a", // Alpha with smooth breathing -> a
                         letterOptions[1] to "b",
                         letterOptions[2] to "g",
                         letterOptions[3] to "d"
@@ -323,8 +323,7 @@ private fun MatchPairsExerciseContentPreview() {
                     matchedPairs = mapOf(
                         "alpha" to "a",
                         "beta" to "b"
-                    ),
-                    selectedOption = null
+                    )
                 ),
                 onMatchCreated = { _, _ -> }
             )
@@ -377,6 +376,55 @@ private fun MatchPairsExerciseCompletePreview() {
                         "delta" to "d"
                     ),
                     selectedOption = null
+                ),
+                onMatchCreated = { _, _ -> }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MatchPairsExerciseWithMarksPreview() {
+    KoineosTheme {
+        Surface(color = Colors.Surface) {
+            val letterOptions = listOf(
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "alpha", display = "ἄ", // With smooth breathing and acute accent
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                ),
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "eta", display = "ἦ", // With rough breathing and circumflex
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                ),
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "omicron", display = "ὸ", // With grave accent
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                ),
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "iota", display = "ἱ", // With rough breathing
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                )
+            )
+
+            MatchPairsExerciseContent(
+                exerciseState = MatchPairsExerciseUiState(
+                    id = "exercise1",
+                    instructions = "Tap the matching pairs",
+                    pairsToMatch = mapOf(
+                        letterOptions[0] to "a´", // Alpha with accent -> a´
+                        letterOptions[1] to "hê^", // Eta with breathing and circumflex -> hê^
+                        letterOptions[2] to "o`", // Omicron with grave -> o`
+                        letterOptions[3] to "hi" // Iota with rough breathing -> hi
+                    ),
+                    matchedPairs = mapOf(
+                        "alpha" to "a´",
+                        "eta" to "hê^"
+                    )
                 ),
                 onMatchCreated = { _, _ -> }
             )

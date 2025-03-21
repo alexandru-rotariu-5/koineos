@@ -33,7 +33,7 @@ import com.koineos.app.ui.theme.Typography
 
 /**
  * Exercise content for selecting the correct Greek entity for a transliteration.
- * Supports all entity types (letters, diphthongs, etc.).
+ * Supports all entity types (letters, diphthongs, etc.) with breathing and accent marks.
  *
  * @param exerciseState The UI state for this exercise
  * @param onAnswerSelected Callback when an answer is selected
@@ -136,8 +136,8 @@ private fun SelectLemmaExerciseContentPreview() {
             SelectLemmaExerciseContent(
                 exerciseState = SelectLemmaExerciseUiState(
                     id = "exercise1",
-                    instructions = "Select the correct character for \"b\"",
-                    transliteration = "b",
+                    instructions = "Select the correct character for \"he\"",
+                    transliteration = "he", // Rough breathing transliteration
                     options = listOf(
                         SelectLemmaExerciseUiState.EntityOption(
                             id = "alpha", display = "α",
@@ -150,7 +150,7 @@ private fun SelectLemmaExerciseContentPreview() {
                             useUppercase = false
                         ),
                         SelectLemmaExerciseUiState.EntityOption(
-                            id = "gamma", display = "γ",
+                            id = "epsilon", display = "ἑ", // With rough breathing
                             entityType = AlphabetCategory.LETTERS.toString(),
                             useUppercase = false
                         ),
@@ -285,6 +285,48 @@ private fun SelectLemmaExerciseWithCheckedIncorrectPreview() {
                     selectedAnswer = "α",
                     isChecked = true,
                     isCorrect = false
+                ),
+                onAnswerSelected = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectLemmaExerciseWithAccentPreview() {
+    KoineosTheme {
+        Surface(color = Colors.Surface) {
+            SelectLemmaExerciseContent(
+                exerciseState = SelectLemmaExerciseUiState(
+                    id = "exercise1",
+                    instructions = "Select the correct character for \"a´\"",
+                    transliteration = "a´", // With acute accent
+                    options = listOf(
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "alpha", display = "ά", // With acute accent
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "beta", display = "β",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "gamma", display = "γ",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "delta", display = "δ",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        )
+                    ),
+                    selectedAnswer = "ά",
+                    isChecked = true,
+                    isCorrect = true
                 ),
                 onAnswerSelected = {}
             )

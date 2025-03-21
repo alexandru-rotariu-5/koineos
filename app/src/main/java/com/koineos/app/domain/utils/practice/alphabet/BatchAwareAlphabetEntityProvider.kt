@@ -5,6 +5,7 @@ import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.domain.model.AlphabetEntity
 import com.koineos.app.domain.model.BreathingMark
 import com.koineos.app.domain.model.Diphthong
+import com.koineos.app.domain.model.EnhancedAlphabetEntity
 import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
 import com.koineos.app.domain.model.practice.alphabet.AlphabetBatch
@@ -12,6 +13,7 @@ import com.koineos.app.domain.repository.AlphabetMasteryRepository
 import com.koineos.app.domain.repository.AlphabetRepository
 import com.koineos.app.domain.service.BatchManagementService
 import com.koineos.app.domain.service.EntitySelectionService
+import com.koineos.app.domain.service.VariantSelectionService
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -22,19 +24,24 @@ import kotlin.math.pow
 /**
  * Entity provider that uses the batch system for progressive introduction of alphabet entities.
  * Supports all types of alphabet entities (Letters, Diphthongs, ImproperDiphthongs).
+ * Integrates breathing and accent marks for variants as mastery progresses.
  */
 @Singleton
 class BatchAwareAlphabetEntityProvider @Inject constructor(
     private val alphabetRepository: AlphabetRepository,
     private val alphabetMasteryRepository: AlphabetMasteryRepository,
     private val batchManagementService: BatchManagementService,
-    private val entitySelectionService: EntitySelectionService
+    private val entitySelectionService: EntitySelectionService,
+    private val variantSelectionService: VariantSelectionService
 ) : AlphabetEntityProvider {
 
     // Cache for entities and batches
     private var entityCache: Map<AlphabetCategory, List<AlphabetEntity>>? = null
     private var batchCache: List<AlphabetBatch>? = null
     private val cacheMutex = Mutex()
+
+    // Cache for applied marks to track them throughout the practice flow
+    private val appliedMarksCache = mutableMapOf<String, List<AlphabetEntity>>()
 
     /**
      * Ensures the entity cache is initialized.
@@ -85,6 +92,129 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         return batchManagementService.determineUnlockedBatches(batches, masteryLevels)
     }
 
+    /**
+     * Enhances an entity with variants if needed and returns the applied marks
+     */
+    private suspend fun enhanceEntityWithVariants(entity: AlphabetEntity): EnhancedEntity {
+        val masteryLevels = alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
+
+        // Check if we should apply marks based on mastery levels
+        val applyBreathingMarks = variantSelectionService.shouldApplyBreathingMarks(masteryLevels)
+        val applyAccentMarks = variantSelectionService.shouldApplyAccentMarks(masteryLevels)
+
+        // If no marks should be applied, return the original entity
+        if (!applyBreathingMarks && !applyAccentMarks) {
+            return EnhancedEntity(entity, emptyList(), null, null)
+        }
+
+        // Get available marks
+        val breathingMarks = if (applyBreathingMarks) {
+            getEntitiesByCategory(AlphabetCategory.BREATHING_MARKS).filterIsInstance<BreathingMark>()
+        } else emptyList()
+
+        val accentMarks = if (applyAccentMarks) {
+            getEntitiesByCategory(AlphabetCategory.ACCENT_MARKS).filterIsInstance<AccentMark>()
+        } else emptyList()
+
+        // Select marks based on mastery levels
+        val selectedBreathingMark = if (applyBreathingMarks) {
+            variantSelectionService.selectBreathingMark(breathingMarks, masteryLevels)
+        } else null
+
+        val selectedAccentMark = if (applyAccentMarks) {
+            variantSelectionService.selectAccentMark(accentMarks, masteryLevels)
+        } else null
+
+        // If no marks were selected, return the original entity
+        if (selectedBreathingMark == null && selectedAccentMark == null) {
+            return EnhancedEntity(entity, emptyList(), null, null)
+        }
+
+        // Track applied marks for mastery updates
+        val appliedMarks = mutableListOf<AlphabetEntity>()
+        selectedBreathingMark?.let { appliedMarks.add(it) }
+        selectedAccentMark?.let { appliedMarks.add(it) }
+
+        return EnhancedEntity(
+            entity = entity,
+            appliedMarks = appliedMarks,
+            breathingMark = selectedBreathingMark,
+            accentMark = selectedAccentMark
+        )
+    }
+
+    /**
+     * Gets the transliteration for an entity with applied marks
+     */
+    fun getEnhancedTransliteration(
+        entity: AlphabetEntity,
+        breathingMark: BreathingMark?,
+        accentMark: AccentMark?
+    ): String {
+        val baseTransliteration = when (entity) {
+            is Letter -> entity.transliteration
+            is Diphthong -> entity.transliteration
+            is ImproperDiphthong -> entity.transliteration
+            else -> ""
+        }
+
+        return variantSelectionService.generateTransliteration(
+            baseTransliteration,
+            breathingMark,
+            accentMark
+        )
+    }
+
+    /**
+     * Gets the display text for an entity with applied marks
+     */
+    fun getEnhancedDisplayText(
+        entity: AlphabetEntity,
+        breathingMark: BreathingMark?,
+        accentMark: AccentMark?,
+        useUppercase: Boolean = false
+    ): String {
+        // Base display without marks
+        val baseDisplay = when(entity) {
+            is Letter -> if (useUppercase) entity.uppercase else entity.lowercase
+            is Diphthong -> entity.lowercase
+            is ImproperDiphthong -> entity.lowercase
+            else -> ""
+        }
+
+        // If no marks, return base display
+        if (breathingMark == null && accentMark == null) {
+            return baseDisplay
+        }
+
+        // Apply variant if available
+        return variantSelectionService.selectVariant(entity, breathingMark, accentMark)
+    }
+
+    /**
+     * Data class to hold an entity and its applied marks
+     */
+    data class EnhancedEntity(
+        val entity: AlphabetEntity,
+        val appliedMarks: List<AlphabetEntity>,
+        val breathingMark: BreathingMark?,
+        val accentMark: AccentMark?
+    )
+
+    /**
+     * Gets applied marks for an entity
+     */
+    fun getAppliedMarks(entityId: String): List<AlphabetEntity> {
+        return appliedMarksCache[entityId] ?: emptyList()
+    }
+
+    /**
+     * Clears the applied marks cache
+     */
+    fun clearAppliedMarksCache() {
+        appliedMarksCache.clear()
+    }
+
     override suspend fun getEntityById(id: String): AlphabetEntity? {
         ensureCacheInitialized()
 
@@ -106,7 +236,15 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
             masteryLevels = masteryLevels
         ).firstOrNull() ?: throw IllegalStateException("No entity available")
 
-        return selectedEntity
+        // Enhance with variants if necessary
+        val enhanced = enhanceEntityWithVariants(selectedEntity)
+
+        // Cache applied marks for later retrieval
+        if (enhanced.appliedMarks.isNotEmpty()) {
+            appliedMarksCache[selectedEntity.id] = enhanced.appliedMarks
+        }
+
+        return enhanced.entity
     }
 
     override suspend fun getRandomEntities(count: Int): List<AlphabetEntity> {
@@ -134,7 +272,7 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         // Handle special case for sigma variants
         val filteredEntities = filterSigmaVariants(selectedEntities)
 
-        return when {
+        val baseEntities = when {
             filteredEntities.size == count -> filteredEntities
 
             filteredEntities.size < count -> {
@@ -151,6 +289,18 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
             }
 
             else -> filteredEntities.take(count)
+        }
+
+        // Apply variant enhancement to each entity
+        return baseEntities.map { entity ->
+            val enhanced = enhanceEntityWithVariants(entity)
+
+            // Cache applied marks
+            if (enhanced.appliedMarks.isNotEmpty()) {
+                appliedMarksCache[entity.id] = enhanced.appliedMarks
+            }
+
+            enhanced.entity
         }
     }
 
@@ -179,7 +329,15 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         // Select weighted
         val totalWeight = entityWeights.values.sum()
         if (totalWeight <= 0) {
-            return availableEntities.random()
+            val baseEntity = availableEntities.random()
+            val enhanced = enhanceEntityWithVariants(baseEntity)
+
+            // Cache applied marks
+            if (enhanced.appliedMarks.isNotEmpty()) {
+                appliedMarksCache[baseEntity.id] = enhanced.appliedMarks
+            }
+
+            return enhanced.entity
         }
 
         var randomValue = Math.random() * totalWeight
@@ -188,12 +346,27 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
             val weight = entityWeights[entity] ?: 0f
             randomValue -= weight
             if (randomValue <= 0) {
-                return entity
+                val enhanced = enhanceEntityWithVariants(entity)
+
+                // Cache applied marks
+                if (enhanced.appliedMarks.isNotEmpty()) {
+                    appliedMarksCache[entity.id] = enhanced.appliedMarks
+                }
+
+                return enhanced.entity
             }
         }
 
         // Fallback
-        return availableEntities.random()
+        val baseEntity = availableEntities.random()
+        val enhanced = enhanceEntityWithVariants(baseEntity)
+
+        // Cache applied marks
+        if (enhanced.appliedMarks.isNotEmpty()) {
+            appliedMarksCache[baseEntity.id] = enhanced.appliedMarks
+        }
+
+        return enhanced.entity
     }
 
     override suspend fun getRandomEntitiesExcluding(
@@ -256,7 +429,19 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         }
 
         // Filter out duplicate sigma variants
-        return filterSigmaVariants(selectedEntities)
+        val baseEntities = filterSigmaVariants(selectedEntities)
+
+        // Apply variant enhancement to each entity
+        return baseEntities.map { entity ->
+            val enhanced = enhanceEntityWithVariants(entity)
+
+            // Cache applied marks
+            if (enhanced.appliedMarks.isNotEmpty()) {
+                appliedMarksCache[entity.id] = enhanced.appliedMarks
+            }
+
+            enhanced.entity
+        }
     }
 
     override suspend fun getEntitiesByCategory(category: AlphabetCategory): List<AlphabetEntity> {
@@ -271,7 +456,21 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
             throw IllegalStateException("No entities available in category $category")
         }
 
-        return entities.random()
+        val baseEntity = entities.random()
+
+        // Only enhance if it's a letter, diphthong, or improper diphthong
+        if (category in listOf(AlphabetCategory.LETTERS, AlphabetCategory.DIPHTHONGS, AlphabetCategory.IMPROPER_DIPHTHONGS)) {
+            val enhanced = enhanceEntityWithVariants(baseEntity)
+
+            // Cache applied marks
+            if (enhanced.appliedMarks.isNotEmpty()) {
+                appliedMarksCache[baseEntity.id] = enhanced.appliedMarks
+            }
+
+            return enhanced.entity
+        }
+
+        return baseEntity
     }
 
     override suspend fun getIncorrectEntityOptions(
@@ -292,6 +491,7 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
                 throw IllegalStateException("No entities available for options")
             }
 
+            // No need to enhance incorrect options with marks
             availableEntities.shuffled().take(count.coerceAtMost(availableEntities.size))
         }
     }
@@ -367,6 +567,113 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
             AlphabetCategory.BREATHING_MARKS -> entity is BreathingMark
             AlphabetCategory.ACCENT_MARKS -> entity is AccentMark
         }
+    }
+
+    override suspend fun getRandomEnhancedEntity(useUppercase: Boolean): EnhancedAlphabetEntity {
+        val entity = getRandomEntity()
+        return enhanceEntity(entity, useUppercase)
+    }
+
+    override suspend fun getRandomEnhancedEntities(count: Int, useUppercase: Boolean): List<EnhancedAlphabetEntity> {
+        val entities = getRandomEntities(count)
+        return entities.map { enhanceEntity(it, useUppercase) }
+    }
+
+    override suspend fun enhanceEntity(entity: AlphabetEntity, useUppercase: Boolean): EnhancedAlphabetEntity {
+        // Get current mastery levels for all entities
+        val masteryLevels = alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
+
+        // Get all available marks
+        val allBreathingMarks = getAllEntitiesByType<BreathingMark>()
+        val allAccentMarks = getAllEntitiesByType<AccentMark>()
+
+        // Determine if we should apply marks based on mastery levels
+        val shouldApplyBreathingMarks = variantSelectionService.shouldApplyBreathingMarks(masteryLevels)
+        val shouldApplyAccentMarks = variantSelectionService.shouldApplyAccentMarks(masteryLevels)
+
+        // Select marks if appropriate
+        val breathingMark = if (shouldApplyBreathingMarks && canTakeBreathingMark(entity)) {
+            variantSelectionService.selectBreathingMark(allBreathingMarks, masteryLevels)
+        } else null
+
+        val accentMark = if (shouldApplyAccentMarks && canTakeAccentMark(entity)) {
+            variantSelectionService.selectAccentMark(allAccentMarks, masteryLevels)
+        } else null
+
+        // Get the enhanced display text with marks (but without uppercase applied yet)
+        val baseDisplayText = variantSelectionService.selectVariant(entity, breathingMark, accentMark)
+
+        // Apply uppercase if needed for the display text
+        val enhancedDisplayText = if (useUppercase && entity is Letter) {
+            // For letters, we can apply uppercase
+            entity.uppercase
+        } else {
+            // Otherwise use the variant with marks
+            baseDisplayText
+        }
+
+        // Get the base transliteration
+        val baseTransliteration = when (entity) {
+            is Letter -> entity.transliteration
+            is Diphthong -> entity.transliteration
+            is ImproperDiphthong -> entity.transliteration
+            else -> ""
+        }
+
+        // Generate enhanced transliteration with marks
+        val enhancedTransliteration = variantSelectionService.generateTransliteration(
+            baseTransliteration,
+            breathingMark,
+            accentMark
+        )
+
+        // Create and return the enhanced entity
+        return EnhancedAlphabetEntity(
+            baseEntity = entity,
+            breathingMark = breathingMark,
+            accentMark = accentMark,
+            enhancedDisplayText = enhancedDisplayText,
+            enhancedTransliteration = enhancedTransliteration,
+            useUppercase = useUppercase
+        )
+    }
+
+    /**
+     * Helper method to determine if an entity can take a breathing mark
+     */
+    private fun canTakeBreathingMark(entity: AlphabetEntity): Boolean {
+        return when (entity) {
+            is Letter -> entity.variants?.roughBreathing != null || entity.variants?.smoothBreathing != null
+            is Diphthong -> entity.variants?.roughBreathing != null || entity.variants?.smoothBreathing != null
+            is ImproperDiphthong -> entity.variants?.roughBreathing != null || entity.variants?.smoothBreathing != null
+            else -> false
+        }
+    }
+
+    /**
+     * Helper method to determine if an entity can take an accent mark
+     */
+    private fun canTakeAccentMark(entity: AlphabetEntity): Boolean {
+        return when (entity) {
+            is Letter -> entity.variants?.acuteAccent != null ||
+                    entity.variants?.graveAccent != null ||
+                    entity.variants?.circumflexAccent != null
+            is Diphthong -> entity.variants?.acuteAccent != null ||
+                    entity.variants?.graveAccent != null ||
+                    entity.variants?.circumflexAccent != null
+            is ImproperDiphthong -> entity.variants?.acuteAccent != null ||
+                    entity.variants?.graveAccent != null ||
+                    entity.variants?.circumflexAccent != null
+            else -> false
+        }
+    }
+
+    /**
+     * Helper function to get all entities of a specific type
+     */
+    private suspend inline fun <reified T : AlphabetEntity> getAllEntitiesByType(): List<T> {
+        val content = alphabetRepository.getAlphabetContent().getOrNull()?.first() ?: return emptyList()
+        return content.flatMap { it.entities }.filterIsInstance<T>()
     }
 
     /**

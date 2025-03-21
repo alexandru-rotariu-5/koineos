@@ -30,12 +30,12 @@ class UpdateAlphabetEntityMasteryLevelsUseCase @Inject constructor(
 
             // Process each exercise
             exerciseResults.forEach { (exercise, isCorrect) ->
-                // Identify target entities
+                // Identify target entities including both base entities and applied marks
                 val targetEntityIds = entityTargetIdentifier.identifyTargetEntityIds(exercise)
 
                 // Update mastery level for each entity
                 targetEntityIds.forEach { entityId ->
-                    // Get current mastery level (use our tracked version that may have been updated)
+                    // Get current mastery level
                     val currentMastery = currentMasteryLevels[entityId] ?: 0f
 
                     // Calculate new mastery level
@@ -51,7 +51,7 @@ class UpdateAlphabetEntityMasteryLevelsUseCase @Inject constructor(
                         )
                     }
 
-                    // Update our tracking map with the new mastery level
+                    // Update tracking map
                     currentMasteryLevels[entityId] = newMastery
                 }
             }

@@ -30,11 +30,11 @@ class EntitySelectionService @Inject constructor() {
         val availableEntities = unlockedBatches.flatMap { it.entities }.distinct()
         if (availableEntities.isEmpty()) return emptyList()
 
-        // Using a minimum weight of 0.4 ensures even high-mastery items have a chance
-        // The 0.6 factor means mastery only accounts for 60% of selection probability
+        // Using a minimum weight of 0.5 ensures even high-mastery items have a chance
+        // The 0.7 factor means mastery only accounts for 70% of selection probability
         val weights = availableEntities.associateWith { entity ->
             val mastery = masteryLevels[entity.id] ?: 0f
-            0.4f + ((1f - mastery) * 0.6f)
+            0.3f + ((1f - mastery) * 0.7f)
         }
 
         // Simple weighted random selection

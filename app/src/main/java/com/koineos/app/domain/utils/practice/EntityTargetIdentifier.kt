@@ -16,18 +16,24 @@ class EntityTargetIdentifier @Inject constructor() {
 
     /**
      * Identifies the entity IDs targeted by an exercise.
-     * This is used to determine which entities' mastery levels should be updated.
-     *
-     * @param exercise The exercise that was completed
-     * @return List of entity IDs that were practiced in this exercise
+     * Includes both the main entities and any applied marks.
      */
     fun identifyTargetEntityIds(exercise: Exercise): List<String> {
-        return when (exercise) {
+        val baseEntityIds = when (exercise) {
             is SelectTransliterationExercise -> listOf(exercise.entity.id)
             is SelectLemmaExercise -> listOf(exercise.correctEntity.id)
             is MatchPairsExercise -> exercise.entityPairs.map { it.entity.id }
             else -> emptyList()
         }
+
+        val appliedMarkIds = when (exercise) {
+            is SelectTransliterationExercise -> exercise.appliedMarks.map { it.id }
+            is SelectLemmaExercise -> exercise.appliedMarks.map { it.id }
+            is MatchPairsExercise -> exercise.appliedMarks.map { it.id }
+            else -> emptyList()
+        }
+
+        return baseEntityIds + appliedMarkIds
     }
 
     /**

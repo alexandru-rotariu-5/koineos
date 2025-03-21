@@ -16,13 +16,17 @@ import java.util.Locale
  * @property options The transliteration options to choose from.
  * @property correctAnswer The correct transliteration option.
  * @property useUppercase Whether to use uppercase (if applicable for the entity type).
+ * @property enhancedDisplayText Optional enhanced display text with applied marks.
+ * @property appliedMarks List of marks (breathing, accent) applied to this entity.
  */
 data class SelectTransliterationExercise(
     override val id: String,
     val entity: AlphabetEntity,
     val options: List<String>,
     val correctAnswer: String,
-    val useUppercase: Boolean
+    val useUppercase: Boolean,
+    val enhancedDisplayText: String? = null,
+    val appliedMarks: List<AlphabetEntity> = emptyList()
 ) : AlphabetExercise() {
 
     override val type = ExerciseType.SELECT_TRANSLITERATION
@@ -30,10 +34,10 @@ data class SelectTransliterationExercise(
     override val instructions: String = "What sound does this make?"
 
     /**
-     * The display representation of the entity.
+     * The display representation of the entity, including any applied marks.
      */
     val displayEntity: String
-        get() = EntityTransliterationPair.getEntityDisplay(entity, useUppercase)
+        get() = enhancedDisplayText ?: EntityTransliterationPair.getEntityDisplay(entity, useUppercase)
 
     override fun validateAnswer(userAnswer: Any): Boolean {
         return if (userAnswer is String) {
@@ -45,7 +49,7 @@ data class SelectTransliterationExercise(
 
     override fun getFeedback(userAnswer: Any): ExerciseFeedback {
         val isCorrect = validateAnswer(userAnswer)
-        val entityDisplay = EntityTransliterationPair.getEntityDisplay(entity, useUppercase)
+        val entityDisplay = enhancedDisplayText ?: EntityTransliterationPair.getEntityDisplay(entity, useUppercase)
 
         // Get entity name and type for feedback
         val (nameDisplay, entityType) = when (entity) {
@@ -59,16 +63,24 @@ data class SelectTransliterationExercise(
             else -> Pair("Entity", "entity")
         }
 
+        // Include information about applied marks in the feedback
+        val marksInfo = if (appliedMarks.isNotEmpty()) {
+            val marksDescription = appliedMarks.joinToString(", ") {
+                it.id.substringAfter("_").replace("_", " ")
+            }
+            " with $marksDescription"
+        } else ""
+
         return if (isCorrect) {
             ExerciseFeedback.correct(
-                "Great job identifying this $entityType!"
+                "Great job identifying this $entityType$marksInfo!"
             )
         } else {
             val displayedCorrectAnswer =
                 if (useUppercase) correctAnswer.uppercase() else correctAnswer
             ExerciseFeedback.incorrect(
                 correctAnswer = displayedCorrectAnswer,
-                explanationText = "$nameDisplay (${entityDisplay}) is transliterated as '$displayedCorrectAnswer'."
+                explanationText = "$nameDisplay (${entityDisplay})$marksInfo is transliterated as '$displayedCorrectAnswer'."
             )
         }
     }

@@ -6,7 +6,6 @@ import com.koineos.app.domain.model.practice.alphabet.MatchPairsExercise
 import com.koineos.app.domain.model.practice.alphabet.SelectLemmaExercise
 import com.koineos.app.domain.model.practice.alphabet.SelectTransliterationExercise
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetEntityDisplay.getDisplayName
-import com.koineos.app.domain.utils.practice.alphabet.AlphabetEntityDisplay.getDisplayText
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetEntityDisplay.getEntityTypeDescription
 import com.koineos.app.presentation.model.practice.ExerciseUiState
 import com.koineos.app.presentation.model.practice.FeedbackUiState
@@ -86,7 +85,7 @@ class ExerciseStateMapper @Inject constructor() {
         val options = exercise.options.map { entity ->
             SelectLemmaExerciseUiState.EntityOption(
                 id = entity.id,
-                display = entity.getDisplayText(exercise.useUppercase),
+                display = exercise.getEntityDisplay(entity),
                 entityType = entity.getEntityTypeDescription(),
                 useUppercase = exercise.useUppercase
             )

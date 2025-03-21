@@ -16,12 +16,16 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -32,6 +36,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.koineos.app.R
+import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.presentation.model.alphabet.AccentMarkUiState
 import com.koineos.app.presentation.model.alphabet.AlphabetScreenUiState
 import com.koineos.app.presentation.model.alphabet.BreathingMarkUiState
@@ -106,7 +111,8 @@ private fun AlphabetScreenContent(
             HeaderContent(
                 modifier = Modifier,
                 elevation = headerElevation,
-                onLearnClick = onNavigateToPractice
+                onLearnClick = onNavigateToPractice,
+                viewModel = viewModel
             )
             when (uiState) {
                 is AlphabetScreenUiState.Loaded -> {
@@ -144,8 +150,9 @@ private fun HeaderContent(
     modifier: Modifier = Modifier,
     elevation: Float,
     onLearnClick: () -> Unit,
+    viewModel: AlphabetViewModel // for testing, remove later
 ) {
-    androidx.compose.material3.Surface(
+    Surface(
         modifier = modifier
             .fillMaxWidth()
             .zIndex(1f),
@@ -164,6 +171,59 @@ private fun HeaderContent(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = true
             )
+
+            // for testing, remove later
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                // Letters toggle with state
+                var lettersToggle by remember { mutableStateOf(false) }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Letters", style = Typography.labelSmall)
+                    Switch(
+                        checked = lettersToggle,
+                        onCheckedChange = { newState ->
+                            lettersToggle = newState
+                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.LETTERS, newState)
+                        }
+                    )
+                }
+
+                // Diphthongs toggle with state
+                var diphthongsToggle by remember { mutableStateOf(false) }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Diphthongs", style = Typography.labelSmall)
+                    Switch(
+                        checked = diphthongsToggle,
+                        onCheckedChange = { newState ->
+                            diphthongsToggle = newState
+                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.DIPHTHONGS, newState)
+                        }
+                    )
+                }
+
+                // Improper Diphthongs toggle with state
+                var improperDiphthongsToggle by remember { mutableStateOf(false) }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Improper Diph.", style = Typography.labelSmall)
+                    Switch(
+                        checked = improperDiphthongsToggle,
+                        onCheckedChange = { newState ->
+                            improperDiphthongsToggle = newState
+                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.IMPROPER_DIPHTHONGS, newState)
+                        }
+                    )
+                }
+            }
         }
     }
 }

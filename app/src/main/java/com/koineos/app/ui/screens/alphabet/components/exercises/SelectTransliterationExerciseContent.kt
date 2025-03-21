@@ -35,7 +35,7 @@ import com.koineos.app.ui.theme.Typography
 
 /**
  * Exercise content for selecting the correct transliteration for a Koine Greek entity.
- * Supports all entity types (letters, diphthongs, etc.).
+ * Supports all entity types (letters, diphthongs, etc.) with breathing and accent marks.
  *
  * @param exerciseState The UI state for this exercise
  * @param onAnswerSelected Callback when an answer is selected
@@ -54,6 +54,7 @@ fun SelectTransliterationExerciseContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        // Display the enhanced entity with any applied marks
         Text(
             text = exerciseState.entityDisplay,
             style = Typography.displayLarge.copy(
@@ -230,6 +231,30 @@ private fun SelectTransliterationExerciseWithCheckedIncorrectPreview() {
                     isChecked = true,
                     isCorrect = false,
                     entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                ),
+                onAnswerSelected = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SelectTransliterationExerciseWithMarksPreview() {
+    KoineosTheme {
+        Surface(color = Surface) {
+            SelectTransliterationExerciseContent(
+                exerciseState = SelectTransliterationExerciseUiState(
+                    id = "exercise1",
+                    instructions = "What sound does this make?",
+                    entityDisplay = "ἑ", // With rough breathing
+                    entityName = "epsilon",
+                    options = listOf("e", "he", "i"),
+                    selectedAnswer = "he",
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    isChecked = true,
+                    isCorrect = true,
                     useUppercase = false
                 ),
                 onAnswerSelected = {}

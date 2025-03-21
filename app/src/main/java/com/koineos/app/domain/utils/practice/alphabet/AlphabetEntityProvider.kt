@@ -2,6 +2,7 @@ package com.koineos.app.domain.utils.practice.alphabet
 
 import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.domain.model.AlphabetEntity
+import com.koineos.app.domain.model.EnhancedAlphabetEntity
 import com.koineos.app.domain.utils.practice.ExerciseContentProvider
 
 /**
@@ -79,4 +80,30 @@ interface AlphabetEntityProvider : ExerciseContentProvider<AlphabetEntity> {
      * @return True if the entity belongs to the category, false otherwise
      */
     fun isEntityOfCategory(entity: AlphabetEntity, category: AlphabetCategory): Boolean
+
+    /**
+     * Gets a random enhanced entity with appropriate marks applied.
+     *
+     * @param useUppercase Whether to use uppercase where applicable
+     * @return An enhanced entity with marks applied as appropriate
+     */
+    suspend fun getRandomEnhancedEntity(useUppercase: Boolean = false): EnhancedAlphabetEntity
+
+    /**
+     * Gets multiple random enhanced entities with appropriate marks applied.
+     *
+     * @param count Number of entities to retrieve
+     * @param useUppercase Whether to use uppercase where applicable
+     * @return List of enhanced entities with marks applied as appropriate
+     */
+    suspend fun getRandomEnhancedEntities(count: Int, useUppercase: Boolean = false): List<EnhancedAlphabetEntity>
+
+    /**
+     * Enhances a base entity with appropriate marks.
+     *
+     * @param entity The base entity to enhance
+     * @param useUppercase Whether to use uppercase where applicable
+     * @return An enhanced entity with marks applied as appropriate
+     */
+    suspend fun enhanceEntity(entity: AlphabetEntity, useUppercase: Boolean = false): EnhancedAlphabetEntity
 }

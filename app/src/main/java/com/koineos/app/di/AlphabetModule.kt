@@ -11,6 +11,7 @@ import com.koineos.app.domain.repository.AlphabetRepository
 import com.koineos.app.domain.service.BatchManagementService
 import com.koineos.app.domain.service.EntitySelectionService
 import com.koineos.app.domain.service.MasteryUpdateService
+import com.koineos.app.domain.service.VariantSelectionService
 import com.koineos.app.domain.usecase.alphabet.GenerateAlphabetPracticeSetUseCase
 import com.koineos.app.domain.usecase.alphabet.GetAlphabetContentUseCase
 import com.koineos.app.domain.usecase.alphabet.UpdateAlphabetEntityMasteryLevelsUseCase
@@ -101,14 +102,16 @@ object AlphabetModule {
         alphabetRepository: AlphabetRepository,
         alphabetMasteryRepository: AlphabetMasteryRepository,
         batchManagementService: BatchManagementService,
-        entitySelectionService: EntitySelectionService
+        entitySelectionService: EntitySelectionService,
+        variantSelectionService: VariantSelectionService
     ): AlphabetEntityProvider {
         Log.d(TAG, "Providing BatchAwareAlphabetEntityProvider")
         return BatchAwareAlphabetEntityProvider(
             alphabetRepository,
             alphabetMasteryRepository,
             batchManagementService,
-            entitySelectionService
+            entitySelectionService,
+            variantSelectionService
         )
     }
 
@@ -122,11 +125,13 @@ object AlphabetModule {
     @Provides
     @Singleton
     fun provideAlphabetExerciseGenerator(
-        entityProvider: AlphabetEntityProvider,
+        entityProvider: BatchAwareAlphabetEntityProvider,
         letterCaseProvider: LetterCaseProvider
     ): AlphabetExerciseGenerator {
         Log.d(TAG, "Providing AlphabetExerciseGenerator")
-        return AlphabetExerciseGenerator(entityProvider, letterCaseProvider)
+        return AlphabetExerciseGenerator(
+            entityProvider, letterCaseProvider
+        )
     }
 
     @Provides
@@ -174,5 +179,12 @@ object AlphabetModule {
             entityTargetIdentifier,
             alphabetMasteryRepository
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideVariantSelectionService(): VariantSelectionService {
+        Log.d(TAG, "Providing VariantSelectionService")
+        return VariantSelectionService()
     }
 }
