@@ -1,22 +1,25 @@
 package com.koineos.app.domain.model.practice.alphabet
 
+import com.koineos.app.domain.model.AlphabetEntity
+import com.koineos.app.domain.model.Diphthong
+import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
 import com.koineos.app.domain.model.practice.ExerciseFeedback
 import com.koineos.app.domain.model.practice.ExerciseType
 import java.util.Locale
 
 /**
- * Exercise where the user selects the correct transliteration for a displayed Koine Greek letter.
+ * Exercise where the user selects the correct transliteration for a displayed Koine Greek entity.
  *
  * @property id Unique identifier for this exercise.
- * @property letter The Koine Greek letter to be identified.
+ * @property entity The Koine Greek entity to be identified.
  * @property options The transliteration options to choose from.
  * @property correctAnswer The correct transliteration option.
- * @property useUppercase Whether to use uppercase or lowercase for the letter.
+ * @property useUppercase Whether to use uppercase (if applicable for the entity type).
  */
 data class SelectTransliterationExercise(
     override val id: String,
-    val letter: Letter,
+    val entity: AlphabetEntity,
     val options: List<String>,
     val correctAnswer: String,
     val useUppercase: Boolean
@@ -26,8 +29,11 @@ data class SelectTransliterationExercise(
 
     override val instructions: String = "What sound does this make?"
 
-    val displayLetter: String
-        get() = if (useUppercase) letter.uppercase else letter.lowercase
+    /**
+     * The display representation of the entity.
+     */
+    val displayEntity: String
+        get() = EntityTransliterationPair.getEntityDisplay(entity, useUppercase)
 
     override fun validateAnswer(userAnswer: Any): Boolean {
         return if (userAnswer is String) {
@@ -39,20 +45,30 @@ data class SelectTransliterationExercise(
 
     override fun getFeedback(userAnswer: Any): ExerciseFeedback {
         val isCorrect = validateAnswer(userAnswer)
-        val letterDisplay = if (useUppercase) letter.uppercase else letter.lowercase
-        val nameDisplay =
-            letter.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() }
+        val entityDisplay = EntityTransliterationPair.getEntityDisplay(entity, useUppercase)
+
+        // Get entity name and type for feedback
+        val (nameDisplay, entityType) = when (entity) {
+            is Letter -> Pair(
+                entity.name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.ROOT) else it.toString() },
+                "letter"
+            )
+
+            is Diphthong -> Pair("Diphthong", "diphthong")
+            is ImproperDiphthong -> Pair("Improper diphthong", "improper diphthong")
+            else -> Pair("Entity", "entity")
+        }
 
         return if (isCorrect) {
             ExerciseFeedback.correct(
-                "Great job identifying $nameDisplay!"
+                "Great job identifying this $entityType!"
             )
         } else {
             val displayedCorrectAnswer =
                 if (useUppercase) correctAnswer.uppercase() else correctAnswer
             ExerciseFeedback.incorrect(
                 correctAnswer = displayedCorrectAnswer,
-                explanationText = "$nameDisplay (${letterDisplay}) is transliterated as '$displayedCorrectAnswer'."
+                explanationText = "$nameDisplay (${entityDisplay}) is transliterated as '$displayedCorrectAnswer'."
             )
         }
     }

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.presentation.model.practice.alphabet.MatchPairsExerciseUiState
 import com.koineos.app.ui.components.cards.CardPadding
 import com.koineos.app.ui.components.cards.DisabledRegularCard
@@ -34,14 +35,11 @@ import com.koineos.app.ui.theme.Typography
 import kotlinx.coroutines.delay
 
 /**
- * Exercise content for matching Greek letters with their transliterations.
- *
- * Implements the matching exercise flow where users select one item from each column
- * to create pairs. Correct matches are visually indicated and disabled, while incorrect
- * matches trigger feedback.
+ * Exercise content for matching Greek entities with their transliterations.
+ * Supports all entity types (letters, diphthongs, etc.).
  *
  * @param exerciseState The UI state for this exercise
- * @param onMatchCreated Callback when a match is created - called with letterID and transliteration
+ * @param onMatchCreated Callback when a match is created - called with entityID and transliteration
  * @param modifier Modifier for styling
  */
 @Composable
@@ -50,8 +48,8 @@ fun MatchPairsExerciseContent(
     onMatchCreated: (String, String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Track the currently selected option from the left column (letter)
-    var selectedLetterOption by remember {
+    // Track the currently selected option from the left column (entity)
+    var selectedEntityOption by remember {
         mutableStateOf<MatchPairsExerciseUiState.MatchOption?>(
             null
         )
@@ -75,7 +73,7 @@ fun MatchPairsExerciseContent(
         }
     }
 
-    val letterOptions = remember { exerciseState.letterOptions }
+    val entityOptions = remember { exerciseState.entityOptions }
     val transliterationOptions = remember { exerciseState.transliterationOptions }
 
     Row(
@@ -85,17 +83,17 @@ fun MatchPairsExerciseContent(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
     ) {
-        // Left column - Letter options
+        // Left column - Entity options
         Column(
             modifier = Modifier.weight(1f),
             verticalArrangement = Arrangement.spacedBy(Dimensions.spacingLarge)
         ) {
-            letterOptions.forEach { option ->
+            entityOptions.forEach { option ->
                 val isMatched = option.id in exerciseState.matchedPairs.keys
-                val isSelected = option.id == selectedLetterOption?.id
+                val isSelected = option.id == selectedEntityOption?.id
                 val isAnimating = option.id == animatingPairId
 
-                val letterText = @Composable {
+                val entityText = @Composable {
                     Text(
                         text = option.display,
                         style = Typography.headlineLarge.copy(
@@ -113,7 +111,7 @@ fun MatchPairsExerciseContent(
                         SuccessRegularCard(
                             modifier = Modifier.fillMaxWidth(),
                             contentPadding = CardPadding.Large,
-                            content = { letterText() }
+                            content = { entityText() }
                         )
                     }
 
@@ -121,7 +119,7 @@ fun MatchPairsExerciseContent(
                         ErrorRegularCard(
                             modifier = Modifier.fillMaxWidth(),
                             contentPadding = CardPadding.Large,
-                            content = { letterText() }
+                            content = { entityText() }
                         )
                     }
                     // Selected state
@@ -130,7 +128,7 @@ fun MatchPairsExerciseContent(
                             modifier = Modifier.fillMaxWidth(),
                             contentPadding = CardPadding.Large,
                             onClick = { /* Already selected */ },
-                            content = { letterText() }
+                            content = { entityText() }
                         )
                     }
                     // Matched state - custom disabled appearance with lower alpha
@@ -138,7 +136,7 @@ fun MatchPairsExerciseContent(
                         DisabledRegularCard(
                             modifier = Modifier.fillMaxWidth(),
                             contentPadding = CardPadding.Large,
-                            content = { letterText() }
+                            content = { entityText() }
                         )
                     }
                     // Default state
@@ -147,7 +145,7 @@ fun MatchPairsExerciseContent(
                             modifier = Modifier.fillMaxWidth(),
                             contentPadding = CardPadding.Large,
                             onClick = {
-                                selectedLetterOption = option
+                                selectedEntityOption = option
 
                                 // If there's already a transliteration selected, try to match
                                 if (selectedTransliteration != null) {
@@ -170,11 +168,11 @@ fun MatchPairsExerciseContent(
                                     onMatchCreated(option.id, selectedTransliteration!!)
 
                                     // Reset selections
-                                    selectedLetterOption = null
+                                    selectedEntityOption = null
                                     selectedTransliteration = null
                                 }
                             },
-                            content = { letterText() }
+                            content = { entityText() }
                         )
                     }
                 }
@@ -246,14 +244,14 @@ fun MatchPairsExerciseContent(
                                 selectedTransliteration = transliteration
 
                                 // If there's already a letter selected, try to match
-                                if (selectedLetterOption != null) {
+                                if (selectedEntityOption != null) {
                                     // Prepare for animation
-                                    animatingPairId = selectedLetterOption!!.id
+                                    animatingPairId = selectedEntityOption!!.id
                                     animatingTransliteration = transliteration
 
                                     // Check if correct
                                     val isCorrect = exerciseState.isCorrectMatch(
-                                        selectedLetterOption!!.id,
+                                        selectedEntityOption!!.id,
                                         transliteration
                                     )
                                     animationState = if (isCorrect) {
@@ -263,10 +261,10 @@ fun MatchPairsExerciseContent(
                                     }
 
                                     // Call the match handler
-                                    onMatchCreated(selectedLetterOption!!.id, transliteration)
+                                    onMatchCreated(selectedEntityOption!!.id, transliteration)
 
                                     // Reset selections
-                                    selectedLetterOption = null
+                                    selectedEntityOption = null
                                     selectedTransliteration = null
                                 }
                             },
@@ -290,10 +288,26 @@ private fun MatchPairsExerciseContentPreview() {
     KoineosTheme {
         Surface(color = Colors.Surface) {
             val letterOptions = listOf(
-                MatchPairsExerciseUiState.MatchOption(id = "alpha", display = "α"),
-                MatchPairsExerciseUiState.MatchOption(id = "beta", display = "β"),
-                MatchPairsExerciseUiState.MatchOption(id = "gamma", display = "γ"),
-                MatchPairsExerciseUiState.MatchOption(id = "delta", display = "δ")
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "alpha", display = "α",
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                ),
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "beta", display = "β",
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                ),
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "gamma", display = "γ",
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                ),
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "delta", display = "δ",
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                )
             )
 
             MatchPairsExerciseContent(
@@ -324,10 +338,26 @@ private fun MatchPairsExerciseCompletePreview() {
     KoineosTheme {
         Surface(color = Colors.Surface) {
             val letterOptions = listOf(
-                MatchPairsExerciseUiState.MatchOption(id = "alpha", display = "α"),
-                MatchPairsExerciseUiState.MatchOption(id = "beta", display = "β"),
-                MatchPairsExerciseUiState.MatchOption(id = "gamma", display = "γ"),
-                MatchPairsExerciseUiState.MatchOption(id = "delta", display = "δ")
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "alpha", display = "α",
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                ),
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "beta", display = "β",
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                ),
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "gamma", display = "γ",
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                ),
+                MatchPairsExerciseUiState.MatchOption(
+                    id = "delta", display = "δ",
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
+                )
             )
 
             MatchPairsExerciseContent(

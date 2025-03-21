@@ -1,9 +1,12 @@
 package com.koineos.app.domain.utils.practice.alphabet
 
+import com.koineos.app.domain.model.AlphabetEntity
+import com.koineos.app.domain.model.Diphthong
+import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
 import com.koineos.app.domain.model.practice.Exercise
 import com.koineos.app.domain.model.practice.ExerciseType
-import com.koineos.app.domain.model.practice.alphabet.LetterTransliterationPair
+import com.koineos.app.domain.model.practice.alphabet.EntityTransliterationPair
 import com.koineos.app.domain.model.practice.alphabet.MatchPairsExercise
 import com.koineos.app.domain.model.practice.alphabet.SelectLemmaExercise
 import com.koineos.app.domain.model.practice.alphabet.SelectTransliterationExercise
@@ -14,51 +17,56 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Generator for alphabet-specific exercises, focusing on letter recognition and transliteration.
+ * Generator for alphabet-specific exercises, focusing on entity recognition and transliteration.
+ * Supports all types of alphabet entities (Letters, Diphthongs, ImproperDiphthongs).
  *
- * @property letterProvider Provider for letter content.
+ * @property entityProvider Provider for alphabet entities.
+ * @property letterCaseProvider Provider for determining case usage.
  */
 @Singleton
 class AlphabetExerciseGenerator @Inject constructor(
-    private val letterProvider: LetterProvider,
+    private val entityProvider: AlphabetEntityProvider,
     private val letterCaseProvider: LetterCaseProvider
-) : ExerciseGenerator<Letter> {
+) : ExerciseGenerator<AlphabetEntity> {
 
     companion object {
         // Number of options to show in multiple choice exercises
-        private const val DEFAULT_LEMMA_OPTION_COUNT = 4
+        private const val DEFAULT_ENTITY_OPTION_COUNT = 4
         private const val DEFAULT_TRANSLITERATION_OPTION_COUNT = 3
     }
 
-    override suspend fun generateExercise(exerciseType: ExerciseType, content: Letter): Exercise? {
+    override suspend fun generateExercise(
+        exerciseType: ExerciseType,
+        content: AlphabetEntity
+    ): Exercise? {
         return when (exerciseType) {
             ExerciseType.SELECT_TRANSLITERATION -> generateSelectTransliterationExercise(content)
             ExerciseType.SELECT_LEMMA -> generateSelectLemmaExercise(content)
-            ExerciseType.MATCH_PAIRS -> null // Requires multiple letters, use the overload with provider
+            ExerciseType.MATCH_PAIRS -> null // Requires multiple entities, use the overload with provider
         }
     }
 
     override suspend fun generateExercise(
         exerciseType: ExerciseType,
-        exerciseContentProvider: ExerciseContentProvider<Letter>
+        exerciseContentProvider: ExerciseContentProvider<AlphabetEntity>
     ): Exercise? {
-        val provider = exerciseContentProvider as? LetterProvider ?: return null
+        val provider = exerciseContentProvider as? AlphabetEntityProvider ?: return null
 
         return when (exerciseType) {
             ExerciseType.SELECT_TRANSLITERATION -> {
-                val letter = provider.getRandomEntity()
-                generateSelectTransliterationExercise(letter)
+                val entity = provider.getRandomEntity()
+                generateSelectTransliterationExercise(entity)
             }
 
             ExerciseType.SELECT_LEMMA -> {
-                val letter = provider.getRandomEntity()
-                generateSelectLemmaExercise(letter)
+                val entity = provider.getRandomEntity()
+                generateSelectLemmaExercise(entity)
             }
 
             ExerciseType.MATCH_PAIRS -> {
-                // Get multiple letters for the matching exercise
-                val letters = provider.getRandomEntities(4)
-                generateLetterMatchingExercise(letters)
+                // Get multiple entities for the matching exercise
+                val entities = provider.getRandomEntities(4)
+                generateEntityMatchingExercise(entities)
             }
         }
     }
@@ -71,13 +79,24 @@ class AlphabetExerciseGenerator @Inject constructor(
         )
     }
 
-    private suspend fun generateSelectTransliterationExercise(letter: Letter): SelectTransliterationExercise {
-        // Determine case for this exercise
-        val useUppercase = letterCaseProvider.shouldUseUppercase()
+    /**
+     * Generates an exercise where the user selects the correct transliteration for an alphabet entity.
+     */
+    private suspend fun generateSelectTransliterationExercise(entity: AlphabetEntity): SelectTransliterationExercise {
+        // Determine case for this exercise (applies if entity is a letter)
+        val useUppercase = entity is Letter && letterCaseProvider.shouldUseUppercase()
+
+        // Get the entity's transliteration
+        val transliteration = when (entity) {
+            is Letter -> entity.transliteration
+            is Diphthong -> entity.transliteration
+            is ImproperDiphthong -> entity.transliteration
+            else -> "" // Should not happen with our entity types
+        }
 
         // Get incorrect options
-        val incorrectOptions = letterProvider.getIncorrectTransliterationOptions(
-            letter.transliteration,
+        val incorrectOptions = entityProvider.getIncorrectTransliterationOptions(
+            transliteration,
             DEFAULT_TRANSLITERATION_OPTION_COUNT - 1
         )
 
@@ -87,53 +106,74 @@ class AlphabetExerciseGenerator @Inject constructor(
         }
 
         // Add correct answer with proper case
-        val correctAnswer = if (useUppercase) letter.transliteration.uppercase() else letter.transliteration
+        val correctAnswer = if (useUppercase) transliteration.uppercase() else transliteration
 
         // Combine and shuffle
         val options = (processedOptions + correctAnswer).shuffled()
 
         return SelectTransliterationExercise(
             id = UUID.randomUUID().toString(),
-            letter = letter,
+            entity = entity,
             options = options,
             correctAnswer = correctAnswer,
             useUppercase = useUppercase
         )
     }
 
-    private suspend fun generateSelectLemmaExercise(letter: Letter): SelectLemmaExercise {
+    /**
+     * Generates an exercise where the user selects the correct alphabet entity for a transliteration.
+     */
+    private suspend fun generateSelectLemmaExercise(entity: AlphabetEntity): SelectLemmaExercise {
         // Determine case for this exercise
-        val useUppercase = letterCaseProvider.shouldUseUppercase()
+        val useUppercase = entity is Letter && letterCaseProvider.shouldUseUppercase()
 
-        // Get incorrect options
-        val incorrectOptions = letterProvider.getIncorrectLetterOptions(
-            letter,
-            DEFAULT_LEMMA_OPTION_COUNT - 1
+        // Get the entity's transliteration
+        val transliteration = when (entity) {
+            is Letter -> entity.transliteration
+            is Diphthong -> entity.transliteration
+            is ImproperDiphthong -> entity.transliteration
+            else -> "" // Should not happen with our entity types
+        }
+
+        // Get incorrect options of the same entity type
+        val incorrectOptions = entityProvider.getIncorrectEntityOptions(
+            entity,
+            DEFAULT_ENTITY_OPTION_COUNT - 1
         )
 
         // Combine and shuffle
-        val options = (incorrectOptions + letter).shuffled()
+        val options = (incorrectOptions + entity).shuffled()
 
         return SelectLemmaExercise(
             id = UUID.randomUUID().toString(),
-            transliteration = letter.transliteration,
+            transliteration = transliteration,
             options = options,
-            correctLetter = letter,
+            correctEntity = entity,
             useUppercase = useUppercase
         )
     }
 
-    private fun generateLetterMatchingExercise(letters: List<Letter>): MatchPairsExercise {
-        val useUppercase = letterCaseProvider.shouldUseUppercase()
+    /**
+     * Generates a matching exercise with pairs of entities and their transliterations.
+     */
+    private fun generateEntityMatchingExercise(entities: List<AlphabetEntity>): MatchPairsExercise {
+        val useUppercase = entities.any { it is Letter } && letterCaseProvider.shouldUseUppercase()
 
-        // Create pairs with appropriate case for each
-        val pairs = letters.map { letter ->
-            LetterTransliterationPair(letter, letter.transliteration, useUppercase)
+        // Create pairs for each entity with its transliteration
+        val pairs = entities.map { entity ->
+            val transliteration = when (entity) {
+                is Letter -> entity.transliteration
+                is Diphthong -> entity.transliteration
+                is ImproperDiphthong -> entity.transliteration
+                else -> "" // Should not happen with our entity types
+            }
+
+            EntityTransliterationPair(entity, transliteration, useUppercase)
         }
 
         return MatchPairsExercise(
             id = UUID.randomUUID().toString(),
-            letterPairs = pairs
+            entityPairs = pairs
         )
     }
 }

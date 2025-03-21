@@ -17,6 +17,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
 import com.koineos.app.ui.components.cards.CardPadding
 import com.koineos.app.ui.components.cards.DisabledRegularCard
@@ -25,6 +26,7 @@ import com.koineos.app.ui.components.cards.RegularCard
 import com.koineos.app.ui.components.cards.SelectedRegularCard
 import com.koineos.app.ui.components.cards.SuccessRegularCard
 import com.koineos.app.ui.theme.Colors
+import com.koineos.app.ui.theme.Colors.Surface
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
@@ -32,7 +34,8 @@ import com.koineos.app.ui.theme.MainFont
 import com.koineos.app.ui.theme.Typography
 
 /**
- * Exercise content for selecting the correct transliteration for a Koine Greek letter.
+ * Exercise content for selecting the correct transliteration for a Koine Greek entity.
+ * Supports all entity types (letters, diphthongs, etc.).
  *
  * @param exerciseState The UI state for this exercise
  * @param onAnswerSelected Callback when an answer is selected
@@ -52,11 +55,11 @@ fun SelectTransliterationExerciseContent(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = exerciseState.letterDisplay,
+            text = exerciseState.entityDisplay,
             style = Typography.displayLarge.copy(
                 fontFamily = KoineFont,
                 fontWeight = FontWeight.Bold,
-                fontSize = 160.sp
+                fontSize = 120.sp
             ),
             textAlign = TextAlign.Center,
             color = Colors.Primary
@@ -143,15 +146,19 @@ fun SelectTransliterationExerciseContent(
 @Composable
 private fun SelectTransliterationExerciseContentPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Surface) {
             SelectTransliterationExerciseContent(
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",
                     instructions = "What sound does this make?",
-                    letterDisplay = "α",
-                    letterName = "alpha",
+                    entityDisplay = "α",
+                    entityName = "alpha",
                     options = listOf("a", "b", "g"),
-                    selectedAnswer = null
+                    selectedAnswer = null,
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    isChecked = false,
+                    isCorrect = null,
+                    useUppercase = false
                 ),
                 onAnswerSelected = {}
             )
@@ -163,15 +170,19 @@ private fun SelectTransliterationExerciseContentPreview() {
 @Composable
 private fun SelectTransliterationExerciseWithSelectionPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Surface) {
             SelectTransliterationExerciseContent(
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",
                     instructions = "What sound does this make?",
-                    letterDisplay = "α",
-                    letterName = "alpha",
+                    entityDisplay = "α",
+                    entityName = "alpha",
                     options = listOf("a", "b", "g"),
-                    selectedAnswer = "a"
+                    selectedAnswer = "a",
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    isChecked = true,
+                    isCorrect = null,
+                    useUppercase = false
                 ),
                 onAnswerSelected = {}
             )
@@ -183,17 +194,19 @@ private fun SelectTransliterationExerciseWithSelectionPreview() {
 @Composable
 private fun SelectTransliterationExerciseWithCheckedCorrectPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Surface) {
             SelectTransliterationExerciseContent(
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",
                     instructions = "What sound does this make?",
-                    letterDisplay = "α",
-                    letterName = "alpha",
+                    entityDisplay = "α",
+                    entityName = "alpha",
                     options = listOf("a", "b", "g"),
                     selectedAnswer = "a",
                     isChecked = true,
-                    isCorrect = true
+                    isCorrect = true,
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
                 ),
                 onAnswerSelected = {}
             )
@@ -205,17 +218,19 @@ private fun SelectTransliterationExerciseWithCheckedCorrectPreview() {
 @Composable
 private fun SelectTransliterationExerciseWithCheckedIncorrectPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Surface) {
             SelectTransliterationExerciseContent(
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",
                     instructions = "What sound does this make?",
-                    letterDisplay = "α",
-                    letterName = "alpha",
+                    entityDisplay = "α",
+                    entityName = "alpha",
                     options = listOf("a", "b", "g"),
                     selectedAnswer = "b",
                     isChecked = true,
-                    isCorrect = false
+                    isCorrect = false,
+                    entityType = AlphabetCategory.LETTERS.toString(),
+                    useUppercase = false
                 ),
                 onAnswerSelected = {}
             )

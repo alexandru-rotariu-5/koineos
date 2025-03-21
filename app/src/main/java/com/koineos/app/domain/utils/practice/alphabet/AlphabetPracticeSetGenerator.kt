@@ -13,14 +13,15 @@ import javax.inject.Singleton
 /**
  * Generator for complete alphabet practice sets.
  * Creates sets with a balanced mix of different alphabet exercise types.
+ * Supports all alphabet entity types (Letters, Diphthongs, ImproperDiphthongs).
  *
  * @property alphabetExerciseGenerator Generator for individual alphabet exercises.
- * @property letterProvider Provider for letter content.
+ * @property entityProvider Provider for alphabet entities.
  */
 @Singleton
 class AlphabetPracticeSetGenerator @Inject constructor(
     private val alphabetExerciseGenerator: AlphabetExerciseGenerator,
-    private val letterProvider: LetterProvider
+    private val entityProvider: AlphabetEntityProvider
 ) : PracticeSetGenerator {
 
     override suspend fun generatePracticeSet(configuration: PracticeSetConfiguration): PracticeSet {
@@ -80,7 +81,7 @@ class AlphabetPracticeSetGenerator @Inject constructor(
         typeDistribution.forEach { (type, typeCount) ->
             repeat(typeCount) {
                 // Generate an exercise of this type
-                val exercise = alphabetExerciseGenerator.generateExercise(type, letterProvider)
+                val exercise = alphabetExerciseGenerator.generateExercise(type, entityProvider)
 
                 // Add it to our list if generation was successful
                 exercise?.let { exercises.add(it) }

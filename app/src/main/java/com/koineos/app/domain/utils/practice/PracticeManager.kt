@@ -1,9 +1,12 @@
 package com.koineos.app.domain.utils.practice
 
+import com.koineos.app.domain.model.practice.Exercise
+import com.koineos.app.domain.model.practice.ExerciseFeedback
 import com.koineos.app.domain.model.practice.ExerciseType
 import com.koineos.app.domain.model.practice.PracticeFocusArea
 import com.koineos.app.domain.model.practice.PracticeSet
 import com.koineos.app.domain.model.practice.PracticeSetConfiguration
+import com.koineos.app.domain.utils.practice.alphabet.AlphabetEntityProvider
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetPracticeSetGenerator
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -13,10 +16,12 @@ import javax.inject.Singleton
  * Manages the generation of practice sets and provides access to practice generators.
  *
  * @property alphabetPracticeSetGenerator Generator for alphabet practice sets.
+ * @property alphabetEntityProvider Provider for alphabet entities.
  */
 @Singleton
 class PracticeManager @Inject constructor(
-    private val alphabetPracticeSetGenerator: AlphabetPracticeSetGenerator
+    private val alphabetPracticeSetGenerator: AlphabetPracticeSetGenerator,
+    private val alphabetEntityProvider: AlphabetEntityProvider
 ) {
     /**
      * Generates an alphabet practice set with default configuration.
@@ -36,5 +41,16 @@ class PracticeManager @Inject constructor(
         )
 
         return alphabetPracticeSetGenerator.generatePracticeSet(configuration)
+    }
+
+    /**
+     * Validates an answer for a specific exercise.
+     *
+     * @param exercise The exercise to validate against.
+     * @param answer The user's answer.
+     * @return Feedback on the user's answer.
+     */
+    fun validateAnswer(exercise: Exercise, answer: Any): ExerciseFeedback {
+        return exercise.getFeedback(answer)
     }
 }

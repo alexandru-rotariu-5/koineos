@@ -1,7 +1,11 @@
 package com.koineos.app.domain.utils.practice.alphabet
 
+import com.koineos.app.domain.model.AccentMark
 import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.domain.model.AlphabetEntity
+import com.koineos.app.domain.model.BreathingMark
+import com.koineos.app.domain.model.Diphthong
+import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
 import com.koineos.app.domain.model.practice.alphabet.AlphabetBatch
 import com.koineos.app.domain.repository.AlphabetMasteryRepository
@@ -16,15 +20,16 @@ import javax.inject.Singleton
 import kotlin.math.pow
 
 /**
- * Letter provider that uses the batch system for progressive introduction of alphabet entities.
+ * Entity provider that uses the batch system for progressive introduction of alphabet entities.
+ * Supports all types of alphabet entities (Letters, Diphthongs, ImproperDiphthongs).
  */
 @Singleton
-class BatchAwareLetterProvider @Inject constructor(
+class BatchAwareAlphabetEntityProvider @Inject constructor(
     private val alphabetRepository: AlphabetRepository,
     private val alphabetMasteryRepository: AlphabetMasteryRepository,
     private val batchManagementService: BatchManagementService,
     private val entitySelectionService: EntitySelectionService
-) : LetterProvider {
+) : AlphabetEntityProvider {
 
     // Cache for entities and batches
     private var entityCache: Map<AlphabetCategory, List<AlphabetEntity>>? = null
@@ -80,10 +85,13 @@ class BatchAwareLetterProvider @Inject constructor(
         return batchManagementService.determineUnlockedBatches(batches, masteryLevels)
     }
 
-    /**
-     * Provides a random entity according to selection strategy.
-     */
-    override suspend fun getRandomEntity(): Letter {
+    override suspend fun getEntityById(id: String): AlphabetEntity? {
+        ensureCacheInitialized()
+
+        return entityCache?.values?.flatten()?.find { it.id == id }
+    }
+
+    override suspend fun getRandomEntity(): AlphabetEntity {
         val unlockedBatches = getUnlockedBatches()
         if (unlockedBatches.isEmpty()) {
             throw IllegalStateException("No unlocked batches available")
@@ -96,18 +104,12 @@ class BatchAwareLetterProvider @Inject constructor(
             unlockedBatches = unlockedBatches,
             count = 1,
             masteryLevels = masteryLevels
-        ).firstOrNull() as? Letter
-            ?: throw IllegalStateException("No letter entity available")
+        ).firstOrNull() ?: throw IllegalStateException("No entity available")
 
         return selectedEntity
     }
 
-    /**
-     * Provides multiple random entities according to selection strategy.
-     *
-     * @param count Number of entities to provide.
-     */
-    override suspend fun getRandomEntities(count: Int): List<Letter> {
+    override suspend fun getRandomEntities(count: Int): List<AlphabetEntity> {
         val unlockedBatches = getUnlockedBatches()
         if (unlockedBatches.isEmpty()) {
             throw IllegalStateException("No unlocked batches available")
@@ -115,20 +117,21 @@ class BatchAwareLetterProvider @Inject constructor(
 
         val masteryLevels = alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
 
-        val allAvailableLetters = unlockedBatches.flatMap { batch ->
-            batch.entities.filterIsInstance<Letter>()
+        val allAvailableEntities = unlockedBatches.flatMap { batch ->
+            batch.entities
         }.distinct()
 
-        if (allAvailableLetters.isEmpty()) {
-            throw IllegalStateException("No letters available in unlocked batches")
+        if (allAvailableEntities.isEmpty()) {
+            throw IllegalStateException("No entities available in unlocked batches")
         }
 
         val selectedEntities = entitySelectionService.selectEntitiesForPractice(
             unlockedBatches = unlockedBatches,
             count = count,
             masteryLevels = masteryLevels
-        ).filterIsInstance<Letter>()
+        )
 
+        // Handle special case for sigma variants
         val filteredEntities = filterSigmaVariants(selectedEntities)
 
         return when {
@@ -136,10 +139,12 @@ class BatchAwareLetterProvider @Inject constructor(
 
             filteredEntities.size < count -> {
                 val result = filteredEntities.toMutableList()
-                val remainingLetters = allAvailableLetters.filter { it !in result }
+                val remainingEntities = allAvailableEntities.filter {
+                    it !in result && (it is Letter && it.name.contains("sigma").not())
+                }
 
-                if (remainingLetters.isNotEmpty()) {
-                    result.addAll(remainingLetters.shuffled().take(count - result.size))
+                if (remainingEntities.isNotEmpty()) {
+                    result.addAll(remainingEntities.shuffled().take(count - result.size))
                 }
 
                 result
@@ -149,10 +154,7 @@ class BatchAwareLetterProvider @Inject constructor(
         }
     }
 
-    /**
-     * Provides a random entity excluding specified entities.
-     */
-    override suspend fun getRandomEntityExcluding(excluded: List<Letter>): Letter {
+    override suspend fun getRandomEntityExcluding(excluded: List<AlphabetEntity>): AlphabetEntity {
         val unlockedBatches = getUnlockedBatches()
         if (unlockedBatches.isEmpty()) {
             throw IllegalStateException("No unlocked batches available")
@@ -162,11 +164,10 @@ class BatchAwareLetterProvider @Inject constructor(
 
         // Get all available entities from unlocked batches
         val availableEntities = unlockedBatches.flatMap { it.entities }
-            .filterIsInstance<Letter>()
             .filter { it !in excluded }
 
         if (availableEntities.isEmpty()) {
-            throw IllegalStateException("No letters available after exclusion")
+            throw IllegalStateException("No entities available after exclusion")
         }
 
         // Calculate weights based on mastery gap
@@ -195,10 +196,10 @@ class BatchAwareLetterProvider @Inject constructor(
         return availableEntities.random()
     }
 
-    /**
-     * Provides multiple random entities excluding specified entities.
-     */
-    override suspend fun getRandomEntitiesExcluding(count: Int, excluded: List<Letter>): List<Letter> {
+    override suspend fun getRandomEntitiesExcluding(
+        count: Int,
+        excluded: List<AlphabetEntity>
+    ): List<AlphabetEntity> {
         val unlockedBatches = getUnlockedBatches()
         if (unlockedBatches.isEmpty()) {
             throw IllegalStateException("No unlocked batches available")
@@ -208,15 +209,14 @@ class BatchAwareLetterProvider @Inject constructor(
 
         // Get all available entities from unlocked batches
         val availableEntities = unlockedBatches.flatMap { it.entities }
-            .filterIsInstance<Letter>()
             .filter { it !in excluded }
 
         if (availableEntities.isEmpty()) {
-            throw IllegalStateException("No letters available after exclusion")
+            throw IllegalStateException("No entities available after exclusion")
         }
 
         // Implement weighted selection from available entities
-        val selectedEntities = mutableListOf<Letter>()
+        val selectedEntities = mutableListOf<AlphabetEntity>()
         val entityPool = availableEntities.toMutableList()
 
         // Calculate weights based on mastery gap
@@ -249,7 +249,7 @@ class BatchAwareLetterProvider @Inject constructor(
             }
 
             // Fallback if we didn't select anything
-            if (selectedEntities.size <= 0 && entityPool.isNotEmpty()) {
+            if (selectedEntities.size <= selectedEntities.size - 1 && entityPool.isNotEmpty()) {
                 selectedEntities.add(entityPool.random())
                 entityPool.remove(selectedEntities.last())
             }
@@ -259,70 +259,97 @@ class BatchAwareLetterProvider @Inject constructor(
         return filterSigmaVariants(selectedEntities)
     }
 
-    /**
-     * Filters out additional sigma variants if one is already present.
-     * This ensures we don't have duplicate uppercase sigmas in the same exercise.
-     */
-    private fun filterSigmaVariants(letters: List<Letter>): List<Letter> {
-        val result = mutableListOf<Letter>()
-        var hasSigma = false
-
-        for (letter in letters) {
-            if (letter.name.contains("sigma")) {
-                if (!hasSigma) {
-                    result.add(letter)
-                    hasSigma = true
-                }
-                // Skip additional sigma variants
-            } else {
-                result.add(letter)
-            }
-        }
-
-        return result
-    }
-
-    /**
-     * Provides letters from a specific category.
-     */
-    override suspend fun getLettersByCategory(category: AlphabetCategory): List<Letter> {
+    override suspend fun getEntitiesByCategory(category: AlphabetCategory): List<AlphabetEntity> {
         ensureCacheInitialized()
 
-        return entityCache?.get(category)?.filterIsInstance<Letter>() ?: emptyList()
+        return entityCache?.get(category) ?: emptyList()
     }
 
-    /**
-     * Provides a random letter from a specific category.
-     */
-    override suspend fun getRandomLetterFromCategory(category: AlphabetCategory): Letter {
-        val letters = getLettersByCategory(category)
-        if (letters.isEmpty()) {
-            throw IllegalStateException("No letters available in category $category")
+    override suspend fun getRandomEntityFromCategory(category: AlphabetCategory): AlphabetEntity {
+        val entities = getEntitiesByCategory(category)
+        if (entities.isEmpty()) {
+            throw IllegalStateException("No entities available in category $category")
         }
 
-        return letters.random()
+        return entities.random()
     }
 
-    /**
-     * Provides incorrect letter options for exercises.
-     */
-    override suspend fun getIncorrectLetterOptions(correctLetter: Letter, count: Int): List<Letter> {
-        return if (correctLetter.name.contains("sigma")) {
-            getIncorrectLetterOptionsExcludingSigmaVariants(correctLetter, count)
+    override suspend fun getIncorrectEntityOptions(
+        correctEntity: AlphabetEntity,
+        count: Int
+    ): List<AlphabetEntity> {
+        // Special handling for sigma variants
+        return if (correctEntity is Letter && correctEntity.name.contains("sigma")) {
+            getIncorrectEntityOptionsWithSigmaHandling(correctEntity, count)
         } else {
-            getIncorrectLetterOptionsWithoutMultipleSigmas(correctLetter, count)
+            // Standard handling for other entities
+            val unlockedBatches = getUnlockedBatches()
+            val availableEntities = unlockedBatches.flatMap { it.entities }
+                .filter { it.id != correctEntity.id }
+                .filter { isEntityOfSameType(it, correctEntity) }
+
+            if (availableEntities.isEmpty()) {
+                throw IllegalStateException("No entities available for options")
+            }
+
+            availableEntities.shuffled().take(count.coerceAtMost(availableEntities.size))
         }
     }
 
-    /**
-     * Provides incorrect transliteration options for exercises.
-     */
-    override suspend fun getIncorrectTransliterationOptions(correctTransliteration: String, count: Int): List<String> {
+    override suspend fun getIncorrectEntityOptionsWithSigmaHandling(
+        correctEntity: AlphabetEntity,
+        count: Int
+    ): List<AlphabetEntity> {
+        val unlockedBatches = getUnlockedBatches()
+        val allEntities = unlockedBatches.flatMap { it.entities }
+
+        // Split into sigma and non-sigma entities
+        val (sigmaEntities, nonSigmaEntities) = if (correctEntity is Letter) {
+            allEntities.partition {
+                it is Letter && it.name.contains("sigma") && it.id != correctEntity.id
+            }
+        } else {
+            // For non-letters, don't worry about sigma handling
+            Pair(
+                emptyList(),
+                allEntities.filter {
+                    it.id != correctEntity.id && isEntityOfSameType(
+                        it,
+                        correctEntity
+                    )
+                })
+        }
+
+        // Start with non-sigma entities
+        val result = nonSigmaEntities.filter { isEntityOfSameType(it, correctEntity) }
+            .shuffled()
+            .take(count.coerceAtMost(nonSigmaEntities.size))
+            .toMutableList()
+
+        // Add one sigma variant if needed and available
+        if (result.size < count && sigmaEntities.isNotEmpty()) {
+            result.add(sigmaEntities.random())
+        }
+
+        return result.take(count)
+    }
+
+    override suspend fun getIncorrectTransliterationOptions(
+        correctTransliteration: String,
+        count: Int
+    ): List<String> {
         val unlockedBatches = getUnlockedBatches()
 
         // Get all available transliterations from unlocked batches
         val allTransliterations = unlockedBatches.flatMap { batch ->
-            batch.entities.filterIsInstance<Letter>().map { it.transliteration }
+            batch.entities.mapNotNull { entity ->
+                when (entity) {
+                    is Letter -> entity.transliteration
+                    is Diphthong -> entity.transliteration
+                    is ImproperDiphthong -> entity.transliteration
+                    else -> null
+                }
+            }
         }.distinct()
 
         // Filter out the correct transliteration
@@ -332,57 +359,51 @@ class BatchAwareLetterProvider @Inject constructor(
         return incorrectOptions.shuffled().take(count.coerceAtMost(incorrectOptions.size))
     }
 
-    /**
-     * Provides incorrect letter options, excluding sigma variants.
-     */
-    override suspend fun getIncorrectLetterOptionsExcludingSigmaVariants(correctLetter: Letter, count: Int): List<Letter> {
-        val unlockedBatches = getUnlockedBatches()
-
-        // Get all available letters from unlocked batches
-        val availableLetters = unlockedBatches.flatMap { batch ->
-            batch.entities.filterIsInstance<Letter>()
-        }.filter {
-            it.id != correctLetter.id && !it.name.contains("sigma")
+    override fun isEntityOfCategory(entity: AlphabetEntity, category: AlphabetCategory): Boolean {
+        return when (category) {
+            AlphabetCategory.LETTERS -> entity is Letter
+            AlphabetCategory.DIPHTHONGS -> entity is Diphthong
+            AlphabetCategory.IMPROPER_DIPHTHONGS -> entity is ImproperDiphthong
+            AlphabetCategory.BREATHING_MARKS -> entity is BreathingMark
+            AlphabetCategory.ACCENT_MARKS -> entity is AccentMark
         }
-
-        if (availableLetters.isEmpty()) {
-            throw IllegalStateException("No letters available after exclusion")
-        }
-
-        // Return random options
-        return availableLetters.shuffled().take(count.coerceAtMost(availableLetters.size))
     }
 
     /**
-     * Provides incorrect letter options with at most one sigma variant.
+     * Checks if two entities are of the same type (e.g., both letters, both diphthongs).
      */
-    override suspend fun getIncorrectLetterOptionsWithoutMultipleSigmas(correctLetter: Letter, count: Int): List<Letter> {
-        val unlockedBatches = getUnlockedBatches()
+    private fun isEntityOfSameType(entity1: AlphabetEntity, entity2: AlphabetEntity): Boolean {
+        return when {
+            entity1 is Letter && entity2 is Letter -> true
+            entity1 is Diphthong && entity2 is Diphthong -> true
+            entity1 is ImproperDiphthong && entity2 is ImproperDiphthong -> true
+            entity1 is BreathingMark && entity2 is BreathingMark -> true
+            entity1 is AccentMark && entity2 is AccentMark -> true
+            else -> false
+        }
+    }
 
-        // Get all available letters separated by sigma and non-sigma
-        val availableNonSigmaLetters = unlockedBatches.flatMap { batch ->
-            batch.entities.filterIsInstance<Letter>()
-        }.filter {
-            it.id != correctLetter.id && !it.name.contains("sigma")
-        }.distinct()
+    /**
+     * Filters out additional sigma variants if one is already present.
+     * This ensures we don't have duplicate uppercase sigmas in the same exercise.
+     */
+    private fun filterSigmaVariants(entities: List<AlphabetEntity>): List<AlphabetEntity> {
+        val result = mutableListOf<AlphabetEntity>()
+        var hasSigma = false
 
-        val sigmaVariants = unlockedBatches.flatMap { batch ->
-            batch.entities.filterIsInstance<Letter>()
-        }.filter {
-            it.id != correctLetter.id && it.name.contains("sigma")
+        for (entity in entities) {
+            if (entity is Letter && entity.name.contains("sigma")) {
+                if (!hasSigma) {
+                    result.add(entity)
+                    hasSigma = true
+                }
+                // Skip additional sigma variants
+            } else {
+                result.add(entity)
+            }
         }
 
-        // Start with non-sigma letters
-        val result = availableNonSigmaLetters.shuffled()
-            .take(count.coerceAtMost(availableNonSigmaLetters.size))
-            .toMutableList()
-
-        // If we need more options and have sigmas, add one
-        if (result.size < count && sigmaVariants.isNotEmpty()) {
-            result.add(sigmaVariants.random())
-        }
-
-        return result.take(count)
+        return result
     }
 
     // Helper extension to calculate power

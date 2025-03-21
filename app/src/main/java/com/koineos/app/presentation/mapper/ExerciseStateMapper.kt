@@ -5,6 +5,9 @@ import com.koineos.app.domain.model.practice.ExerciseFeedback
 import com.koineos.app.domain.model.practice.alphabet.MatchPairsExercise
 import com.koineos.app.domain.model.practice.alphabet.SelectLemmaExercise
 import com.koineos.app.domain.model.practice.alphabet.SelectTransliterationExercise
+import com.koineos.app.domain.utils.practice.alphabet.AlphabetEntityDisplay.getDisplayName
+import com.koineos.app.domain.utils.practice.alphabet.AlphabetEntityDisplay.getDisplayText
+import com.koineos.app.domain.utils.practice.alphabet.AlphabetEntityDisplay.getEntityTypeDescription
 import com.koineos.app.presentation.model.practice.ExerciseUiState
 import com.koineos.app.presentation.model.practice.FeedbackUiState
 import com.koineos.app.presentation.model.practice.alphabet.MatchPairsExerciseUiState
@@ -14,6 +17,7 @@ import javax.inject.Inject
 
 /**
  * Maps domain exercise models to UI state representations.
+ * Supports all entity types (letters, diphthongs, etc.).
  */
 class ExerciseStateMapper @Inject constructor() {
 
@@ -59,8 +63,9 @@ class ExerciseStateMapper @Inject constructor() {
         return SelectTransliterationExerciseUiState(
             id = exercise.id,
             instructions = exercise.instructions,
-            letterDisplay = exercise.displayLetter,
-            letterName = exercise.letter.name,
+            entityDisplay = exercise.displayEntity,
+            entityName = exercise.entity.getDisplayName(),
+            entityType = exercise.entity.getEntityTypeDescription(),
             options = exercise.options,
             selectedAnswer = currentAnswer as? String,
             useUppercase = exercise.useUppercase
@@ -77,11 +82,12 @@ class ExerciseStateMapper @Inject constructor() {
         else
             exercise.transliteration
 
-        // Convert domain letter options to UI letter options with proper case
-        val options = exercise.options.map { letter ->
-            SelectLemmaExerciseUiState.LetterOption(
-                id = letter.id,
-                display = if (exercise.useUppercase) letter.uppercase else letter.lowercase,
+        // Convert domain entity options to UI entity options
+        val options = exercise.options.map { entity ->
+            SelectLemmaExerciseUiState.EntityOption(
+                id = entity.id,
+                display = entity.getDisplayText(exercise.useUppercase),
+                entityType = entity.getEntityTypeDescription(),
                 useUppercase = exercise.useUppercase
             )
         }
@@ -100,13 +106,14 @@ class ExerciseStateMapper @Inject constructor() {
         exercise: MatchPairsExercise,
         currentAnswer: Any?
     ): MatchPairsExerciseUiState {
-        val useUppercase = exercise.letterPairs.firstOrNull()?.useUppercase ?: false
+        val useUppercase = exercise.entityPairs.firstOrNull()?.useUppercase ?: false
 
-        // Create a map of match options to their transliterations with proper case
-        val pairsToMatch = exercise.letterPairs.associate { pair ->
+        // Create a map of match options to their transliterations
+        val pairsToMatch = exercise.entityPairs.associate { pair ->
             val option = MatchPairsExerciseUiState.MatchOption(
-                id = pair.letter.id,
-                display = pair.displayLetter,
+                id = pair.entity.id,
+                display = pair.displayEntity,
+                entityType = pair.entity.getEntityTypeDescription(),
                 useUppercase = pair.useUppercase
             )
             option to pair.displayTransliteration

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.presentation.model.practice.alphabet.SelectLemmaExerciseUiState
 import com.koineos.app.ui.components.cards.CardPadding
 import com.koineos.app.ui.components.cards.DisabledRegularCard
@@ -31,7 +32,8 @@ import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
 
 /**
- * Exercise content for selecting the correct Greek letter for a transliteration.
+ * Exercise content for selecting the correct Greek entity for a transliteration.
+ * Supports all entity types (letters, diphthongs, etc.).
  *
  * @param exerciseState The UI state for this exercise
  * @param onAnswerSelected Callback when an answer is selected
@@ -62,10 +64,10 @@ fun SelectLemmaExerciseContent(
                 val isChecked = exerciseState.isChecked
                 val isCorrect = exerciseState.isCorrect == true
 
-                val letterText = @Composable {
+                val entityText = @Composable {
                     Text(
                         text = option.display,
-                        style = Typography.displayLarge.copy(
+                        style = Typography.displayMedium.copy(
                             fontFamily = KoineFont,
                             fontWeight = FontWeight.Bold
                         ),
@@ -84,13 +86,13 @@ fun SelectLemmaExerciseContent(
                             SuccessRegularCard(
                                 modifier = Modifier.fillMaxWidth(),
                                 contentPadding = CardPadding.Large,
-                                content = { letterText() }
+                                content = { entityText() }
                             )
                         } else {
                             ErrorRegularCard(
                                 modifier = Modifier.fillMaxWidth(),
                                 contentPadding = CardPadding.Large,
-                                content = { letterText() }
+                                content = { entityText() }
                             )
                         }
                     }
@@ -100,7 +102,7 @@ fun SelectLemmaExerciseContent(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = { /* Do nothing, already selected */ },
                             contentPadding = CardPadding.Large,
-                            content = { letterText() }
+                            content = { entityText() }
                         )
                     }
                     // For unselected options in a checked exercise
@@ -108,7 +110,7 @@ fun SelectLemmaExerciseContent(
                         DisabledRegularCard(
                             modifier = Modifier.fillMaxWidth(),
                             contentPadding = CardPadding.Large,
-                            content = { letterText() }
+                            content = { entityText() }
                         )
                     }
                     // Default state for options
@@ -117,7 +119,7 @@ fun SelectLemmaExerciseContent(
                             modifier = Modifier.fillMaxWidth(),
                             onClick = { onAnswerSelected(option.display) },
                             contentPadding = CardPadding.Large,
-                            content = { letterText() }
+                            content = { entityText() }
                         )
                     }
                 }
@@ -137,10 +139,26 @@ private fun SelectLemmaExerciseContentPreview() {
                     instructions = "Select the correct character for \"b\"",
                     transliteration = "b",
                     options = listOf(
-                        SelectLemmaExerciseUiState.LetterOption(id = "alpha", display = "α"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "beta", display = "β"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "gamma", display = "γ"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "δ")
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "alpha", display = "α",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "beta", display = "β",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "gamma", display = "γ",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "delta", display = "δ",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        )
                     ),
                     selectedAnswer = null
                 ),
@@ -161,10 +179,26 @@ private fun SelectLemmaExerciseWithSelectionPreview() {
                     instructions = "Select the correct character for \"b\"",
                     transliteration = "b",
                     options = listOf(
-                        SelectLemmaExerciseUiState.LetterOption(id = "alpha", display = "α"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "beta", display = "β"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "gamma", display = "γ"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "δ")
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "alpha", display = "α",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "beta", display = "β",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "gamma", display = "γ",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "delta", display = "δ",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        )
                     ),
                     selectedAnswer = "β"
                 ),
@@ -185,10 +219,26 @@ private fun SelectLemmaExerciseWithCheckedCorrectPreview() {
                     instructions = "Select the correct character for \"b\"",
                     transliteration = "b",
                     options = listOf(
-                        SelectLemmaExerciseUiState.LetterOption(id = "alpha", display = "α"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "beta", display = "β"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "gamma", display = "γ"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "δ")
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "alpha", display = "α",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "beta", display = "β",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "gamma", display = "γ",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "delta", display = "δ",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        )
                     ),
                     selectedAnswer = "β",
                     isChecked = true,
@@ -211,10 +261,26 @@ private fun SelectLemmaExerciseWithCheckedIncorrectPreview() {
                     instructions = "Select the correct character for \"b\"",
                     transliteration = "b",
                     options = listOf(
-                        SelectLemmaExerciseUiState.LetterOption(id = "alpha", display = "α"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "beta", display = "β"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "gamma", display = "γ"),
-                        SelectLemmaExerciseUiState.LetterOption(id = "delta", display = "δ")
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "alpha", display = "α",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "beta", display = "β",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "gamma", display = "γ",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        ),
+                        SelectLemmaExerciseUiState.EntityOption(
+                            id = "delta", display = "δ",
+                            entityType = AlphabetCategory.LETTERS.toString(),
+                            useUppercase = false
+                        )
                     ),
                     selectedAnswer = "α",
                     isChecked = true,

@@ -8,16 +8,21 @@ import com.koineos.app.presentation.model.practice.ExerciseUiState
  *
  * @property id Unique identifier for the exercise.
  * @property instructions Instructions shown to the user.
- * @property letterDisplay Koine Greek letter to display.
- * @property letterName Name of the letter (for accessibility and feedback).
+ * @property entityDisplay Display text of the Koine Greek entity.
+ * @property entityName Name of the entity (for accessibility and feedback).
+ * @property entityType Type of the entity (letter, diphthong, etc.).
  * @property options Transliteration options to choose from.
  * @property selectedAnswer The user's selected answer, if any.
+ * @property isChecked Whether the answer has been checked.
+ * @property isCorrect Whether the answer is correct (if checked).
+ * @property useUppercase Whether uppercase is used.
  */
 data class SelectTransliterationExerciseUiState(
     override val id: String,
     override val instructions: String,
-    val letterDisplay: String,
-    val letterName: String,
+    val entityDisplay: String,
+    val entityName: String,
+    val entityType: String,
     val options: List<String>,
     val selectedAnswer: String? = null,
     val isChecked: Boolean = false,

@@ -84,17 +84,49 @@ class BatchManagementService @Inject constructor() {
         // Check each batch in order
         for (i in 0 until batches.size - 1) {
             val currentBatch = batches[i]
+            val nextBatch = batches[i + 1]
 
-            // If current batch meets criteria, unlock the next batch
-            if (currentBatch.meetsUnlockCriteria(masteryLevels)) {
-                unlockedBatches.add(batches[i + 1])
+            // Determine if this is a category transition
+            val currentCategory = getCategoryFromBatchId(currentBatch.id)
+            val nextCategory = getCategoryFromBatchId(nextBatch.id)
+            val isCategoryTransition = currentCategory != nextCategory
+
+            if (isCategoryTransition) {
+                // For category transitions, require all entities in current category to be 100% mastered
+                val categoryBatches = unlockedBatches.filter {
+                    getCategoryFromBatchId(it.id) == currentCategory
+                }
+                val allCategoryEntities = categoryBatches.flatMap { it.entities }
+
+                val allEntitiesFullyMastered = allCategoryEntities
+                    .all { entity -> (masteryLevels[entity.id] ?: 0f) >= 1.0f }
+
+                if (allEntitiesFullyMastered) {
+                    unlockedBatches.add(nextBatch)
+                } else {
+                    break
+                }
             } else {
-                // Stop checking once we find a batch that doesn't meet criteria
-                break
+                // For batches within same category, use standard criteria
+                if (currentBatch.meetsUnlockCriteria(masteryLevels)) {
+                    unlockedBatches.add(nextBatch)
+                } else {
+                    break
+                }
             }
         }
 
         return unlockedBatches
+    }
+
+    // Helper to determine category from batch ID
+    private fun getCategoryFromBatchId(batchId: String): String {
+        return when {
+            batchId.startsWith("letter_batch_") -> "letter"
+            batchId.startsWith("diphthong_batch_") -> "diphthong"
+            batchId == "improper_diphthong_batch" -> "improper_diphthong"
+            else -> "unknown"
+        }
     }
 
     /**
@@ -124,30 +156,25 @@ class BatchManagementService @Inject constructor() {
      * Creates diphthong batches according to the enhancement plan.
      */
     private fun createDiphthongBatches(diphthongs: List<AlphabetEntity>): List<List<AlphabetEntity>> {
-        // Simple diphthongs (αι, ει, οι)
-        val simpleDiphthongs = diphthongs.filter { entity ->
+        // Group 1: i-diphthongs (αι, ει, οι, υι)
+        val iDiphthongs = diphthongs.filter { entity ->
             entity.id.contains("diphthong_0") ||
                     entity.id.contains("diphthong_1") ||
-                    entity.id.contains("diphthong_2")
+                    entity.id.contains("diphthong_2") ||
+                    entity.id.contains("diphthong_3")
         }
 
-        // Complex diphthongs (αυ, ευ, ου)
-        val complexDiphthongs = diphthongs.filter { entity ->
+        // Group 2: u-diphthongs (αυ, ευ, ηυ, ου)
+        val uDiphthongs = diphthongs.filter { entity ->
             entity.id.contains("diphthong_4") ||
                     entity.id.contains("diphthong_5") ||
+                    entity.id.contains("diphthong_6") ||
                     entity.id.contains("diphthong_7")
         }
 
-        // Rare diphthongs (υι, ηυ)
-        val rareDiphthongs = diphthongs.filter { entity ->
-            entity.id.contains("diphthong_3") ||
-                    entity.id.contains("diphthong_6")
-        }
-
         return listOf(
-            simpleDiphthongs,
-            complexDiphthongs,
-            rareDiphthongs
+            iDiphthongs,
+            uDiphthongs
         ).filter { it.isNotEmpty() }
     }
 }

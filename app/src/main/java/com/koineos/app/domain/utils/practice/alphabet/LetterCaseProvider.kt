@@ -25,7 +25,7 @@ interface LetterCaseProvider {
 @Singleton
 class DefaultLetterCaseProvider @Inject constructor() : LetterCaseProvider {
     companion object {
-        private const val UPPERCASE_PROBABILITY = 0.3f
+        private const val UPPERCASE_PROBABILITY = 0.2f
     }
 
     override fun shouldUseUppercase(): Boolean {

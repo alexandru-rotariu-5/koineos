@@ -38,7 +38,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AlphabetViewModel @Inject constructor(
     private val getAlphabetContentUseCase: GetAlphabetContentUseCase,
-    private val stringProvider: StringProvider
+    private val stringProvider: StringProvider,
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AlphabetScreenUiState> by lazy {

@@ -4,19 +4,22 @@ import com.koineos.app.domain.model.practice.ExerciseType
 import com.koineos.app.presentation.model.practice.ExerciseUiState
 
 /**
- * UI state for lemma selection exercises.
+ * UI state for entity selection exercises.
  *
  * @property id Unique identifier for the exercise.
  * @property instructions Instructions shown to the user.
- * @property transliteration Transliteration to match with a letter.
- * @property options Letter options to choose from, each with display value and id.
- * @property selectedAnswer The user's selected letter, if any.
+ * @property transliteration Transliteration to match with an entity.
+ * @property options Entity options to choose from.
+ * @property selectedAnswer The user's selected entity, if any.
+ * @property isChecked Whether the answer has been checked.
+ * @property isCorrect Whether the answer is correct (if checked).
+ * @property useUppercase Whether to use uppercase where applicable.
  */
 data class SelectLemmaExerciseUiState(
     override val id: String,
     override val instructions: String,
     val transliteration: String,
-    val options: List<LetterOption>,
+    val options: List<EntityOption>,
     val selectedAnswer: String? = null,
     val isChecked: Boolean = false,
     val isCorrect: Boolean? = null,
@@ -26,15 +29,17 @@ data class SelectLemmaExerciseUiState(
     override val hasAnswer: Boolean get() = selectedAnswer != null
 
     /**
-     * Represents a letter option in the UI.
+     * Represents an entity option in the UI.
      *
      * @property id Identifier for the option.
-     * @property display Display value for the option (the letter).
-     * @property useUppercase Whether to use uppercase or lowercase for the letter.
+     * @property display Display text for the option (the entity).
+     * @property entityType Type of the entity (letter, diphthong, etc.).
+     * @property useUppercase Whether to use uppercase where applicable.
      */
-    data class LetterOption(
+    data class EntityOption(
         val id: String,
         val display: String,
+        val entityType: String,
         val useUppercase: Boolean = false
     )
 }

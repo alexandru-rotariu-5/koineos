@@ -4,6 +4,7 @@ import android.content.Context
 import com.koineos.app.domain.usecase.CompletePracticeSetUseCase
 import com.koineos.app.domain.usecase.ValidateExerciseAnswerUseCase
 import com.koineos.app.domain.utils.practice.PracticeManager
+import com.koineos.app.domain.utils.practice.alphabet.AlphabetEntityProvider
 import com.koineos.app.domain.utils.practice.alphabet.AlphabetPracticeSetGenerator
 import com.koineos.app.ui.utils.AndroidStringProvider
 import com.koineos.app.ui.utils.StringProvider
@@ -32,9 +33,10 @@ object AppModule {
     @Provides
     @Singleton
     fun providePracticeManager(
-        alphabetPracticeSetGenerator: AlphabetPracticeSetGenerator
+        alphabetPracticeSetGenerator: AlphabetPracticeSetGenerator,
+        alphabetEntityProvider: AlphabetEntityProvider
     ): PracticeManager {
-        return PracticeManager(alphabetPracticeSetGenerator)
+        return PracticeManager(alphabetPracticeSetGenerator, alphabetEntityProvider)
     }
 
     @Provides
