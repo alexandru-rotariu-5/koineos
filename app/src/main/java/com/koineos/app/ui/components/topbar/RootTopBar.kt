@@ -3,6 +3,7 @@ package com.koineos.app.ui.components.topbar
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.theme.Colors
 
@@ -37,5 +38,13 @@ fun RootTopBar(
                 iconTint = Colors.OnPrimary
             )
         )
+    )
+}
+
+@Preview
+@Composable
+fun RootTopBarPreview() {
+    RootTopBar(
+        showLogo = true
     )
 }
