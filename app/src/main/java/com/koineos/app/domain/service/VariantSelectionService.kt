@@ -1,6 +1,12 @@
 package com.koineos.app.domain.service
 
-import com.koineos.app.domain.model.*
+import com.koineos.app.domain.model.AccentMark
+import com.koineos.app.domain.model.AlphabetCategory
+import com.koineos.app.domain.model.AlphabetEntity
+import com.koineos.app.domain.model.BreathingMark
+import com.koineos.app.domain.model.Diphthong
+import com.koineos.app.domain.model.ImproperDiphthong
+import com.koineos.app.domain.model.Letter
 import java.text.Normalizer
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,11 +22,13 @@ class VariantSelectionService @Inject constructor() {
      */
     fun shouldApplyBreathingMarks(masteryLevels: Map<String, Float>): Boolean {
         // Check if letters, diphthongs, and improper diphthongs have 100% mastery
-        return areAllEntitiesMastered(masteryLevels, listOf(
-            AlphabetCategory.LETTERS,
-            AlphabetCategory.DIPHTHONGS,
-            AlphabetCategory.IMPROPER_DIPHTHONGS
-        ))
+        return areAllEntitiesMastered(
+            masteryLevels, listOf(
+                AlphabetCategory.LETTERS,
+                AlphabetCategory.DIPHTHONGS,
+                AlphabetCategory.IMPROPER_DIPHTHONGS
+            )
+        )
     }
 
     /**
@@ -30,12 +38,14 @@ class VariantSelectionService @Inject constructor() {
      */
     fun shouldApplyAccentMarks(masteryLevels: Map<String, Float>): Boolean {
         // Check if letters, diphthongs, improper diphthongs, and breathing marks have 100% mastery
-        return areAllEntitiesMastered(masteryLevels, listOf(
-            AlphabetCategory.LETTERS,
-            AlphabetCategory.DIPHTHONGS,
-            AlphabetCategory.IMPROPER_DIPHTHONGS,
-            AlphabetCategory.BREATHING_MARKS
-        ))
+        return areAllEntitiesMastered(
+            masteryLevels, listOf(
+                AlphabetCategory.LETTERS,
+                AlphabetCategory.DIPHTHONGS,
+                AlphabetCategory.IMPROPER_DIPHTHONGS,
+                AlphabetCategory.BREATHING_MARKS
+            )
+        )
     }
 
     /**
@@ -50,7 +60,7 @@ class VariantSelectionService @Inject constructor() {
 
         // For simplicity in this example, let's assume we can extract entities by ID prefix
         return categories.all { category ->
-            val prefix = when(category) {
+            val prefix = when (category) {
                 AlphabetCategory.LETTERS -> "letter_"
                 AlphabetCategory.DIPHTHONGS -> "diphthong_"
                 AlphabetCategory.IMPROPER_DIPHTHONGS -> "improper_diphthong_"
@@ -111,7 +121,7 @@ class VariantSelectionService @Inject constructor() {
         breathingMark: BreathingMark?,
         accentMark: AccentMark?
     ): String {
-        val variants = when(entity) {
+        val variants = when (entity) {
             is Letter -> entity.variants
             is Diphthong -> entity.variants
             is ImproperDiphthong -> entity.variants
@@ -125,36 +135,45 @@ class VariantSelectionService @Inject constructor() {
                 when {
                     breathingMark.name == "rough" && accentMark.name == "acute" ->
                         variants.roughBreathingAcuteAccent
+
                     breathingMark.name == "rough" && accentMark.name == "grave" ->
                         variants.roughBreathingGraveAccent
+
                     breathingMark.name == "rough" && accentMark.name == "circumflex" ->
                         variants.roughBreathingCircumflexAccent
+
                     breathingMark.name == "smooth" && accentMark.name == "acute" ->
                         variants.smoothBreathingAcuteAccent
+
                     breathingMark.name == "smooth" && accentMark.name == "grave" ->
                         variants.smoothBreathingGraveAccent
+
                     breathingMark.name == "smooth" && accentMark.name == "circumflex" ->
                         variants.smoothBreathingCircumflexAccent
+
                     else -> getEntityDisplay(entity) // Fallback
                 } ?: getEntityDisplay(entity)
             }
+
             breathingMark != null -> {
                 // Just breathing mark
-                when(breathingMark.name) {
+                when (breathingMark.name) {
                     "rough" -> variants.roughBreathing
                     "smooth" -> variants.smoothBreathing
                     else -> getEntityDisplay(entity)
                 } ?: getEntityDisplay(entity)
             }
+
             accentMark != null -> {
                 // Just accent mark
-                when(accentMark.name) {
+                when (accentMark.name) {
                     "acute" -> variants.acuteAccent
                     "grave" -> variants.graveAccent
                     "circumflex" -> variants.circumflexAccent
                     else -> getEntityDisplay(entity)
                 } ?: getEntityDisplay(entity)
             }
+
             else -> getEntityDisplay(entity)
         }
     }
@@ -163,7 +182,7 @@ class VariantSelectionService @Inject constructor() {
      * Gets the base display representation of an entity
      */
     private fun getEntityDisplay(entity: AlphabetEntity): String {
-        return when(entity) {
+        return when (entity) {
             is Letter -> entity.lowercase
             is Diphthong -> entity.lowercase
             is ImproperDiphthong -> entity.lowercase
@@ -188,9 +207,9 @@ class VariantSelectionService @Inject constructor() {
     ): String {
         var result = baseTransliteration
 
-        // Apply breathing mark - "h" prefix for rough breathing
+        // Apply breathing mark - "h" for rough breathing
         if (breathingMark?.name == "rough") {
-            result = "h$result"
+            result = if (baseTransliteration == "r") "${result}h" else "h$result"
         }
 
         // Apply accent mark using Unicode combining characters
@@ -201,7 +220,7 @@ class VariantSelectionService @Inject constructor() {
             // If there's only one character after prefix, apply mark to it
             if (result.length <= prefixLength + 1) {
                 val baseChar = result.substring(prefixLength, prefixLength + 1)
-                val accentedChar = when(accentMark.name) {
+                val accentedChar = when (accentMark.name) {
                     "acute" -> baseChar + "\u0301" // Combining acute accent
                     "grave" -> baseChar + "\u0300" // Combining grave accent
                     "circumflex" -> baseChar + "\u0302" // Combining circumflex
@@ -215,8 +234,7 @@ class VariantSelectionService @Inject constructor() {
                 )
 
                 // Replace the original character with the accented one
-                result = result.substring(0, prefixLength) + normalizedChar +
-                        (if (result.length > prefixLength + 1) result.substring(prefixLength + 1) else "")
+                result = result.substring(0, prefixLength) + normalizedChar
             }
             // For multi-character transliterations (like diphthongs), apply to the first vowel
             else {
@@ -234,7 +252,7 @@ class VariantSelectionService @Inject constructor() {
                 // If a vowel was found, apply the accent
                 if (accentPosition >= 0) {
                     val baseChar = result[accentPosition].toString()
-                    val accentedChar = when(accentMark.name) {
+                    val accentedChar = when (accentMark.name) {
                         "acute" -> baseChar + "\u0301" // Combining acute accent
                         "grave" -> baseChar + "\u0300" // Combining grave accent
                         "circumflex" -> baseChar + "\u0302" // Combining circumflex

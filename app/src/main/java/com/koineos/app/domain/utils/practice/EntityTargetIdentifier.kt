@@ -35,22 +35,4 @@ class EntityTargetIdentifier @Inject constructor() {
 
         return baseEntityIds + appliedMarkIds
     }
-
-    /**
-     * Identifies the exercise type for given entity IDs.
-     * This can be used to determine appropriate mastery update calculations.
-     *
-     * @param exercise The exercise to analyze
-     * @return Map of entity IDs to exercise type
-     */
-    fun identifyExerciseTypeForEntities(exercise: Exercise): Map<String, com.koineos.app.domain.model.practice.ExerciseType> {
-        val exerciseType = exercise.type
-
-        return when (exercise) {
-            is SelectTransliterationExercise -> mapOf(exercise.entity.id to exerciseType)
-            is SelectLemmaExercise -> mapOf(exercise.correctEntity.id to exerciseType)
-            is MatchPairsExercise -> exercise.entityPairs.associate { it.entity.id to exerciseType }
-            else -> emptyMap()
-        }
-    }
 }
