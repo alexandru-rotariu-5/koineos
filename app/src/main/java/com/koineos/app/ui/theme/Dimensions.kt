@@ -51,7 +51,7 @@ object Dimensions {
     val cardElevation = 2.dp
     val alphabetCardMasteredElevation = 2.dp
     val regularCardBorder = 0.5.dp
-    val alphabetCardMasteredBorder = 0.dp
+    val alphabetCardMasteredBorder = 1.dp
     val roundedCorner = 8.dp
     val illustrationSize = 240.dp
     val dividerThickness = 0.5.dp

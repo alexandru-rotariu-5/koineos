@@ -96,7 +96,7 @@ fun AlphabetEntityCard(
                 modifier = Modifier.fillMaxWidth(),
                 progress = masteryLevel,
                 color = if (isMastered) Colors.AlphabetCardMasteredProgressIndicator else Colors.AlphabetCardProgressIndicator,
-                trackColor = Colors.RegularProgressIndicatorTrack
+                trackColor = if (isMastered) Colors.Primary else Colors.RegularProgressIndicatorTrack
             )
         }
     }

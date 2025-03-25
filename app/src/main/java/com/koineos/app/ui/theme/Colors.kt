@@ -42,17 +42,15 @@ object Colors {
 
     val Outline = Color(0xFFE0E0E0)
 
-    val Transparent = Color(0x00000000)
-
     val RegularCardBackground = Color(0xFFFFFFFF)
     val RegularCardBorder = Color(0xFFDDE0E3)
     val OnRegularCard = Color(0xFF4B4B4B)
 
-    val AlphabetCardMasteredBackground = Primary
+    val AlphabetCardMasteredBackground = Color(0xFFFFFFFF)
     val AlphabetCardMasteredBorder = Primary
     val AlphabetCardProgressIndicator = Primary
-    val AlphabetCardMasteredProgressIndicator = Color(0x80FFFFFF)
-    val AlphabetCardMasteredContent = Color(0xFFFFFFFF)
+    val AlphabetCardMasteredProgressIndicator = Primary
+    val AlphabetCardMasteredContent = OnRegularCard
 
     val RegularProgressIndicatorTrack = Color(0xFFE5E5E5)
 
