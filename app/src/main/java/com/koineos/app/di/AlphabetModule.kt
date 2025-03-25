@@ -23,6 +23,7 @@ import com.koineos.app.domain.utils.practice.alphabet.AlphabetPracticeSetGenerat
 import com.koineos.app.domain.utils.practice.alphabet.BatchAwareAlphabetEntityProvider
 import com.koineos.app.domain.utils.practice.alphabet.DefaultLetterCaseProvider
 import com.koineos.app.domain.utils.practice.alphabet.LetterCaseProvider
+import com.koineos.app.domain.utils.practice.alphabet.LetterGroupProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -124,13 +125,21 @@ object AlphabetModule {
 
     @Provides
     @Singleton
+    fun provideLetterGroupProvider(): LetterGroupProvider {
+        Log.d(TAG, "Providing LetterGroupProvider")
+        return LetterGroupProvider()
+    }
+
+    @Provides
+    @Singleton
     fun provideAlphabetExerciseGenerator(
         entityProvider: BatchAwareAlphabetEntityProvider,
-        letterCaseProvider: LetterCaseProvider
+        letterCaseProvider: LetterCaseProvider,
+        letterGroupProvider: LetterGroupProvider
     ): AlphabetExerciseGenerator {
         Log.d(TAG, "Providing AlphabetExerciseGenerator")
         return AlphabetExerciseGenerator(
-            entityProvider, letterCaseProvider
+            entityProvider, letterCaseProvider, letterGroupProvider
         )
     }
 

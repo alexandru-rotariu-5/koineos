@@ -5,17 +5,23 @@ import com.koineos.app.domain.model.Diphthong
 import com.koineos.app.domain.model.EnhancedAlphabetEntity
 import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
+import com.koineos.app.domain.model.LetterGroup
 import com.koineos.app.domain.model.practice.Exercise
 import com.koineos.app.domain.model.practice.ExerciseType
 import com.koineos.app.domain.model.practice.alphabet.EntityTransliterationPair
+import com.koineos.app.domain.model.practice.alphabet.LetterGroupTransliterationPair
+import com.koineos.app.domain.model.practice.alphabet.MatchLetterGroupPairsExercise
 import com.koineos.app.domain.model.practice.alphabet.MatchPairsExercise
 import com.koineos.app.domain.model.practice.alphabet.SelectLemmaExercise
+import com.koineos.app.domain.model.practice.alphabet.SelectLetterGroupLemmaExercise
+import com.koineos.app.domain.model.practice.alphabet.SelectLetterGroupTransliterationExercise
 import com.koineos.app.domain.model.practice.alphabet.SelectTransliterationExercise
 import com.koineos.app.domain.utils.practice.ExerciseContentProvider
 import com.koineos.app.domain.utils.practice.ExerciseGenerator
 import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.random.Random
 
 /**
  * Generator for alphabet-specific exercises, focusing on entity recognition and transliteration.
@@ -24,24 +30,30 @@ import javax.inject.Singleton
  *
  * @property entityProvider Provider for alphabet entities.
  * @property letterCaseProvider Provider for determining case usage.
+ * @property letterGroupProvider Provider for letter groups.
  */
 @Singleton
 class AlphabetExerciseGenerator @Inject constructor(
-    private val entityProvider: BatchAwareAlphabetEntityProvider, // Changed from AlphabetEntityProvider
-    private val letterCaseProvider: LetterCaseProvider
+    private val entityProvider: BatchAwareAlphabetEntityProvider,
+    private val letterCaseProvider: LetterCaseProvider,
+    private val letterGroupProvider: LetterGroupProvider
 ) : ExerciseGenerator<AlphabetEntity> {
 
     companion object {
         // Number of options to show in multiple choice exercises
         private const val DEFAULT_ENTITY_OPTION_COUNT = 4
         private const val DEFAULT_TRANSLITERATION_OPTION_COUNT = 3
+        private const val LETTER_GROUP_PROBABILITY = 0.3f
     }
 
     override fun getSupportedExerciseTypes(): List<ExerciseType> {
         return listOf(
             ExerciseType.SELECT_TRANSLITERATION,
             ExerciseType.SELECT_LEMMA,
-            ExerciseType.MATCH_PAIRS
+            ExerciseType.MATCH_PAIRS,
+            ExerciseType.SELECT_LETTER_GROUP_TRANSLITERATION,
+            ExerciseType.SELECT_LETTER_GROUP_LEMMA,
+            ExerciseType.MATCH_LETTER_GROUP_PAIRS
         )
     }
 
@@ -51,6 +63,26 @@ class AlphabetExerciseGenerator @Inject constructor(
     ): Exercise? {
         val provider = exerciseContentProvider as? BatchAwareAlphabetEntityProvider ?: return null
 
+        // Attempt to generate a letter group exercise with a certain probability
+        if (Random.nextFloat() < LETTER_GROUP_PROBABILITY) {
+            // Get available entities and mastery levels
+            val masteryLevels = provider.getMasteryLevels()
+            val availableEntities = provider.getAllEntities()
+
+            // Try to generate a letter group exercise
+            val letterGroupExercise = generateLetterGroupExercise(
+                exerciseType,
+                availableEntities,
+                masteryLevels
+            )
+
+            // If successful, return it
+            if (letterGroupExercise != null) {
+                return letterGroupExercise
+            }
+        }
+
+        // Fall back to regular entity exercises
         return when (exerciseType) {
             ExerciseType.SELECT_TRANSLITERATION -> {
                 val entity = provider.getRandomEntity()
@@ -74,7 +106,143 @@ class AlphabetExerciseGenerator @Inject constructor(
                 }
                 generateEntityMatchingExercise(enhancedEntities)
             }
+
+            else -> null
         }
+    }
+
+    /**
+     * Generates a letter group exercise based on the exercise type.
+     */
+    private suspend fun generateLetterGroupExercise(
+        exerciseType: ExerciseType,
+        availableEntities: List<AlphabetEntity>,
+        masteryLevels: Map<String, Float>
+    ): Exercise? {
+        // Try to generate a letter group
+        val letterGroup = letterGroupProvider.generateLetterGroup(
+            availableEntities,
+            masteryLevels
+        ) ?: return null
+
+        return when (exerciseType) {
+            ExerciseType.SELECT_TRANSLITERATION,
+            ExerciseType.SELECT_LETTER_GROUP_TRANSLITERATION -> {
+                generateSelectLetterGroupTransliterationExercise(
+                    letterGroup,
+                    availableEntities,
+                    masteryLevels
+                )
+            }
+
+            ExerciseType.SELECT_LEMMA,
+            ExerciseType.SELECT_LETTER_GROUP_LEMMA -> {
+                generateSelectLetterGroupLemmaExercise(
+                    letterGroup,
+                    availableEntities,
+                    masteryLevels
+                )
+            }
+
+            ExerciseType.MATCH_PAIRS,
+            ExerciseType.MATCH_LETTER_GROUP_PAIRS -> {
+                generateMatchLetterGroupPairsExercise(
+                    availableEntities,
+                    masteryLevels
+                )
+            }
+        }
+    }
+
+    /**
+     * Generates a Select Transliteration exercise for a letter group.
+     */
+    private suspend fun generateSelectLetterGroupTransliterationExercise(
+        letterGroup: LetterGroup,
+        availableEntities: List<AlphabetEntity>,
+        masteryLevels: Map<String, Float>,
+    ): SelectLetterGroupTransliterationExercise {
+        // Generate additional letter groups for incorrect options
+        val additionalGroups = letterGroupProvider.generateLetterGroups(
+            DEFAULT_TRANSLITERATION_OPTION_COUNT - 1,
+            availableEntities,
+            masteryLevels
+        )
+
+        // If we couldn't generate enough additional groups, use random transliterations
+        val incorrectOptions = if (additionalGroups.size >= DEFAULT_TRANSLITERATION_OPTION_COUNT - 1) {
+            additionalGroups.map { it.transliteration }
+        } else {
+            // Use existing mechanism to get incorrect transliterations
+            entityProvider.getIncorrectTransliterationOptions(
+                letterGroup.transliteration,
+                DEFAULT_TRANSLITERATION_OPTION_COUNT - 1
+            )
+        }
+
+        // Combine and shuffle all options
+        val options = (incorrectOptions + letterGroup.transliteration).shuffled()
+
+        return SelectLetterGroupTransliterationExercise(
+            id = UUID.randomUUID().toString(),
+            letterGroup = letterGroup,
+            options = options,
+            correctAnswer = letterGroup.transliteration
+        )
+    }
+
+    /**
+     * Generates a Select Lemma exercise for a letter group.
+     */
+    private fun generateSelectLetterGroupLemmaExercise(
+        letterGroup: LetterGroup,
+        availableEntities: List<AlphabetEntity>,
+        masteryLevels: Map<String, Float>
+    ): SelectLetterGroupLemmaExercise {
+        // Generate additional letter groups for incorrect options
+        val additionalGroups = letterGroupProvider.generateLetterGroups(
+            DEFAULT_ENTITY_OPTION_COUNT - 1,
+            availableEntities,
+            masteryLevels
+        )
+
+        // Combine and shuffle all options
+        val options = (additionalGroups + letterGroup).shuffled()
+
+        return SelectLetterGroupLemmaExercise(
+            id = UUID.randomUUID().toString(),
+            transliteration = letterGroup.transliteration,
+            options = options,
+            correctLetterGroup = letterGroup
+        )
+    }
+
+    /**
+     * Generates a Match Pairs exercise for letter groups.
+     */
+    private fun generateMatchLetterGroupPairsExercise(
+        availableEntities: List<AlphabetEntity>,
+        masteryLevels: Map<String, Float>
+    ): MatchLetterGroupPairsExercise {
+        // Generate letter groups
+        val letterGroups = letterGroupProvider.generateLetterGroups(
+            4, // Same count as regular match pairs
+            availableEntities,
+            masteryLevels
+        )
+
+        // Create pairs
+        val pairs = letterGroups.map { group ->
+            LetterGroupTransliterationPair(
+                letterGroup = group,
+                transliteration = group.transliteration
+            )
+        }
+
+        return MatchLetterGroupPairsExercise(
+            id = UUID.randomUUID().toString(),
+            letterGroupPairs = pairs
+        )
     }
 
     /**

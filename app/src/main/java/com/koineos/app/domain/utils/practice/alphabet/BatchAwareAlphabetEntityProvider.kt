@@ -601,6 +601,23 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         return result
     }
 
+    /**
+     * Gets all available entities regardless of batch status.
+     * This is used for letter group generation.
+     */
+    suspend fun getAllEntities(): List<AlphabetEntity> {
+        ensureCacheInitialized()
+        return entityCache?.values?.flatten() ?: emptyList()
+    }
+
+    /**
+     * Gets current mastery levels for all entities.
+     * This is used for letter group generation based on mastery threshold.
+     */
+    suspend fun getMasteryLevels(): Map<String, Float> {
+        return alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
+    }
+
     // Helper extension to calculate power
     private fun Float.pow(exponent: Int): Float {
         return this.toDouble().pow(exponent.toDouble()).toFloat()

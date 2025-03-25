@@ -11,7 +11,10 @@ import com.koineos.app.presentation.model.practice.ActionButtonColorState
 import com.koineos.app.presentation.model.practice.ActionButtonFactory
 import com.koineos.app.presentation.model.practice.ActionButtonType
 import com.koineos.app.presentation.model.practice.PracticeScreenUiState
+import com.koineos.app.presentation.model.practice.alphabet.PairMatchingUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectLemmaExerciseUiState
+import com.koineos.app.presentation.model.practice.alphabet.SelectLetterGroupLemmaUiState
+import com.koineos.app.presentation.model.practice.alphabet.SelectLetterGroupTransliterationUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -146,21 +149,42 @@ abstract class BasePracticeSessionViewModel(
                 }
 
                 val updatedExercises = loadedState.exercises.toMutableList()
+                val currentExercise = updatedExercises[currentExerciseIndex]
 
-                when (val currentExercise = updatedExercises[currentExerciseIndex]) {
-                    is SelectLemmaExerciseUiState -> {
-                        updatedExercises[currentExerciseIndex] = currentExercise.copy(
-                            isChecked = true,
-                            isCorrect = feedback.isCorrect
-                        )
-                    }
+                val updatedExercise = when (currentExercise) {
                     is SelectTransliterationExerciseUiState -> {
-                        updatedExercises[currentExerciseIndex] = currentExercise.copy(
+                        currentExercise.copy(
                             isChecked = true,
                             isCorrect = feedback.isCorrect
                         )
                     }
+                    is SelectLemmaExerciseUiState -> {
+                        currentExercise.copy(
+                            isChecked = true,
+                            isCorrect = feedback.isCorrect
+                        )
+                    }
+                    // Pair matching exercises are handled differently
+                    is PairMatchingUiState -> currentExercise
+
+                    // Letter group exercises
+                    is SelectLetterGroupTransliterationUiState -> {
+                        currentExercise.copy(
+                            isChecked = true,
+                            isCorrect = feedback.isCorrect
+                        )
+                    }
+                    is SelectLetterGroupLemmaUiState -> {
+                        currentExercise.copy(
+                            isChecked = true,
+                            isCorrect = feedback.isCorrect
+                        )
+                    }
+                    // Default case
+                    else -> currentExercise
                 }
+
+                updatedExercises[currentExerciseIndex] = updatedExercise
 
                 loadedState.copy(
                     exercises = updatedExercises,

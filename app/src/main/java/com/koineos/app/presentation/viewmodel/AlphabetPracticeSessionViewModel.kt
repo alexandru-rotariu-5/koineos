@@ -12,8 +12,12 @@ import com.koineos.app.presentation.model.practice.ActionButtonColorState
 import com.koineos.app.presentation.model.practice.ActionButtonFactory
 import com.koineos.app.presentation.model.practice.FeedbackUiState
 import com.koineos.app.presentation.model.practice.PracticeScreenUiState
+import com.koineos.app.presentation.model.practice.alphabet.MatchLetterGroupPairsUiState
 import com.koineos.app.presentation.model.practice.alphabet.MatchPairsExerciseUiState
+import com.koineos.app.presentation.model.practice.alphabet.PairMatchingUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectLemmaExerciseUiState
+import com.koineos.app.presentation.model.practice.alphabet.SelectLetterGroupLemmaUiState
+import com.koineos.app.presentation.model.practice.alphabet.SelectLetterGroupTransliterationUiState
 import com.koineos.app.presentation.model.practice.alphabet.SelectTransliterationExerciseUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -64,20 +68,28 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
 
                 val currentExercise = loadedState.exercises[currentExerciseIndex]
 
-                // Handle match pair attempts specifically
-                if (answer is Pair<*, *> && currentExercise is MatchPairsExerciseUiState) {
-                    val letterId = answer.first as? String ?: return@update state
+                if (answer is Pair<*, *> && currentExercise is PairMatchingUiState) {
+                    val entityId = answer.first as? String ?: return@update state
                     val transliteration = answer.second as? String ?: return@update state
 
-                    val isCorrect = currentExercise.isCorrectMatch(letterId, transliteration)
+                    val isCorrect = currentExercise.isCorrectMatch(entityId, transliteration)
 
                     if (isCorrect) {
                         val newMatchedPairs = currentExercise.matchedPairs.toMutableMap().apply {
-                            put(letterId, transliteration)
+                            put(entityId, transliteration)
                         }
 
                         val updatedExercises = loadedState.exercises.toMutableList()
-                        val updatedExercise = currentExercise.copy(matchedPairs = newMatchedPairs)
+
+                        val updatedExercise = when (currentExercise) {
+                            is MatchPairsExerciseUiState ->
+                                currentExercise.copy(matchedPairs = newMatchedPairs)
+                            is MatchLetterGroupPairsUiState ->
+                                currentExercise.copy(matchedPairs = newMatchedPairs)
+                            else ->
+                                currentExercise
+                        }
+
                         updatedExercises[currentExerciseIndex] = updatedExercise
 
                         val newUserAnswers = loadedState.userAnswers.toMutableMap().apply {
@@ -117,7 +129,6 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
                         )
                     }
                 } else {
-                    // For other exercise types, update the exercise with the selected answer
                     val updatedExercises = loadedState.exercises.toMutableList()
 
                     val updatedExercise = when (currentExercise) {
@@ -126,6 +137,14 @@ class AlphabetPracticeSessionViewModel @Inject constructor(
                         }
 
                         is SelectTransliterationExerciseUiState -> {
+                            currentExercise.copy(selectedAnswer = answer as? String)
+                        }
+
+                        is SelectLetterGroupLemmaUiState -> {
+                            currentExercise.copy(selectedAnswer = answer as? String)
+                        }
+
+                        is SelectLetterGroupTransliterationUiState -> {
                             currentExercise.copy(selectedAnswer = answer as? String)
                         }
 

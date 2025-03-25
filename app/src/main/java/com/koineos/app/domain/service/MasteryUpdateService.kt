@@ -12,15 +12,10 @@ import javax.inject.Singleton
 class MasteryUpdateService @Inject constructor() {
 
     companion object {
-        // Threshold above which mastery will be considered complete (100%)
         private const val MASTERY_COMPLETION_THRESHOLD = 0.97f
-
-        // Threshold below which mastery will be reset to 0%
         private const val MASTERY_RESET_THRESHOLD = 0.03f
-
-        // Maximum allowed mastery increase per correct answer
-        // This directly caps how much mastery can increase in a single exercise
         private const val MAX_MASTERY_INCREASE_PER_EXERCISE = 0.05f
+        private const val LETTER_GROUP_LEARNING_RATE_MODIFIER = 0.75f
     }
 
     /**
@@ -33,8 +28,17 @@ class MasteryUpdateService @Inject constructor() {
     ): Float {
         val exerciseWeight = getExerciseWeight(exerciseType)
 
-        // Use base learning rate
-        val learningRate = MasteryConstants.BASE_LEARNING_RATE
+        // Determine if it's a letter group exercise for rate reduction
+        val isLetterGroupExercise = exerciseType == ExerciseType.SELECT_LETTER_GROUP_TRANSLITERATION ||
+                exerciseType == ExerciseType.SELECT_LETTER_GROUP_LEMMA ||
+                exerciseType == ExerciseType.MATCH_LETTER_GROUP_PAIRS
+
+        // Apply letter group learning rate modifier if applicable
+        val learningRate = if (isLetterGroupExercise) {
+            MasteryConstants.BASE_LEARNING_RATE * LETTER_GROUP_LEARNING_RATE_MODIFIER
+        } else {
+            MasteryConstants.BASE_LEARNING_RATE
+        }
 
         // Calculate the raw increment
         val rawIncrement = (1.0f - currentMastery) * learningRate * exerciseWeight
@@ -43,7 +47,7 @@ class MasteryUpdateService @Inject constructor() {
         val minimumIncrement = 0.01f * exerciseWeight
         val actualIncrement = maxOf(minimumIncrement, rawIncrement)
 
-        // CRITICAL CHANGE: Calculate raw new mastery, then cap the total increase
+        // Calculate raw new mastery, then cap the total increase
         val rawNewMastery = currentMastery + actualIncrement
 
         // Calculate how much mastery would increase
@@ -93,9 +97,17 @@ class MasteryUpdateService @Inject constructor() {
      */
     private fun getExerciseWeight(exerciseType: ExerciseType): Float {
         return when (exerciseType) {
-            ExerciseType.SELECT_TRANSLITERATION -> MasteryConstants.SELECT_TRANSLITERATION_WEIGHT
-            ExerciseType.SELECT_LEMMA -> MasteryConstants.SELECT_LEMMA_WEIGHT
-            ExerciseType.MATCH_PAIRS -> MasteryConstants.MATCH_PAIRS_WEIGHT
+            ExerciseType.SELECT_TRANSLITERATION,
+            ExerciseType.SELECT_LETTER_GROUP_TRANSLITERATION ->
+                MasteryConstants.SELECT_TRANSLITERATION_WEIGHT
+
+            ExerciseType.SELECT_LEMMA,
+            ExerciseType.SELECT_LETTER_GROUP_LEMMA ->
+                MasteryConstants.SELECT_LEMMA_WEIGHT
+
+            ExerciseType.MATCH_PAIRS,
+            ExerciseType.MATCH_LETTER_GROUP_PAIRS ->
+                MasteryConstants.MATCH_PAIRS_WEIGHT
         }
     }
 }

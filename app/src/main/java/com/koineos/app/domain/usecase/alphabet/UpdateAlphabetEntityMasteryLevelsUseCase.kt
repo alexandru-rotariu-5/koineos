@@ -21,70 +21,77 @@ class UpdateAlphabetEntityMasteryLevelsUseCase @Inject constructor(
     companion object {
         // Maximum allowed mastery increase per practice session for any entity
         private const val MAX_MASTERY_INCREASE_PER_SESSION = 0.2f
+        private const val MASTERY_COMPLETION_THRESHOLD = 0.97f
+        private const val MASTERY_RESET_THRESHOLD = 0.03f
+        private const val MAX_MASTERY_INCREASE_PER_EXERCISE = 0.05f
+        private const val LETTER_GROUP_LEARNING_RATE_MODIFIER = 0.75f
+
     }
 
-    suspend operator fun invoke(exerciseResults: Map<Exercise, Boolean>): Result<Unit> = withContext(Dispatchers.IO) {
-        try {
-            val initialMasteryLevels = alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
-            val currentMasteryLevels = initialMasteryLevels.toMutableMap()
+    suspend operator fun invoke(exerciseResults: Map<Exercise, Boolean>): Result<Unit> =
+        withContext(Dispatchers.IO) {
+            try {
+                val initialMasteryLevels =
+                    alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
+                val currentMasteryLevels = initialMasteryLevels.toMutableMap()
 
-            // Process each exercise
-            exerciseResults.forEach { (exercise, isCorrect) ->
-                // Identify target entities including both base entities and applied marks
-                val targetEntityIds = entityTargetIdentifier.identifyTargetEntityIds(exercise)
+                // Process each exercise
+                exerciseResults.forEach { (exercise, isCorrect) ->
+                    // Identify target entities including both base entities and applied marks
+                    val targetEntityIds = entityTargetIdentifier.identifyTargetEntityIds(exercise)
 
-                // Update mastery level for each entity
-                targetEntityIds.forEach { entityId ->
-                    // Get current mastery level
-                    val currentMastery = currentMasteryLevels[entityId] ?: 0f
+                    // Update mastery level for each entity
+                    targetEntityIds.forEach { entityId ->
+                        // Get current mastery level
+                        val currentMastery = currentMasteryLevels[entityId] ?: 0f
 
-                    // Calculate new mastery level
-                    val newMastery = if (isCorrect) {
-                        masteryUpdateService.calculateMasteryAfterCorrectAnswer(
-                            currentMastery,
-                            exercise.type
-                        )
+                        // Calculate new mastery level
+                        val newMastery = if (isCorrect) {
+                            masteryUpdateService.calculateMasteryAfterCorrectAnswer(
+                                currentMastery,
+                                exercise.type
+                            )
+                        } else {
+                            masteryUpdateService.calculateMasteryAfterIncorrectAnswer(
+                                currentMastery,
+                                exercise.type
+                            )
+                        }
+
+                        // Update tracking map
+                        currentMasteryLevels[entityId] = newMastery
+                    }
+                }
+
+                // After processing all exercises, apply the per-session cap to each entity
+                // and persist the final values to the repository
+                currentMasteryLevels.forEach { (entityId, newMastery) ->
+                    val initialMastery = initialMasteryLevels[entityId] ?: 0f
+
+                    // Only apply cap to increases (don't cap decreases from wrong answers)
+                    val finalMastery = if (newMastery > initialMastery) {
+                        // Calculate the total increase in this session
+                        val totalIncrease = newMastery - initialMastery
+
+                        // Cap the increase
+                        val cappedIncrease = minOf(totalIncrease, MAX_MASTERY_INCREASE_PER_SESSION)
+
+                        // Apply the capped increase to the initial mastery
+                        initialMastery + cappedIncrease
                     } else {
-                        masteryUpdateService.calculateMasteryAfterIncorrectAnswer(
-                            currentMastery,
-                            exercise.type
-                        )
+                        // If mastery decreased or didn't change, use the calculated value
+                        newMastery
                     }
 
-                    // Update tracking map
-                    currentMasteryLevels[entityId] = newMastery
-                }
-            }
-
-            // After processing all exercises, apply the per-session cap to each entity
-            // and persist the final values to the repository
-            currentMasteryLevels.forEach { (entityId, newMastery) ->
-                val initialMastery = initialMasteryLevels[entityId] ?: 0f
-
-                // Only apply cap to increases (don't cap decreases from wrong answers)
-                val finalMastery = if (newMastery > initialMastery) {
-                    // Calculate the total increase in this session
-                    val totalIncrease = newMastery - initialMastery
-
-                    // Cap the increase
-                    val cappedIncrease = minOf(totalIncrease, MAX_MASTERY_INCREASE_PER_SESSION)
-
-                    // Apply the capped increase to the initial mastery
-                    initialMastery + cappedIncrease
-                } else {
-                    // If mastery decreased or didn't change, use the calculated value
-                    newMastery
+                    alphabetMasteryRepository.updateAlphabetEntityMasteryLevel(
+                        entityId,
+                        finalMastery
+                    )
                 }
 
-                alphabetMasteryRepository.updateAlphabetEntityMasteryLevel(
-                    entityId,
-                    finalMastery
-                )
+                Result.success(Unit)
+            } catch (e: Exception) {
+                Result.failure(e)
             }
-
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
         }
-    }
 }
