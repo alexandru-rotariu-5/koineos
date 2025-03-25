@@ -163,7 +163,8 @@ class AlphabetExerciseGenerator @Inject constructor(
         masteryLevels: Map<String, Float>,
     ): SelectLetterGroupTransliterationExercise {
         // Generate additional letter groups for incorrect options
-        val additionalGroups = letterGroupProvider.generateLetterGroups(
+        val additionalGroups = letterGroupProvider.generateSimilarLetterGroups(
+            letterGroup,
             DEFAULT_TRANSLITERATION_OPTION_COUNT - 1,
             availableEntities,
             masteryLevels
@@ -200,7 +201,8 @@ class AlphabetExerciseGenerator @Inject constructor(
         masteryLevels: Map<String, Float>
     ): SelectLetterGroupLemmaExercise {
         // Generate additional letter groups for incorrect options
-        val additionalGroups = letterGroupProvider.generateLetterGroups(
+        val additionalGroups = letterGroupProvider.generateSimilarLetterGroups(
+            letterGroup,
             DEFAULT_ENTITY_OPTION_COUNT - 1,
             availableEntities,
             masteryLevels

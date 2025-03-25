@@ -4,10 +4,9 @@ import com.koineos.app.domain.model.AlphabetEntity
 import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
 import com.koineos.app.domain.model.LetterGroup
-import com.koineos.app.domain.model.practice.MasteryConstants
-import kotlin.random.Random
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.random.Random
 
 /**
  * Provider for generating letter groups based on available alphabet entities
@@ -18,7 +17,46 @@ class LetterGroupProvider @Inject constructor() {
 
     companion object {
         private const val MIN_MASTERY_THRESHOLD = 0.2f
-        private const val MASTERY_LEARNING_REDUCTION = 0.75f
+
+        private val GROUP_SIZE_THRESHOLDS = mapOf(
+            0.0f to 2,
+            0.5f to 3
+        )
+    }
+
+    /**
+     * Determines the appropriate letter group size based on mastery level.
+     *
+     * @param averageMastery The average mastery level of eligible entities
+     * @return The appropriate group size
+     */
+    private fun determineGroupSize(averageMastery: Float): Int {
+        // Find the highest threshold that is less than or equal to the average mastery
+        return GROUP_SIZE_THRESHOLDS.entries
+            .filter { it.key <= averageMastery }
+            .maxByOrNull { it.key }
+            ?.value
+            ?: GROUP_SIZE_THRESHOLDS[0.0f]!! // Default to the minimum size if no threshold is met
+    }
+
+    /**
+     * Calculates the average mastery level of the eligible entities.
+     *
+     * @param eligibleEntities List of entities with mastery above the minimum threshold
+     * @param masteryLevels Current mastery levels for all entities
+     * @return The average mastery level
+     */
+    private fun calculateAverageMastery(
+        eligibleEntities: List<AlphabetEntity>,
+        masteryLevels: Map<String, Float>
+    ): Float {
+        if (eligibleEntities.isEmpty()) return 0.0f
+
+        val totalMastery = eligibleEntities.sumOf {
+            (masteryLevels[it.id] ?: 0f).toDouble()
+        }
+
+        return (totalMastery / eligibleEntities.size).toFloat()
     }
 
     /**
@@ -46,10 +84,15 @@ class LetterGroupProvider @Inject constructor() {
             return null
         }
 
-        // Randomly choose group size (2 or 3)
+        // Calculate average mastery and determine group size
+        val averageMastery = calculateAverageMastery(eligibleEntities, masteryLevels)
+
+        // Determine the group size based on average mastery
         val groupSize = when {
-            consonants.size < 2 || vowelsAndDiphthongs.size < 2 -> 2 // Limited choices
-            else -> Random.nextInt(2, 4) // 2 or 3
+            // Fallback to 2 characters if we don't have enough of each type
+            consonants.size < 2 || vowelsAndDiphthongs.size < 2 -> 2
+            // Otherwise, use mastery-based size determination
+            else -> determineGroupSize(averageMastery)
         }
 
         // Select pattern based on group size
@@ -108,6 +151,93 @@ class LetterGroupProvider @Inject constructor() {
     }
 
     /**
+     * Generates similar but incorrect letter groups by replacing one character from the correct letter group.
+     *
+     * @param correctGroup The correct letter group
+     * @param count Number of incorrect options to generate
+     * @param availableEntities All available entities
+     * @param masteryLevels Current mastery levels for entities
+     * @return List of incorrect letter groups
+     */
+    fun generateSimilarLetterGroups(
+        correctGroup: LetterGroup,
+        count: Int,
+        availableEntities: List<AlphabetEntity>,
+        masteryLevels: Map<String, Float>
+    ): List<LetterGroup> {
+        // Filter entities by mastery threshold
+        val eligibleEntities = availableEntities.filter {
+            (masteryLevels[it.id] ?: 0f) >= MIN_MASTERY_THRESHOLD
+        }
+
+        // Separate entities by type
+        val vowels = eligibleEntities.filter { isVowelOrDiphthong(it) && it !is ImproperDiphthong }
+        val consonants = eligibleEntities.filter { isConsonant(it) }
+        val improperDiphthongs = eligibleEntities.filterIsInstance<ImproperDiphthong>()
+
+        val result = mutableListOf<LetterGroup>()
+
+        // Get the original entities
+        val originalEntities = correctGroup.entities
+
+        // Keep track of generated display texts to ensure uniqueness
+        val generatedDisplayTexts = mutableSetOf(correctGroup.displayText)
+
+        // For each attempt
+        for (i in 0 until count) {
+            if (result.size >= count) break
+
+            // Choose a random position to replace
+            val positionToReplace = Random.nextInt(originalEntities.size)
+            val entityToReplace = originalEntities[positionToReplace]
+
+            // Determine the replacement pool based on the entity type
+            val replacementPool = when {
+                isConsonant(entityToReplace) -> consonants.filter { it.id != entityToReplace.id }
+                isVowelOrDiphthong(entityToReplace) && entityToReplace !is ImproperDiphthong -> {
+                    // Vowels can be replaced by vowels or improper diphthongs
+                    (vowels + improperDiphthongs).filter { it.id != entityToReplace.id }
+                }
+
+                entityToReplace is ImproperDiphthong -> {
+                    // Improper diphthongs can be replaced by improper diphthongs or vowels
+                    (improperDiphthongs + vowels).filter { it.id != entityToReplace.id }
+                }
+
+                else -> emptyList() // This shouldn't happen, but just in case
+            }
+
+            if (replacementPool.isEmpty()) continue
+
+            // Choose a random replacement
+            val replacement = replacementPool.random()
+
+            // Create a new group with the replacement
+            val newEntities = originalEntities.toMutableList()
+            newEntities[positionToReplace] = replacement
+
+            // Create display text and transliteration
+            val displayText = createDisplayText(newEntities)
+            val transliteration = createTransliteration(newEntities)
+
+            // Only add if this is a new, unique group
+            if (displayText !in generatedDisplayTexts) {
+                generatedDisplayTexts.add(displayText)
+
+                result.add(
+                    LetterGroup(
+                        entities = newEntities,
+                        displayText = displayText,
+                        transliteration = transliteration
+                    )
+                )
+            }
+        }
+
+        return result
+    }
+
+    /**
      * Checks if an entity is a vowel or diphthong.
      */
     private fun isVowelOrDiphthong(entity: AlphabetEntity): Boolean {
@@ -116,6 +246,7 @@ class LetterGroupProvider @Inject constructor() {
                 val vowels = listOf("α", "ε", "η", "ι", "ο", "υ", "ω")
                 vowels.any { entity.lowercase.contains(it) }
             }
+
             is ImproperDiphthong -> true
             else -> false
         }

@@ -13,7 +13,7 @@ data class MatchLetterGroupPairsExercise(
 ) : AlphabetExercise() {
 
     override val type = ExerciseType.MATCH_LETTER_GROUP_PAIRS
-    override val instructions: String = "Match the letter groups with their transliterations."
+    override val instructions: String = "Tap the matching pairs."
 
     override fun validateAnswer(userAnswer: Any): Boolean {
         if (userAnswer !is Pair<*, *>) return false
