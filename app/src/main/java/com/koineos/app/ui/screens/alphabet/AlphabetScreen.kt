@@ -174,56 +174,56 @@ private fun HeaderContent(
 
             // for testing, remove later
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                // Letters toggle with state
-                var lettersToggle by remember { mutableStateOf(false) }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Letters", style = Typography.labelSmall)
-                    Switch(
-                        checked = lettersToggle,
-                        onCheckedChange = { newState ->
-                            lettersToggle = newState
-                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.LETTERS, newState)
-                        }
-                    )
-                }
-
-                // Diphthongs toggle with state
-                var diphthongsToggle by remember { mutableStateOf(false) }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Diphthongs", style = Typography.labelSmall)
-                    Switch(
-                        checked = diphthongsToggle,
-                        onCheckedChange = { newState ->
-                            diphthongsToggle = newState
-                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.DIPHTHONGS, newState)
-                        }
-                    )
-                }
-
-                // Improper Diphthongs toggle with state
-                var improperDiphthongsToggle by remember { mutableStateOf(false) }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Improper Diph.", style = Typography.labelSmall)
-                    Switch(
-                        checked = improperDiphthongsToggle,
-                        onCheckedChange = { newState ->
-                            improperDiphthongsToggle = newState
-                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.IMPROPER_DIPHTHONGS, newState)
-                        }
-                    )
-                }
-            }
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceEvenly
+//            ) {
+//                // Letters toggle with state
+//                var lettersToggle by remember { mutableStateOf(false) }
+//                Column(
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text("Letters", style = Typography.labelSmall)
+//                    Switch(
+//                        checked = lettersToggle,
+//                        onCheckedChange = { newState ->
+//                            lettersToggle = newState
+//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.LETTERS, newState)
+//                        }
+//                    )
+//                }
+//
+//                // Diphthongs toggle with state
+//                var diphthongsToggle by remember { mutableStateOf(false) }
+//                Column(
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text("Diphthongs", style = Typography.labelSmall)
+//                    Switch(
+//                        checked = diphthongsToggle,
+//                        onCheckedChange = { newState ->
+//                            diphthongsToggle = newState
+//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.DIPHTHONGS, newState)
+//                        }
+//                    )
+//                }
+//
+//                // Improper Diphthongs toggle with state
+//                var improperDiphthongsToggle by remember { mutableStateOf(false) }
+//                Column(
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text("Improper Diph.", style = Typography.labelSmall)
+//                    Switch(
+//                        checked = improperDiphthongsToggle,
+//                        onCheckedChange = { newState ->
+//                            improperDiphthongsToggle = newState
+//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.IMPROPER_DIPHTHONGS, newState)
+//                        }
+//                    )
+//                }
+//            }
         }
     }
 }
