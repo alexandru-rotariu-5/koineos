@@ -17,11 +17,6 @@ class LetterGroupProvider @Inject constructor() {
 
     companion object {
         private const val MIN_MASTERY_THRESHOLD = 0.2f
-
-        private val GROUP_SIZE_THRESHOLDS = mapOf(
-            0.0f to 2,
-            0.5f to 3
-        )
     }
 
     /**
@@ -31,12 +26,10 @@ class LetterGroupProvider @Inject constructor() {
      * @return The appropriate group size
      */
     private fun determineGroupSize(averageMastery: Float): Int {
-        // Find the highest threshold that is less than or equal to the average mastery
-        return GROUP_SIZE_THRESHOLDS.entries
-            .filter { it.key <= averageMastery }
-            .maxByOrNull { it.key }
-            ?.value
-            ?: GROUP_SIZE_THRESHOLDS[0.0f]!! // Default to the minimum size if no threshold is met
+        return when {
+            averageMastery <= 0.7f -> 2
+            else -> listOf(2, 3).random()
+        }
     }
 
     /**
@@ -282,8 +275,34 @@ class LetterGroupProvider @Inject constructor() {
     ): List<AlphabetEntity> {
         val result = mutableListOf<AlphabetEntity>()
 
-        for (char in pattern) {
-            val pool = if (char == 'V') vowelsAndDiphthongs else consonants
+        // Find sigma variants for special handling
+        val regularSigma = consonants.find { it is Letter && it.lowercase == "σ" }
+        val finalSigma = consonants.find { it is Letter && it.lowercase == "ς" }
+
+        for (i in pattern.indices) {
+            val char = pattern[i]
+            val isLastPosition = i == pattern.length - 1
+
+            // Determine the pool based on character type and position
+            val pool = when (char) {
+                'V' -> vowelsAndDiphthongs
+                'C' -> {
+                    if (isLastPosition) {
+                        // For the last position, exclude regular sigma and include final sigma
+                        consonants.filter {
+                            !(it is Letter && it.lowercase == "σ")
+                        } + listOfNotNull(finalSigma)
+                    } else {
+                        // For other positions, exclude final sigma and include regular sigma
+                        consonants.filter {
+                            !(it is Letter && it.lowercase == "ς")
+                        } + listOfNotNull(regularSigma)
+                    }
+                }
+                else -> emptyList()
+            }
+
+            if (pool.isEmpty()) continue
 
             // Weight selection by inverse of mastery (prefer less mastered entities)
             val entityWeights = pool.associateWith { 1f - (masteryLevels[it.id] ?: 0f) }
@@ -307,7 +326,7 @@ class LetterGroupProvider @Inject constructor() {
             }
 
             // Fallback in case of rounding errors
-            if (result.size <= pattern.indexOf(char)) {
+            if (result.size <= i) {
                 result.add(pool.random())
             }
         }

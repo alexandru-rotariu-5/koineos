@@ -90,6 +90,16 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
     }
 
     /**
+     * Gets all entities from currently unlocked batches.
+     *
+     * @return List of all entities in unlocked batches
+     */
+    suspend fun getUnlockedEntities(): List<AlphabetEntity> {
+        val unlockedBatches = getUnlockedBatches()
+        return unlockedBatches.flatMap { it.entities }.distinct()
+    }
+
+    /**
      * Enhances an entity with variants if needed and returns the applied marks
      */
     private suspend fun enhanceEntityWithVariants(entity: AlphabetEntity): EnhancedEntity {
@@ -353,7 +363,12 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         val baseEntity = entities.random()
 
         // Only enhance if it's a letter, diphthong, or improper diphthong
-        if (category in listOf(AlphabetCategory.LETTERS, AlphabetCategory.DIPHTHONGS, AlphabetCategory.IMPROPER_DIPHTHONGS)) {
+        if (category in listOf(
+                AlphabetCategory.LETTERS,
+                AlphabetCategory.DIPHTHONGS,
+                AlphabetCategory.IMPROPER_DIPHTHONGS
+            )
+        ) {
             val enhanced = enhanceEntityWithVariants(baseEntity)
             return enhanced.entity
         }
@@ -462,12 +477,18 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         return enhanceEntity(entity, useUppercase)
     }
 
-    override suspend fun getRandomEnhancedEntities(count: Int, useUppercase: Boolean): List<EnhancedAlphabetEntity> {
+    override suspend fun getRandomEnhancedEntities(
+        count: Int,
+        useUppercase: Boolean
+    ): List<EnhancedAlphabetEntity> {
         val entities = getRandomEntities(count)
         return entities.map { enhanceEntity(it, useUppercase) }
     }
 
-    override suspend fun enhanceEntity(entity: AlphabetEntity, useUppercase: Boolean): EnhancedAlphabetEntity {
+    override suspend fun enhanceEntity(
+        entity: AlphabetEntity,
+        useUppercase: Boolean
+    ): EnhancedAlphabetEntity {
         // Get current mastery levels for all entities
         val masteryLevels = alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
 
@@ -476,7 +497,8 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         val allAccentMarks = getAllEntitiesByType<AccentMark>()
 
         // Determine if we should apply marks based on mastery levels
-        val shouldApplyBreathingMarks = variantSelectionService.shouldApplyBreathingMarks(masteryLevels)
+        val shouldApplyBreathingMarks =
+            variantSelectionService.shouldApplyBreathingMarks(masteryLevels)
         val shouldApplyAccentMarks = variantSelectionService.shouldApplyAccentMarks(masteryLevels)
 
         // Select marks if appropriate
@@ -489,7 +511,8 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         } else null
 
         // Get the enhanced display text with marks (but without uppercase applied yet)
-        val baseDisplayText = variantSelectionService.selectVariant(entity, breathingMark, accentMark)
+        val baseDisplayText =
+            variantSelectionService.selectVariant(entity, breathingMark, accentMark)
 
         // Apply uppercase if needed for the display text
         val enhancedDisplayText = if (useUppercase && entity is Letter) {
@@ -546,12 +569,15 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
             is Letter -> entity.variants?.acuteAccent != null ||
                     entity.variants?.graveAccent != null ||
                     entity.variants?.circumflexAccent != null
+
             is Diphthong -> entity.variants?.acuteAccent != null ||
                     entity.variants?.graveAccent != null ||
                     entity.variants?.circumflexAccent != null
+
             is ImproperDiphthong -> entity.variants?.acuteAccent != null ||
                     entity.variants?.graveAccent != null ||
                     entity.variants?.circumflexAccent != null
+
             else -> false
         }
     }
@@ -560,7 +586,8 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
      * Helper function to get all entities of a specific type
      */
     private suspend inline fun <reified T : AlphabetEntity> getAllEntitiesByType(): List<T> {
-        val content = alphabetRepository.getAlphabetContent().getOrNull()?.first() ?: return emptyList()
+        val content =
+            alphabetRepository.getAlphabetContent().getOrNull()?.first() ?: return emptyList()
         return content.flatMap { it.entities }.filterIsInstance<T>()
     }
 

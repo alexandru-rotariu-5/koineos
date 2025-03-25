@@ -40,10 +40,13 @@ class AlphabetExerciseGenerator @Inject constructor(
 ) : ExerciseGenerator<AlphabetEntity> {
 
     companion object {
-        // Number of options to show in multiple choice exercises
+        // Number of options to show in selection exercises
         private const val DEFAULT_ENTITY_OPTION_COUNT = 4
         private const val DEFAULT_TRANSLITERATION_OPTION_COUNT = 3
-        private const val LETTER_GROUP_PROBABILITY = 0.3f
+
+        // Mastery thresholds for letter group probability
+        private const val MIN_LETTER_GROUP_MASTERY_THRESHOLD = 0.2f
+        private const val MAX_LETTER_GROUP_MASTERY_THRESHOLD = 1.0f
     }
 
     override fun getSupportedExerciseTypes(): List<ExerciseType> {
@@ -63,10 +66,20 @@ class AlphabetExerciseGenerator @Inject constructor(
     ): Exercise? {
         val provider = exerciseContentProvider as? BatchAwareAlphabetEntityProvider ?: return null
 
-        // Attempt to generate a letter group exercise with a certain probability
-        if (Random.nextFloat() < LETTER_GROUP_PROBABILITY) {
-            // Get available entities and mastery levels
-            val masteryLevels = provider.getMasteryLevels()
+        // Get available entities and mastery levels
+        val unlockedEntities = provider.getUnlockedEntities()
+        val masteryLevels = provider.getMasteryLevels()
+
+        // Calculate the probability of generating a letter group exercise based on mastery
+        val letterGroupProbability =
+            calculateLetterGroupProbability(unlockedEntities, masteryLevels)
+
+        // Determine if this should be a letter group exercise
+        val useLetterGroup = Random.nextFloat() < letterGroupProbability
+
+        // Attempt to generate a letter group exercise if probability check passes
+        if (useLetterGroup) {
+            // Get all available entities for actual letter group generation
             val availableEntities = provider.getAllEntities()
 
             // Try to generate a letter group exercise
@@ -100,7 +113,8 @@ class AlphabetExerciseGenerator @Inject constructor(
 
             ExerciseType.MATCH_PAIRS -> {
                 val entities = provider.getRandomEntities(4)
-                val useUppercase = entities.all { it is Letter } && letterCaseProvider.shouldUseUppercase()
+                val useUppercase =
+                    entities.all { it is Letter } && letterCaseProvider.shouldUseUppercase()
                 val enhancedEntities = entities.map {
                     provider.enhanceEntity(it, useUppercase)
                 }
@@ -108,6 +122,45 @@ class AlphabetExerciseGenerator @Inject constructor(
             }
 
             else -> null
+        }
+    }
+
+    /**
+     * Calculates the probability of generating a letter group exercise based on
+     * the average mastery level of unlocked entities.
+     *
+     * @param unlockedEntities List of unlocked entities
+     * @param masteryLevels Current mastery levels
+     * @return Probability between 0.0 and 1.0
+     */
+    private fun calculateLetterGroupProbability(
+        unlockedEntities: List<AlphabetEntity>,
+        masteryLevels: Map<String, Float>
+    ): Float {
+        if (unlockedEntities.isEmpty()) return 0.0f
+
+        // If there are newly unlocked entities, prioritize those instead of letter groups
+        if (unlockedEntities.any { (masteryLevels[it.id] ?: 0f) < 0.3f }) {
+            return 0.0f
+        }
+
+        // Calculate average mastery of unlocked entities
+        val averageMastery = unlockedEntities.map { masteryLevels[it.id] ?: 0f }.average().toFloat()
+
+        // Scale the probability using the specified thresholds
+        return when {
+            // Below minimum threshold = 0% probability
+            averageMastery < MIN_LETTER_GROUP_MASTERY_THRESHOLD -> 0.0f
+
+            // Above maximum threshold = 100% probability
+            averageMastery >= MAX_LETTER_GROUP_MASTERY_THRESHOLD -> 0.5f
+
+            // Linear interpolation between thresholds
+            else -> {
+                val normalizedMastery = (averageMastery - MIN_LETTER_GROUP_MASTERY_THRESHOLD) /
+                        (MAX_LETTER_GROUP_MASTERY_THRESHOLD - MIN_LETTER_GROUP_MASTERY_THRESHOLD)
+                normalizedMastery.coerceIn(0.0f, 0.5f)
+            }
         }
     }
 
@@ -171,15 +224,16 @@ class AlphabetExerciseGenerator @Inject constructor(
         )
 
         // If we couldn't generate enough additional groups, use random transliterations
-        val incorrectOptions = if (additionalGroups.size >= DEFAULT_TRANSLITERATION_OPTION_COUNT - 1) {
-            additionalGroups.map { it.transliteration }
-        } else {
-            // Use existing mechanism to get incorrect transliterations
-            entityProvider.getIncorrectTransliterationOptions(
-                letterGroup.transliteration,
-                DEFAULT_TRANSLITERATION_OPTION_COUNT - 1
-            )
-        }
+        val incorrectOptions =
+            if (additionalGroups.size >= DEFAULT_TRANSLITERATION_OPTION_COUNT - 1) {
+                additionalGroups.map { it.transliteration }
+            } else {
+                // Use existing mechanism to get incorrect transliterations
+                entityProvider.getIncorrectTransliterationOptions(
+                    letterGroup.transliteration,
+                    DEFAULT_TRANSLITERATION_OPTION_COUNT - 1
+                )
+            }
 
         // Combine and shuffle all options
         val options = (incorrectOptions + letterGroup.transliteration).shuffled()

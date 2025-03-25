@@ -13,7 +13,6 @@ class MasteryUpdateService @Inject constructor() {
 
     companion object {
         private const val MASTERY_COMPLETION_THRESHOLD = 0.97f
-        private const val MASTERY_RESET_THRESHOLD = 0.03f
         private const val MAX_MASTERY_INCREASE_PER_EXERCISE = 0.05f
         private const val LETTER_GROUP_LEARNING_RATE_MODIFIER = 0.75f
     }
@@ -62,31 +61,6 @@ class MasteryUpdateService @Inject constructor() {
         // Apply completion threshold
         if (newMastery >= MASTERY_COMPLETION_THRESHOLD) {
             newMastery = 1.0f
-        }
-
-        return newMastery.coerceIn(0.0f, 1.0f)
-    }
-
-    /**
-     * Calculates the new mastery level after an incorrect answer.
-     */
-    fun calculateMasteryAfterIncorrectAnswer(
-        currentMastery: Float,
-        exerciseType: ExerciseType
-    ): Float {
-        val exerciseWeight = getExerciseWeight(exerciseType)
-        val forgetRate = MasteryConstants.BASE_FORGET_RATE
-
-        // Calculate decrement
-        val decrement = currentMastery * forgetRate * exerciseWeight
-
-        // Cap the maximum decrement
-        val maxDecrement = 0.15f * exerciseWeight
-        var newMastery = currentMastery - minOf(decrement, maxDecrement)
-
-        // Apply reset threshold
-        if (newMastery <= MASTERY_RESET_THRESHOLD) {
-            newMastery = 0.0f
         }
 
         return newMastery.coerceIn(0.0f, 1.0f)

@@ -21,11 +21,6 @@ class UpdateAlphabetEntityMasteryLevelsUseCase @Inject constructor(
     companion object {
         // Maximum allowed mastery increase per practice session for any entity
         private const val MAX_MASTERY_INCREASE_PER_SESSION = 0.2f
-        private const val MASTERY_COMPLETION_THRESHOLD = 0.97f
-        private const val MASTERY_RESET_THRESHOLD = 0.03f
-        private const val MAX_MASTERY_INCREASE_PER_EXERCISE = 0.05f
-        private const val LETTER_GROUP_LEARNING_RATE_MODIFIER = 0.75f
-
     }
 
     suspend operator fun invoke(exerciseResults: Map<Exercise, Boolean>): Result<Unit> =
@@ -51,12 +46,7 @@ class UpdateAlphabetEntityMasteryLevelsUseCase @Inject constructor(
                                 currentMastery,
                                 exercise.type
                             )
-                        } else {
-                            masteryUpdateService.calculateMasteryAfterIncorrectAnswer(
-                                currentMastery,
-                                exercise.type
-                            )
-                        }
+                        } else currentMastery
 
                         // Update tracking map
                         currentMasteryLevels[entityId] = newMastery
