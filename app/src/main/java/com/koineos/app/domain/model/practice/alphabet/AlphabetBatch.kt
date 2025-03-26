@@ -16,7 +16,6 @@ data class AlphabetBatch(
 ) {
     /**
      * Checks if this batch meets criteria to unlock the next batch.
-     * - Average mastery ≥ 0.5
      * - Minimum mastery ≥ 0.3
      */
     fun meetsUnlockCriteria(masteryLevels: Map<String, Float>): Boolean {
@@ -27,10 +26,9 @@ data class AlphabetBatch(
             masteryLevels[entity.id] ?: 0f
         }
 
-        // Calculate average and minimum mastery
-        val avgMastery = masteryValues.average().toFloat()
+        // Calculate minimum mastery
         val minMastery = masteryValues.minOrNull() ?: 0f
 
-        return avgMastery >= 0.5f && minMastery >= 0.3f
+        return minMastery >= 0.3f
     }
 }

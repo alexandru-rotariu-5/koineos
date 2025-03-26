@@ -29,7 +29,7 @@
 
     <!-- Letter Notes -->
     <string name="note_alpha">Pronounced as \'a\' in \'father\'.</string>
-    <string name="note_beta">Pronounced as \'b\' in \'boy\';\nlater softened to \'v\' in modern Greek.</string>
+    <string name="note_beta">Pronounced as \'b\' in \'boy\'.</string>
     <string name="note_gamma">Pronounced as \'g\' in \'got\'.\nBefore γ, κ, χ, or ξ, pronounced as \'ng\' (as in \'sing\').</string>
     <string name="note_delta">Pronounced as \'d\' in \'dog\'.</string>
     <string name="note_epsilon">Short \'e\' sound, as in \'pet\'.</string>

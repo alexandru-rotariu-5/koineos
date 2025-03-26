@@ -135,8 +135,8 @@ class BatchManagementService @Inject constructor() {
     private fun createLetterBatches(letters: List<AlphabetEntity>): List<List<AlphabetEntity>> {
         // Define batches according to the enhancement plan
         val batchDefinitions = listOf(
-            listOf("alpha", "epsilon", "iota", "omicron"),
-            listOf("beta", "gamma", "delta", "kappa"),
+            listOf("alpha", "beta", "epsilon", "gamma"),
+            listOf("iota", "delta", "omicron", "kappa"),
             listOf("lambda", "mu", "nu", "pi"),
             listOf("tau", "rho", "sigma", "zeta"),
             listOf("eta", "omega", "upsilon", "theta"),

@@ -48,7 +48,7 @@ fun SelectLetterGroupLemmaExerciseContent(
             horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
             verticalArrangement = Arrangement.spacedBy(Dimensions.spacingGrid),
             contentPadding = PaddingValues(vertical = Dimensions.paddingMedium),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         ) {
             items(exerciseState.options) { option ->
                 val isSelected = option.display == exerciseState.selectedAnswer
@@ -141,10 +141,6 @@ private fun SelectLetterGroupLemmaExercisePreview() {
                             display = "χαρ",
                             entityIds = listOf("letter_22", "letter_0", "letter_16")
                         ),
-                        SelectLetterGroupLemmaUiState.LetterGroupOption(
-                            display = "γαρ",
-                            entityIds = listOf("letter_2", "letter_0", "letter_16")
-                        )
                     ),
                     selectedAnswer = "χαρ",
                     isChecked = false,
