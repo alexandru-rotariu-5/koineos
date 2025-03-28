@@ -109,10 +109,10 @@ private fun LetterContent(letter: LetterUiState) {
     GreekSymbol(text = "${letter.uppercase} ${letter.lowercase}${if (letter.hasAlternateLowercase) " ${letter.alternateLowercase ?: ""}" else ""}")
 
     // Transliteration and pronunciation
-    PronunciationInfo(
-        transliteration = letter.transliteration,
-        pronunciation = letter.pronunciation
-    )
+//    TransliterationInfo(
+//        transliteration = letter.transliteration,
+//        pronunciation = letter.pronunciation
+//    )
 
     // Notes
     if (letter.notes != null) {
@@ -120,9 +120,9 @@ private fun LetterContent(letter: LetterUiState) {
     }
 
     // Examples
-    if (letter.examples.isNotEmpty()) {
-        ExamplesSection(examples = letter.examples)
-    }
+//    if (letter.examples.isNotEmpty()) {
+//        ExamplesSection(examples = letter.examples)
+//    }
 }
 
 @Composable
@@ -133,10 +133,10 @@ private fun DiphthongContent(diphthong: DiphthongUiState) {
     Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
     // Transliteration and pronunciation
-    PronunciationInfo(
-        transliteration = diphthong.transliteration,
-        pronunciation = diphthong.pronunciation
-    )
+//    TransliterationInfo(
+//        transliteration = diphthong.transliteration,
+//        pronunciation = diphthong.pronunciation
+//    )
 
     // Notes
     if (diphthong.notes != null) {
@@ -144,9 +144,9 @@ private fun DiphthongContent(diphthong: DiphthongUiState) {
     }
 
     // Examples
-    if (diphthong.examples.isNotEmpty()) {
-        ExamplesSection(examples = diphthong.examples)
-    }
+//    if (diphthong.examples.isNotEmpty()) {
+//        ExamplesSection(examples = diphthong.examples)
+//    }
 }
 
 @Composable
@@ -157,10 +157,10 @@ private fun ImproperDiphthongContent(improperDiphthong: ImproperDiphthongUiState
     Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 
     // Transliteration and pronunciation
-    PronunciationInfo(
-        transliteration = improperDiphthong.transliteration,
-        pronunciation = improperDiphthong.pronunciation
-    )
+//    TransliterationInfo(
+//        transliteration = improperDiphthong.transliteration,
+//        pronunciation = improperDiphthong.pronunciation
+//    )
 
     // Notes
     if (improperDiphthong.notes != null) {
@@ -168,9 +168,9 @@ private fun ImproperDiphthongContent(improperDiphthong: ImproperDiphthongUiState
     }
 
     // Examples
-    if (improperDiphthong.examples.isNotEmpty()) {
-        ExamplesSection(examples = improperDiphthong.examples)
-    }
+//    if (improperDiphthong.examples.isNotEmpty()) {
+//        ExamplesSection(examples = improperDiphthong.examples)
+//    }
 }
 
 @Composable
@@ -179,13 +179,16 @@ private fun BreathingMarkContent(breathingMark: BreathingMarkUiState) {
     GreekSymbol(text = breathingMark.symbol)
 
     // Pronunciation
-    if (breathingMark.pronunciation != "") {
-        RegularAssistChip(
-            text = breathingMark.pronunciation,
-            backGroundColor = Colors.PrimaryContainer,
-            textColor = Colors.OnPrimaryContainer
-        )
-    }
+//    if (breathingMark.pronunciation != "") {
+//        RegularAssistChip(
+//            text = breathingMark.pronunciation,
+//            textStyle = Typography.bodyLarge.copy(
+//                fontWeight = FontWeight.Bold
+//            ),
+//            backGroundColor = Colors.Primary,
+//            textColor = Colors.OnPrimary
+//        )
+//    }
 
     // Notes
     if (breathingMark.notes != null) {
@@ -193,9 +196,9 @@ private fun BreathingMarkContent(breathingMark: BreathingMarkUiState) {
     }
 
     // Examples
-    if (breathingMark.examples.isNotEmpty()) {
-        ExamplesSection(examples = breathingMark.examples)
-    }
+//    if (breathingMark.examples.isNotEmpty()) {
+//        ExamplesSection(examples = breathingMark.examples)
+//    }
 }
 
 @Composable
@@ -211,9 +214,9 @@ private fun AccentMarkContent(accentMark: AccentMarkUiState) {
     }
 
     // Examples
-    if (accentMark.examples.isNotEmpty()) {
-        ExamplesSection(examples = accentMark.examples)
-    }
+//    if (accentMark.examples.isNotEmpty()) {
+//        ExamplesSection(examples = accentMark.examples)
+//    }
 }
 
 @Composable
@@ -224,7 +227,7 @@ private fun GreekSymbol(text: String) {
                 append(text)
             }
         },
-        fontSize = 60.sp,
+        fontSize = 100.sp,
         color = Colors.Primary,
         textAlign = TextAlign.Center,
         modifier = Modifier.fillMaxWidth()
@@ -232,11 +235,14 @@ private fun GreekSymbol(text: String) {
 }
 
 @Composable
-private fun PronunciationInfo(transliteration: String, pronunciation: String) {
+private fun TransliterationInfo(transliteration: String, pronunciation: String) {
     RegularAssistChip(
-        text = "$transliteration · /$pronunciation/",
-        backGroundColor = Colors.PrimaryContainer,
-        textColor = Colors.OnPrimaryContainer
+        text = transliteration,
+        textStyle = Typography.bodyLarge.copy(
+            fontWeight = FontWeight.Bold
+        ),
+        backGroundColor = Colors.Primary,
+        textColor = Colors.OnPrimary
     )
 }
 

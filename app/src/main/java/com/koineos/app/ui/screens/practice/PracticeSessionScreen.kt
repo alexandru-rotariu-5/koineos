@@ -28,7 +28,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -36,6 +35,7 @@ import com.koineos.app.domain.model.practice.PracticeFlowState
 import com.koineos.app.domain.utils.practice.ExerciseContentFactory
 import com.koineos.app.presentation.model.practice.PracticeScreenUiState
 import com.koineos.app.presentation.viewmodel.BasePracticeSessionViewModel
+import com.koineos.app.ui.components.core.HeadlineSmall
 import com.koineos.app.ui.components.core.NestedScreenScaffold
 import com.koineos.app.ui.components.core.RegularButton
 import com.koineos.app.ui.components.practice.FeedbackPanel
@@ -225,16 +225,11 @@ private fun PracticeContentState(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Instructions
-            Text(
+            HeadlineSmall(
                 text = state.currentExercise.instructions,
-                style = Typography.headlineSmall.copy(
-                    fontWeight = FontWeight.Bold
-                ),
-                textAlign = TextAlign.Start,
-                color = Colors.OnSurface,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = Dimensions.paddingLarge),
+                    .padding(horizontal = Dimensions.paddingLarge)
             )
 
             // Exercise content

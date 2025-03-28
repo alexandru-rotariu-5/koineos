@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.koineos.app.R
 import com.koineos.app.domain.model.AlphabetCategory
@@ -57,6 +58,9 @@ import com.koineos.app.ui.screens.alphabet.components.LetterCard
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.Typography
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun AlphabetScreen(
@@ -76,7 +80,22 @@ fun AlphabetScreen(
         AlphabetScreenContent(
             uiState = uiState,
             viewModel = viewModel,
-            onNavigateToPractice = { navController.navigate(PracticeDestination.AlphabetPracticeSession.route) }
+            onNavigateToPractice = {
+                viewModel.viewModelScope.launch {
+                    val newBatch = viewModel.checkForNewBatch()
+
+                    withContext(Dispatchers.Main) {
+                        if (newBatch != null) {
+                            navController.navigate(
+                                PracticeDestination.AlphabetTheory.route
+                                    .replace("{batchId}", newBatch.id)
+                            )
+                        } else {
+                            navController.navigate(PracticeDestination.AlphabetPracticeSession.route)
+                        }
+                    }
+                }
+            }
         )
     }
 }
@@ -112,7 +131,7 @@ private fun AlphabetScreenContent(
                 modifier = Modifier,
                 elevation = headerElevation,
                 onLearnClick = onNavigateToPractice,
-                viewModel = viewModel
+                viewModel = viewModel // for testing, remove later
             )
             when (uiState) {
                 is AlphabetScreenUiState.Loaded -> {
@@ -166,7 +185,9 @@ private fun HeaderContent(
                 .padding(vertical = Dimensions.paddingLarge)
         ) {
             RegularButton(
-                onClick = onLearnClick,
+                onClick = {
+                    onLearnClick()
+                },
                 text = stringResource(R.string.alphabet_screen_learn_button),
                 modifier = Modifier.fillMaxWidth(),
                 enabled = true
@@ -174,56 +195,56 @@ private fun HeaderContent(
 
             // for testing, remove later
 
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                verticalAlignment = Alignment.CenterVertically,
-//                horizontalArrangement = Arrangement.SpaceEvenly
-//            ) {
-//                // Letters toggle with state
-//                var lettersToggle by remember { mutableStateOf(false) }
-//                Column(
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//                    Text("Letters", style = Typography.labelSmall)
-//                    Switch(
-//                        checked = lettersToggle,
-//                        onCheckedChange = { newState ->
-//                            lettersToggle = newState
-//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.LETTERS, newState)
-//                        }
-//                    )
-//                }
-//
-//                // Diphthongs toggle with state
-//                var diphthongsToggle by remember { mutableStateOf(false) }
-//                Column(
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//                    Text("Diphthongs", style = Typography.labelSmall)
-//                    Switch(
-//                        checked = diphthongsToggle,
-//                        onCheckedChange = { newState ->
-//                            diphthongsToggle = newState
-//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.DIPHTHONGS, newState)
-//                        }
-//                    )
-//                }
-//
-//                // Improper Diphthongs toggle with state
-//                var improperDiphthongsToggle by remember { mutableStateOf(false) }
-//                Column(
-//                    horizontalAlignment = Alignment.CenterHorizontally
-//                ) {
-//                    Text("Improper Diph.", style = Typography.labelSmall)
-//                    Switch(
-//                        checked = improperDiphthongsToggle,
-//                        onCheckedChange = { newState ->
-//                            improperDiphthongsToggle = newState
-//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.IMPROPER_DIPHTHONGS, newState)
-//                        }
-//                    )
-//                }
-//            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                // Letters toggle with state
+                var lettersToggle by remember { mutableStateOf(false) }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Letters", style = Typography.labelSmall)
+                    Switch(
+                        checked = lettersToggle,
+                        onCheckedChange = { newState ->
+                            lettersToggle = newState
+                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.LETTERS, newState)
+                        }
+                    )
+                }
+
+                // Diphthongs toggle with state
+                var diphthongsToggle by remember { mutableStateOf(false) }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Diphthongs", style = Typography.labelSmall)
+                    Switch(
+                        checked = diphthongsToggle,
+                        onCheckedChange = { newState ->
+                            diphthongsToggle = newState
+                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.DIPHTHONGS, newState)
+                        }
+                    )
+                }
+
+                // Improper Diphthongs toggle with state
+                var improperDiphthongsToggle by remember { mutableStateOf(false) }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Improper Diph.", style = Typography.labelSmall)
+                    Switch(
+                        checked = improperDiphthongsToggle,
+                        onCheckedChange = { newState ->
+                            improperDiphthongsToggle = newState
+                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.IMPROPER_DIPHTHONGS, newState)
+                        }
+                    )
+                }
+            }
         }
     }
 }

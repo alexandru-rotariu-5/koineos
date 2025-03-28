@@ -119,6 +119,26 @@ class BatchManagementService @Inject constructor() {
         return unlockedBatches
     }
 
+    /**
+     * Detects if there's a newly unlocked batch with zero mastery
+     * @param unlockedBatches List of currently unlocked batches
+     * @param masteryLevels Current mastery levels map
+     * @return The newly unlocked batch or null if none
+     */
+    fun detectNewBatch(
+        unlockedBatches: List<AlphabetBatch>,
+        masteryLevels: Map<String, Float>
+    ): AlphabetBatch? {
+        // Look for a batch where all entities have 0.0 mastery
+        val newBatch = unlockedBatches.find { batch ->
+            batch.entities.all { entity ->
+                val mastery = masteryLevels[entity.id] ?: 0f
+                mastery == 0f
+            } && batch.entities.isNotEmpty()
+        }
+        return newBatch
+    }
+
     // Helper to determine category from batch ID
     private fun getCategoryFromBatchId(batchId: String): String {
         return when {
@@ -133,21 +153,29 @@ class BatchManagementService @Inject constructor() {
      * Creates letter batches according to the specification in the enhancement plan.
      */
     private fun createLetterBatches(letters: List<AlphabetEntity>): List<List<AlphabetEntity>> {
-        // Define batches according to the enhancement plan
-        val batchDefinitions = listOf(
-            listOf("alpha", "beta", "epsilon", "gamma"),
-            listOf("iota", "delta", "omicron", "kappa"),
-            listOf("lambda", "mu", "nu", "pi"),
-            listOf("tau", "rho", "sigma", "zeta"),
-            listOf("eta", "omega", "upsilon", "theta"),
-            listOf("xi", "phi", "chi", "psi")
+        val letterVariants = mapOf(
+            "sigma" to setOf("sigma", "final sigma")
         )
 
-        return batchDefinitions.map { namePatterns ->
+        val batchDefinitions = listOf(
+            setOf("alpha", "beta", "epsilon", "gamma"),
+            setOf("iota", "delta", "omicron", "kappa"),
+            setOf("lambda", "mu", "nu", "pi"),
+            setOf("tau", "rho", "sigma", "zeta"),
+            setOf("eta", "omega", "upsilon", "theta"),
+            setOf("xi", "phi", "chi", "psi")
+        )
+
+        return batchDefinitions.map { nameSet ->
             letters.filter { entity ->
-                entity is Letter && namePatterns.any { pattern ->
-                    entity.name.contains(pattern, ignoreCase = true)
-                }
+                entity is Letter && (
+                        // Check if the entity name exactly matches any name in the batch
+                        entity.name.lowercase() in nameSet ||
+                                // Check if the entity name is a variant of any base letter in the batch
+                                nameSet.any { baseName ->
+                                    letterVariants[baseName]?.contains(entity.name.lowercase()) == true
+                                }
+                        )
             }
         }
     }

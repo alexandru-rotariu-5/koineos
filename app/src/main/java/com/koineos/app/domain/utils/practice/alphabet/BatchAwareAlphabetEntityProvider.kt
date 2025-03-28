@@ -80,7 +80,7 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
     /**
      * Gets currently unlocked batches based on mastery levels.
      */
-    private suspend fun getUnlockedBatches(): List<AlphabetBatch> {
+    suspend fun getUnlockedBatches(): List<AlphabetBatch> {
         ensureCacheInitialized()
 
         val batches = batchCache ?: return emptyList()

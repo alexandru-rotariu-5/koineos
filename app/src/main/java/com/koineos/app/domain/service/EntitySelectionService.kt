@@ -65,6 +65,7 @@ class EntitySelectionService @Inject constructor() {
             result.addAll(remainingEntities.shuffled().take(count - result.size))
         }
 
+
         return result
     }
 }

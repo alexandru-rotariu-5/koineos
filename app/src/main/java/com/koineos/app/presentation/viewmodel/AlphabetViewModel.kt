@@ -9,8 +9,11 @@ import com.koineos.app.domain.model.BreathingMark
 import com.koineos.app.domain.model.Diphthong
 import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
+import com.koineos.app.domain.model.practice.alphabet.AlphabetBatch
 import com.koineos.app.domain.repository.AlphabetMasteryRepository
+import com.koineos.app.domain.service.BatchManagementService
 import com.koineos.app.domain.usecase.alphabet.GetAlphabetContentUseCase
+import com.koineos.app.domain.utils.practice.alphabet.BatchAwareAlphabetEntityProvider
 import com.koineos.app.presentation.model.alphabet.AccentMarkUiState
 import com.koineos.app.presentation.model.alphabet.AlphabetEntityUiState
 import com.koineos.app.presentation.model.alphabet.AlphabetScreenUiState
@@ -40,7 +43,9 @@ import javax.inject.Inject
 class AlphabetViewModel @Inject constructor(
     private val getAlphabetContentUseCase: GetAlphabetContentUseCase,
     private val stringProvider: StringProvider,
-//    private val alphabetMasteryRepository: AlphabetMasteryRepository // for testing, remove later
+    private val entityProvider: BatchAwareAlphabetEntityProvider,
+    private val batchManagementService: BatchManagementService,
+    private val alphabetMasteryRepository: AlphabetMasteryRepository // for testing, remove later
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AlphabetScreenUiState> by lazy {
@@ -76,6 +81,17 @@ class AlphabetViewModel @Inject constructor(
     fun onInfoDialogDismiss() {
         _uiState.update {
             it.asLoaded()?.copy(selectedEntityId = null) ?: it
+        }
+    }
+
+    suspend fun checkForNewBatch(): AlphabetBatch? {
+        try {
+            val unlockedBatches = entityProvider.getUnlockedBatches()
+            val masteryLevels = entityProvider.getMasteryLevels()
+
+            return batchManagementService.detectNewBatch(unlockedBatches, masteryLevels)
+        } catch (e: Exception) {
+            return null
         }
     }
 
@@ -118,9 +134,11 @@ class AlphabetViewModel @Inject constructor(
                     AlphabetCategory.IMPROPER_DIPHTHONGS -> processImproperDiphthongs(
                         category.entities
                     )
+
                     AlphabetCategory.BREATHING_MARKS -> processBreathingMarks(
                         category.entities
                     )
+
                     AlphabetCategory.ACCENT_MARKS -> processAccentMarks(
                         category.entities
                     )
@@ -257,32 +275,39 @@ class AlphabetViewModel @Inject constructor(
 
     // testing functions, remove later
 
-//    fun toggleCategoryMasteryLevel(category: AlphabetCategory, setTo100Percent: Boolean) {
-//        viewModelScope.launch {
-//            updateCategoryMasteryLevels(category, if (setTo100Percent) 1.0f else 0.0f)
-//        }
-//    }
-//
-//    private suspend fun updateCategoryMasteryLevels(category: AlphabetCategory, masteryLevel: Float) {
-//        try {
-//            getAlphabetContentUseCase().fold(
-//                onSuccess = { contentFlow ->
-//                    val categories = contentFlow.first()
-//                    val categoryEntities = categories.find { it.category == category }?.entities ?: emptyList()
-//
-//                    categoryEntities.forEach { entity ->
-//                        alphabetMasteryRepository.updateAlphabetEntityMasteryLevel(entity.id, masteryLevel)
-//                    }
-//
-//                    // Refresh the UI
-//                    loadAlphabetContent()
-//                },
-//                onFailure = {
-//                    // Handle error
-//                }
-//            )
-//        } catch (e: Exception) {
-//            // Handle exception
-//        }
-//    }
+    fun toggleCategoryMasteryLevel(category: AlphabetCategory, setTo100Percent: Boolean) {
+        viewModelScope.launch {
+            updateCategoryMasteryLevels(category, if (setTo100Percent) 1.0f else 0.0f)
+        }
+    }
+
+    private suspend fun updateCategoryMasteryLevels(
+        category: AlphabetCategory,
+        masteryLevel: Float
+    ) {
+        try {
+            getAlphabetContentUseCase().fold(
+                onSuccess = { contentFlow ->
+                    val categories = contentFlow.first()
+                    val categoryEntities =
+                        categories.find { it.category == category }?.entities ?: emptyList()
+
+                    categoryEntities.forEach { entity ->
+                        alphabetMasteryRepository.updateAlphabetEntityMasteryLevel(
+                            entity.id,
+                            masteryLevel
+                        )
+                    }
+
+                    // Refresh the UI
+                    loadAlphabetContent()
+                },
+                onFailure = {
+                    // Handle error
+                }
+            )
+        } catch (e: Exception) {
+            // Handle exception
+        }
+    }
 }

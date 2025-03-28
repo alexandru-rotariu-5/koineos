@@ -28,54 +28,80 @@
     <string name="alphabet_screen_learn_button">Learn the alphabet</string>
 
     <!-- Letter Notes -->
-    <string name="note_alpha">Pronounced as \'a\' in \'father\'.</string>
-    <string name="note_beta">Pronounced as \'b\' in \'boy\'.</string>
-    <string name="note_gamma">Pronounced as \'g\' in \'got\'.\nBefore γ, κ, χ, or ξ, pronounced as \'ng\' (as in \'sing\').</string>
-    <string name="note_delta">Pronounced as \'d\' in \'dog\'.</string>
-    <string name="note_epsilon">Short \'e\' sound, as in \'pet\'.</string>
-    <string name="note_zeta">Pronounced \'ds\' in \'ads\', or sometimes \'z\' in \'zebra\'.</string>
-    <string name="note_eta">Long \'e\' sound, like \'a\' in \'late\' without the \'y\' glide.</string>
-    <string name="note_theta">Aspirated \'t\', pronounced as \'th\' in \'think\'.</string>
-    <string name="note_iota">Pronounced as \'i\' in \'machine\'.\nCan be short (as in \'bit\') or long (as in \'machine\').</string>
-    <string name="note_kappa">Pronounced as \'k\' in \'king\'.</string>
-    <string name="note_lambda">Pronounced as \'l\' in \'lamp\'.</string>
-    <string name="note_mu">Pronounced as \'m\' in \'man\'.</string>
-    <string name="note_nu">Pronounced as \'n\' in \'night\'.</string>
-    <string name="note_xi">Pronounced as \'ks\' as in \'box\'.</string>
-    <string name="note_omicron">Short \'o\' sound, as in \'lot\'.</string>
-    <string name="note_pi">Pronounced as \'p\' in \'pen\'.</string>
-    <string name="note_rho">Rolled \'r\' sound, similar to Spanish. Always takes a rough breathing mark at the start of a word.</string>
-    <string name="note_sigma">Uses different forms: σ within words, ς at the end of words.</string>
+    <string name="note_alpha">a as in \"father\"</string>
+    <string name="note_beta">b as in \"boy\".</string>
+    <string name="note_gamma">g as in \"get\".\nBefore γ, κ, χ, or ξ, pronounced as ng (as in \"sing\").</string>
+    <string name="note_delta">d as in \"dog\".</string>
+    <string name="note_epsilon">e as in \"pet\". (short "e").</string>
+    <string name="note_zeta">dz as in \"ads\", or sometimes \"z\" in \"zero\".</string>
+    <string name="note_eta">e as in \"obey\". (long "e").</string>
+    <string name="note_theta">th as in \"theology\".</string>
+    <string name="note_iota">i as in \"bit\".\nCan be short (as in \"bit\") or long (as in \"machine\").</string>
+    <string name="note_kappa">k as in \"keep\".</string>
+    <string name="note_lambda">l as in \"lamp\".</string>
+    <string name="note_mu">m as in \"man\".</string>
+    <string name="note_nu">n as in \"new\".</string>
+    <string name="note_xi">x as in \"box\".</string>
+    <string name="note_omicron">o as in \"top\". (short "o").</string>
+    <string name="note_pi">p as in \"put\".</string>
+    <string name="note_rho">r as in \"rod\". Always takes a rough breathing mark at the start of a word.</string>
+    <string name="note_sigma">s as in \"sit\". Two forms: ς at the end of the word and σ elsewhere.</string>
     <string name="note_final_sigma">Used only at the end of words.</string>
-    <string name="note_tau">Pronounced as \'t\' in \'top\'.</string>
-    <string name="note_upsilon">Pronounced like French \'u\' or German \'ü\'.</string>
-    <string name="note_phi">Aspirated \'p\', pronounced as \'ph\' (or \'f\') in \'phone\'.</string>
-    <string name="note_chi">Aspirated \'k\', pronounced like \'ch\' in Scottish \'loch\' or German \'Bach\'.</string>
-    <string name="note_psi">Pronounced as \'ps\' in \'lapse\'.</string>
-    <string name="note_omega">Long \'o\' sound, like \'aw\' in \'saw\', held longer than omicron.</string>
+    <string name="note_tau">t as in \"talk\".</string>
+    <string name="note_upsilon">ü as the German u with umlaut.</string>
+    <string name="note_phi">ph (or f) in \"phone\".</string>
+    <string name="note_chi">ch as in Scottish \"loch\" or German \"Bach\".</string>
+    <string name="note_psi">ps as in \"lips\".</string>
+    <string name="note_omega">o as in \"tone\". (long "o")</string>
 
     <!-- Diphthong Notes -->
-    <string name="note_diphthong_ai">Pronounced like \'ai\' in \'aisle\'.</string>
-    <string name="note_diphthong_ei">Pronounced like \'ay\' in \'pay\'.</string>
-    <string name="note_diphthong_oi">Pronounced like \'oi\' in \'coin\'.</string>
-    <string name="note_diphthong_ui">Rare diphthong, pronounced as \'wee\' in \'week\'.</string>
-    <string name="note_diphthong_au">Pronounced like \'ow\' in \'cow\'.</string>
-    <string name="note_diphthong_eu">Pronounced as a blend of \'e\' and \'u\', like \'eh-oo\'.</string>
-    <string name="note_diphthong_hu">Rare diphthong, typically pronounced as \'hyoo\'.</string>
-    <string name="note_diphthong_ou">Always pronounced like \'oo\' in \'food\'.</string>
+    <string name="note_diphthong_ai">ai as in \"aisle\".</string>
+    <string name="note_diphthong_ei">ei as in \"eight\".</string>
+    <string name="note_diphthong_oi">oi as in \"oil\".</string>
+    <string name="note_diphthong_ui">wee in \"week\". (rare diphthong)</string>
+    <string name="note_diphthong_au">ow as in \"cow\".</string>
+    <string name="note_diphthong_eu">a blend of \"e\" and \"u\" (e-oo).</string>
+    <string name="note_diphthong_hu">a blend of long "\e\" and \"u\" (eh-oo). (rare diphthong)</string>
+    <string name="note_diphthong_ou">oo as in \"food\".</string>
 
     <!-- Improper Diphthong Notes -->
-    <string name="note_improper_diphthong_ai">Alpha + iota subscript.\nPronounced like alpha.</string>
-    <string name="note_improper_diphthong_ei">Eta + iota subscript.\nPronounced like eta.</string>
-    <string name="note_improper_diphthong_oi">Omega + iota subscript.\nPronounced like omega.</string>
+    <string name="note_improper_diphthong_ai">like alpha.\nAlpha + iota subscript</string>
+    <string name="note_improper_diphthong_ei">like eta.\nEta + iota subscript</string>
+    <string name="note_improper_diphthong_oi">like omega.\nOmega + iota subscript.</string>
 
     <!-- Breathing Mark Notes -->
     <string name="note_breathing_rough">Adds an \'h\' sound before vowels and rho.</string>
     <string name="note_breathing_smooth">Does not affect pronunciation; used for orthographic purposes.</string>
 
     <!-- Accent Mark Notes -->
-    <string name="note_accent_acute">Indicates a rising pitch.\nAppears on one of the last three syllables of a word.</string>
-    <string name="note_accent_circumflex">Marks a rising-falling pitch and only appears on long vowels or diphthongs.</string>
+    <string name="note_accent_acute">Indicates a rising pitch.</string>
+    <string name="note_accent_circumflex">Marks a rising-falling pitch and only appears on long vowels.</string>
     <string name="note_accent_grave">Replaces an acute at the end of a word when followed by another word.</string>
+
+    <!-- Theory Screen Titles -->
+    <string name="theory_title_letters_batch_1">Alpha, Beta, Epsilon, Gamma</string>
+    <string name="theory_title_letters_batch_2">Iota, Delta, Omicron, Kappa</string>
+    <string name="theory_title_letters_batch_3">Lambda, Mu, Nu, Pi</string>
+    <string name="theory_title_letters_batch_4">Tau, Rho, Sigma, Zeta</string>
+    <string name="theory_title_letters_batch_5">Eta, Omega, Upsilon, Theta</string>
+    <string name="theory_title_letters_batch_6">Xi, Phi, Chi, Psi</string>
+    <string name="theory_title_diphthongs_batch_1">I-Diphthongs</string>
+    <string name="theory_title_diphthongs_batch_2">U-Diphthongs</string>
+    <string name="theory_title_improper_diphthongs">Improper Diphthongs</string>
+    <string name="theory_title_breathing_marks">Breathing Marks</string>
+    <string name="theory_title_accent_marks">Accent Marks</string>
+
+    <!-- Theory Screen Intro Texts -->
+    <string name="theory_intro_letters_batch_1">Let\'s start with four basic letters of the Koine Greek alphabet. Take time to learn the shapes, sounds, and both uppercase and lowercase forms.</string>
+    <string name="theory_intro_letters_batch_2">Great progress! Now let\'s continue with four more letters, vowels and consonants, very frequently used in Koine.</string>
+    <string name="theory_intro_letters_batch_3">You\'re advancing well! This batch introduces four more consonants that appear frequently in Koine texts.</string>
+    <string name="theory_intro_letters_batch_4">Let\'s learn four more letters. Notice sigma has different forms depending on its position in a word.</string>
+    <string name="theory_intro_letters_batch_5">These four letters include important vowels that will help you read many more Koine words.</string>
+    <string name="theory_intro_letters_batch_6">Congratulations on reaching the final letters! These complete your knowledge of the Koine alphabet.</string>
+    <string name="theory_intro_diphthongs_batch_1">Diphthongs are combinations of two vowels that form a single sound. These I-diphthongs combine various vowels with iota.</string>
+    <string name="theory_intro_diphthongs_batch_2">These U-diphthongs combine vowels with upsilon to create distinct sounds.</string>
+    <string name="theory_intro_improper_diphthongs">Improper diphthongs use an iota subscript beneath a vowel. They\'re pronounced as a single vowel sound, with the iota being silent.</string>
+    <string name="theory_intro_breathing_marks">Breathing marks appear on vowels at the beginning of words and indicate whether to add an \'h\' sound. Every Koine word that begins with a vowel must have a breathing mark.</string>
+    <string name="theory_intro_accent_marks">There are three kinds of accents in Koine: acute (´), grave (`), and circumflex (῀). Accents are placed above a vowel and help with word pronunciation.</string>
 
 </resources>

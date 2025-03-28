@@ -83,6 +83,7 @@ object Colors {
 
     val TextPrimary = Color(0xFF212325)
     val TextSecondary = Color(0xFF484848)
+    val TextTertiary = Color(0xFF777777)
     val TextPrimaryDark = Color(0xFFE3E3E3)
     val TextSecondaryDark = Color(0xFFABADAF)
 

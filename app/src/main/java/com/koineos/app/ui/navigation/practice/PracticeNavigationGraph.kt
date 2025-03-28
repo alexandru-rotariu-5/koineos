@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.koineos.app.presentation.viewmodel.AlphabetPracticeSessionViewModel
 import com.koineos.app.ui.navigation.RootDestination
+import com.koineos.app.ui.screens.alphabet.AlphabetTheoryScreen
 import com.koineos.app.ui.screens.practice.PracticeSessionResultsScreen
 import com.koineos.app.ui.screens.practice.PracticeSessionScreen
 import com.koineos.app.ui.utils.AnimationUtils
@@ -23,6 +24,26 @@ fun NavGraphBuilder.practiceGraph(
         startDestination = PracticeDestination.AlphabetPracticeSession.route,
         route = "practice_session"
     ) {
+        composable(
+            route = PracticeDestination.AlphabetTheory.route,
+            arguments = listOf(navArgument("batchId") { type = NavType.StringType }),
+            enterTransition = AnimationUtils.slideUpEnter,
+            popExitTransition = AnimationUtils.slideDownExit
+        ) {
+            AlphabetTheoryScreen(
+                onStartPractice = {
+                    // Navigate to practice session without allowing back navigation
+                    navController.navigate(PracticeDestination.AlphabetPracticeSession.route) {
+                        popUpTo(PracticeDestination.AlphabetTheory.route) {
+                            inclusive = true
+                        }
+                    }
+                },
+                onClose = {
+                    navController.popBackStack()
+                }
+            )
+        }
         composable(
             route = PracticeDestination.AlphabetPracticeSession.route,
             enterTransition = AnimationUtils.slideUpEnter,
