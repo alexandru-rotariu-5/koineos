@@ -102,6 +102,6 @@
     <string name="theory_intro_diphthongs_batch_2">These U-diphthongs combine vowels with upsilon to create distinct sounds.</string>
     <string name="theory_intro_improper_diphthongs">Improper diphthongs use an iota subscript beneath a vowel. They\'re pronounced as a single vowel sound, with the iota being silent.</string>
     <string name="theory_intro_breathing_marks">Breathing marks appear on vowels at the beginning of words and indicate whether to add an \'h\' sound. Every Koine word that begins with a vowel must have a breathing mark.</string>
-    <string name="theory_intro_accent_marks">There are three kinds of accents in Koine: acute (´), grave (`), and circumflex (῀). Accents are placed above a vowel and help with word pronunciation.</string>
+    <string name="theory_intro_accent_marks">There are three kinds of accents in Koine: acute ( ´ ), grave ( ` ), and circumflex ( ῀ ). Accents are placed above a vowel and help with word pronunciation.</string>
 
 </resources>

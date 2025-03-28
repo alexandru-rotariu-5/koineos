@@ -367,8 +367,8 @@ private fun TheoryEntityItem(
                 is Letter -> entity.transliteration
                 is Diphthong -> entity.transliteration
                 is ImproperDiphthong -> entity.transliteration
-                is BreathingMark -> "${entity.name} breathing"
-                is AccentMark -> "${entity.name} accent"
+                is BreathingMark -> "${entity.name.replaceFirstChar { it.uppercase() }} breathing"
+                is AccentMark -> "${entity.name.replaceFirstChar { it.uppercase() }} accent"
             }
 
             Text(

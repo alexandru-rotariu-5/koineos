@@ -28,14 +28,6 @@ interface AlphabetEntityProvider : ExerciseContentProvider<AlphabetEntity> {
     suspend fun getEntitiesByCategory(category: AlphabetCategory): List<AlphabetEntity>
 
     /**
-     * Provides a random entity from a specific category.
-     *
-     * @param category The alphabet category to select from
-     * @return A randomly selected entity from the specified category
-     */
-    suspend fun getRandomEntityFromCategory(category: AlphabetCategory): AlphabetEntity
-
-    /**
      * Provides incorrect options for a multiple choice exercise.
      *
      * @param correctEntity The correct entity

@@ -244,6 +244,36 @@ private fun HeaderContent(
                         }
                     )
                 }
+
+                // Improper Diphthongs toggle with state
+                var breathingMarksToggle by remember { mutableStateOf(false) }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Breathings", style = Typography.labelSmall)
+                    Switch(
+                        checked = breathingMarksToggle,
+                        onCheckedChange = { newState ->
+                            breathingMarksToggle = newState
+                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.BREATHING_MARKS, newState)
+                        }
+                    )
+                }
+
+                // Improper Diphthongs toggle with state
+                var accentMarksToggle by remember { mutableStateOf(false) }
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text("Accents", style = Typography.labelSmall)
+                    Switch(
+                        checked = accentMarksToggle,
+                        onCheckedChange = { newState ->
+                            accentMarksToggle = newState
+                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.ACCENT_MARKS, newState)
+                        }
+                    )
+                }
             }
         }
     }

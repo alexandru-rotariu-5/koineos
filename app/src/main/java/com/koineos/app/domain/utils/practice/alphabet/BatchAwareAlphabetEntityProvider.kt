@@ -19,7 +19,6 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.pow
 
 /**
  * Entity provider that uses the batch system for progressive introduction of alphabet entities.
@@ -95,19 +94,20 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
      * @return List of all entities in unlocked batches
      */
     suspend fun getUnlockedEntities(): List<AlphabetEntity> {
-        val unlockedBatches = getUnlockedBatches()
-        return unlockedBatches.flatMap { it.entities }.distinct()
+        val practiceUnlockedBatches = getPracticeUnlockedBatches()
+        return practiceUnlockedBatches.flatMap { it.entities }.distinct()
     }
 
     /**
      * Enhances an entity with variants if needed and returns the applied marks
      */
     private suspend fun enhanceEntityWithVariants(entity: AlphabetEntity): EnhancedEntity {
+        val unlockedBatches = getUnlockedBatches()
         val masteryLevels = alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
 
         // Check if we should apply marks based on mastery levels
-        val applyBreathingMarks = variantSelectionService.shouldApplyBreathingMarks(masteryLevels)
-        val applyAccentMarks = variantSelectionService.shouldApplyAccentMarks(masteryLevels)
+        val applyBreathingMarks = variantSelectionService.shouldApplyBreathingMarks(unlockedBatches)
+        val applyAccentMarks = variantSelectionService.shouldApplyAccentMarks(unlockedBatches)
 
         // If no marks should be applied, return the original entity
         if (!applyBreathingMarks && !applyAccentMarks) {
@@ -167,8 +167,8 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
     }
 
     override suspend fun getRandomEntity(): AlphabetEntity {
-        val unlockedBatches = getUnlockedBatches()
-        if (unlockedBatches.isEmpty()) {
+        val practiceUnlockedBatches = getPracticeUnlockedBatches()
+        if (practiceUnlockedBatches.isEmpty()) {
             throw IllegalStateException("No unlocked batches available")
         }
 
@@ -176,7 +176,7 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
 
         // Select entity using weighted probability
         val selectedEntity = entitySelectionService.selectEntitiesForPractice(
-            unlockedBatches = unlockedBatches,
+            unlockedBatches = practiceUnlockedBatches,
             count = 1,
             masteryLevels = masteryLevels
         ).firstOrNull() ?: throw IllegalStateException("No entity available")
@@ -187,14 +187,14 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
     }
 
     override suspend fun getRandomEntities(count: Int): List<AlphabetEntity> {
-        val unlockedBatches = getUnlockedBatches()
-        if (unlockedBatches.isEmpty()) {
+        val practiceUnlockedBatches = getPracticeUnlockedBatches()
+        if (practiceUnlockedBatches.isEmpty()) {
             throw IllegalStateException("No unlocked batches available")
         }
 
         val masteryLevels = alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
 
-        val allAvailableEntities = unlockedBatches.flatMap { batch ->
+        val allAvailableEntities = practiceUnlockedBatches.flatMap { batch ->
             batch.entities
         }.distinct()
 
@@ -203,7 +203,7 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         }
 
         val selectedEntities = entitySelectionService.selectEntitiesForPractice(
-            unlockedBatches = unlockedBatches,
+            unlockedBatches = practiceUnlockedBatches,
             count = count,
             masteryLevels = masteryLevels
         )
@@ -238,142 +238,10 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         }
     }
 
-    override suspend fun getRandomEntityExcluding(excluded: List<AlphabetEntity>): AlphabetEntity {
-        val unlockedBatches = getUnlockedBatches()
-        if (unlockedBatches.isEmpty()) {
-            throw IllegalStateException("No unlocked batches available")
-        }
-
-        val masteryLevels = alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
-
-        // Get all available entities from unlocked batches
-        val availableEntities = unlockedBatches.flatMap { it.entities }
-            .filter { it !in excluded }
-
-        if (availableEntities.isEmpty()) {
-            throw IllegalStateException("No entities available after exclusion")
-        }
-
-        // Calculate weights based on mastery gap
-        val entityWeights = availableEntities.associateWith { entity ->
-            val mastery = masteryLevels[entity.id] ?: 0f
-            (1f - mastery).pow(2)
-        }
-
-        // Select weighted
-        val totalWeight = entityWeights.values.sum()
-        if (totalWeight <= 0) {
-            val baseEntity = availableEntities.random()
-            val enhanced = enhanceEntityWithVariants(baseEntity)
-            return enhanced.entity
-        }
-
-        var randomValue = Math.random() * totalWeight
-
-        for (entity in availableEntities) {
-            val weight = entityWeights[entity] ?: 0f
-            randomValue -= weight
-            if (randomValue <= 0) {
-                val enhanced = enhanceEntityWithVariants(entity)
-                return enhanced.entity
-            }
-        }
-
-        // Fallback
-        val baseEntity = availableEntities.random()
-        val enhanced = enhanceEntityWithVariants(baseEntity)
-        return enhanced.entity
-    }
-
-    override suspend fun getRandomEntitiesExcluding(
-        count: Int,
-        excluded: List<AlphabetEntity>
-    ): List<AlphabetEntity> {
-        val unlockedBatches = getUnlockedBatches()
-        if (unlockedBatches.isEmpty()) {
-            throw IllegalStateException("No unlocked batches available")
-        }
-
-        val masteryLevels = alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
-
-        // Get all available entities from unlocked batches
-        val availableEntities = unlockedBatches.flatMap { it.entities }
-            .filter { it !in excluded }
-
-        if (availableEntities.isEmpty()) {
-            throw IllegalStateException("No entities available after exclusion")
-        }
-
-        // Implement weighted selection from available entities
-        val selectedEntities = mutableListOf<AlphabetEntity>()
-        val entityPool = availableEntities.toMutableList()
-
-        // Calculate weights based on mastery gap
-        val entityWeights = availableEntities.associateWith { entity ->
-            val mastery = masteryLevels[entity.id] ?: 0f
-            (1f - mastery).pow(2)
-        }
-
-        while (selectedEntities.size < count && entityPool.isNotEmpty()) {
-            val totalWeight = entityPool.sumOf { (entityWeights[it] ?: 0f).toDouble() }
-
-            if (totalWeight <= 0) {
-                // If no weights, select randomly
-                selectedEntities.add(entityPool.random())
-                entityPool.remove(selectedEntities.last())
-                continue
-            }
-
-            // Select based on weighted probability
-            var randomValue = Math.random() * totalWeight
-
-            for (entity in entityPool) {
-                val weight = entityWeights[entity] ?: 0f
-                randomValue -= weight
-                if (randomValue <= 0) {
-                    selectedEntities.add(entity)
-                    entityPool.remove(entity)
-                    break
-                }
-            }
-        }
-
-        // Filter out duplicate sigma variants
-        val baseEntities = filterSigmaVariants(selectedEntities)
-
-        // Apply variant enhancement to each entity
-        return baseEntities.map { entity ->
-            val enhanced = enhanceEntityWithVariants(entity)
-            enhanced.entity
-        }
-    }
-
     override suspend fun getEntitiesByCategory(category: AlphabetCategory): List<AlphabetEntity> {
         ensureCacheInitialized()
 
         return entityCache?.get(category) ?: emptyList()
-    }
-
-    override suspend fun getRandomEntityFromCategory(category: AlphabetCategory): AlphabetEntity {
-        val entities = getEntitiesByCategory(category)
-        if (entities.isEmpty()) {
-            throw IllegalStateException("No entities available in category $category")
-        }
-
-        val baseEntity = entities.random()
-
-        // Only enhance if it's a letter, diphthong, or improper diphthong
-        if (category in listOf(
-                AlphabetCategory.LETTERS,
-                AlphabetCategory.DIPHTHONGS,
-                AlphabetCategory.IMPROPER_DIPHTHONGS
-            )
-        ) {
-            val enhanced = enhanceEntityWithVariants(baseEntity)
-            return enhanced.entity
-        }
-
-        return baseEntity
     }
 
     override suspend fun getIncorrectEntityOptions(
@@ -489,6 +357,8 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         entity: AlphabetEntity,
         useUppercase: Boolean
     ): EnhancedAlphabetEntity {
+        // Get current unlocked batches
+        val unlockedBatches = getUnlockedBatches()
         // Get current mastery levels for all entities
         val masteryLevels = alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
 
@@ -498,8 +368,8 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
 
         // Determine if we should apply marks based on mastery levels
         val shouldApplyBreathingMarks =
-            variantSelectionService.shouldApplyBreathingMarks(masteryLevels)
-        val shouldApplyAccentMarks = variantSelectionService.shouldApplyAccentMarks(masteryLevels)
+            variantSelectionService.shouldApplyBreathingMarks(unlockedBatches)
+        val shouldApplyAccentMarks = variantSelectionService.shouldApplyAccentMarks(unlockedBatches)
 
         // Select marks if appropriate
         val breathingMark = if (shouldApplyBreathingMarks && canTakeBreathingMark(entity)) {
@@ -547,6 +417,14 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
             enhancedTransliteration = enhancedTransliteration,
             useUppercase = useUppercase
         )
+    }
+
+    suspend fun getPracticeUnlockedBatches(): List<AlphabetBatch> {
+        // Get all unlocked batches
+        val allUnlockedBatches = getUnlockedBatches()
+
+        // Filter out enhancement-only batches for practice exercises
+        return allUnlockedBatches.filter { !it.isEnhancementOnly }
     }
 
     /**
@@ -643,10 +521,5 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
      */
     suspend fun getMasteryLevels(): Map<String, Float> {
         return alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
-    }
-
-    // Helper extension to calculate power
-    private fun Float.pow(exponent: Int): Float {
-        return this.toDouble().pow(exponent.toDouble()).toFloat()
     }
 }

@@ -1,12 +1,12 @@
 package com.koineos.app.domain.service
 
 import com.koineos.app.domain.model.AccentMark
-import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.domain.model.AlphabetEntity
 import com.koineos.app.domain.model.BreathingMark
 import com.koineos.app.domain.model.Diphthong
 import com.koineos.app.domain.model.ImproperDiphthong
 import com.koineos.app.domain.model.Letter
+import com.koineos.app.domain.model.practice.alphabet.AlphabetBatch
 import java.text.Normalizer
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -16,61 +16,19 @@ import kotlin.random.Random
 class VariantSelectionService @Inject constructor() {
 
     /**
-     * Determines if breathing marks should be applied based on mastery levels
-     * @param masteryLevels Current mastery levels map
+     * Determines if breathing marks should be applied
      * @return True if breathing marks should be available
      */
-    fun shouldApplyBreathingMarks(masteryLevels: Map<String, Float>): Boolean {
-        // Check if letters, diphthongs, and improper diphthongs have 100% mastery
-        return areAllEntitiesMastered(
-            masteryLevels, listOf(
-                AlphabetCategory.LETTERS,
-                AlphabetCategory.DIPHTHONGS,
-                AlphabetCategory.IMPROPER_DIPHTHONGS
-            )
-        )
+    fun shouldApplyBreathingMarks(unlockedBatches: List<AlphabetBatch>): Boolean {
+        return unlockedBatches.any { it.id == "breathing_mark_batch" }
     }
 
     /**
-     * Determines if accent marks should be applied based on mastery levels
-     * @param masteryLevels Current mastery levels map
+     * Determines if accent marks should be applied
      * @return True if accent marks should be available
      */
-    fun shouldApplyAccentMarks(masteryLevels: Map<String, Float>): Boolean {
-        // Check if letters, diphthongs, improper diphthongs, and breathing marks have 100% mastery
-        return areAllEntitiesMastered(
-            masteryLevels, listOf(
-                AlphabetCategory.LETTERS,
-                AlphabetCategory.DIPHTHONGS,
-                AlphabetCategory.IMPROPER_DIPHTHONGS,
-                AlphabetCategory.BREATHING_MARKS
-            )
-        )
-    }
-
-    /**
-     * Checks if all entities in the given categories are 100% mastered
-     */
-    private fun areAllEntitiesMastered(
-        masteryLevels: Map<String, Float>,
-        categories: List<AlphabetCategory>
-    ): Boolean {
-        // We'll need to filter masteryLevels to only include entities from the given categories
-        // and check if they're all at 100%
-
-        // For simplicity in this example, let's assume we can extract entities by ID prefix
-        return categories.all { category ->
-            val prefix = when (category) {
-                AlphabetCategory.LETTERS -> "letter_"
-                AlphabetCategory.DIPHTHONGS -> "diphthong_"
-                AlphabetCategory.IMPROPER_DIPHTHONGS -> "improper_diphthong_"
-                AlphabetCategory.BREATHING_MARKS -> "breathing_"
-                AlphabetCategory.ACCENT_MARKS -> "accent_"
-            }
-
-            val categoryEntities = masteryLevels.filterKeys { it.startsWith(prefix) }
-            categoryEntities.isNotEmpty() && categoryEntities.all { it.value >= 1.0f }
-        }
+    fun shouldApplyAccentMarks(unlockedBatches: List<AlphabetBatch>): Boolean {
+        return unlockedBatches.any { it.id == "accent_mark_batch" }
     }
 
     /**

@@ -8,11 +8,13 @@ import com.koineos.app.domain.model.AlphabetEntity
  * @property id Unique identifier for this batch
  * @property entities The entities contained in this batch
  * @property order Sequence order in the batch progression
+ * @property isEnhancementOnly Whether this batch is only for enhancement of other standalone batches (applied for breathing/accent marks)
  */
 data class AlphabetBatch(
     val id: String,
     val entities: List<AlphabetEntity>,
-    val order: Int
+    val order: Int,
+    val isEnhancementOnly: Boolean = false
 ) {
     /**
      * Checks if this batch meets criteria to unlock the next batch.

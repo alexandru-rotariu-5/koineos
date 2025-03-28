@@ -60,7 +60,31 @@ class BatchManagementService @Inject constructor() {
             )
         }
 
-        // Breathing marks and accent marks will be added later
+        // 4. Breathing marks
+        val breathingMarks = allEntities[AlphabetCategory.BREATHING_MARKS] ?: emptyList()
+        if (breathingMarks.isNotEmpty()) {
+            batches.add(
+                AlphabetBatch(
+                    id = "breathing_mark_batch",
+                    entities = breathingMarks,
+                    order = batchOrder++,
+                    isEnhancementOnly = true
+                )
+            )
+        }
+
+        // 5. Accent marks
+        val accentMarks = allEntities[AlphabetCategory.ACCENT_MARKS] ?: emptyList()
+        if (accentMarks.isNotEmpty()) {
+            batches.add(
+                AlphabetBatch(
+                    id = "accent_mark_batch",
+                    entities = accentMarks,
+                    order = batchOrder++,
+                    isEnhancementOnly = true
+                )
+            )
+        }
 
         return batches
     }
@@ -92,19 +116,45 @@ class BatchManagementService @Inject constructor() {
             val isCategoryTransition = currentCategory != nextCategory
 
             if (isCategoryTransition) {
-                // For category transitions, require all entities in current category to be 100% mastered
-                val categoryBatches = unlockedBatches.filter {
-                    getCategoryFromBatchId(it.id) == currentCategory
-                }
-                val allCategoryEntities = categoryBatches.flatMap { it.entities }
+                when (nextCategory) {
+                    "breathing_mark" -> {
+                        // Unlock breathing marks only when letters, diphthongs, and improper diphthongs are all mastered
+                        val letterBatches = unlockedBatches.filter { getCategoryFromBatchId(it.id) == "letter" }
+                        val diphthongBatches = unlockedBatches.filter { getCategoryFromBatchId(it.id) == "diphthong" }
+                        val improperDiphthongBatches = unlockedBatches.filter { getCategoryFromBatchId(it.id) == "improper_diphthong" }
 
-                val allEntitiesFullyMastered = allCategoryEntities
-                    .all { entity -> (masteryLevels[entity.id] ?: 0f) >= 1.0f }
+                        val allBasicEntitiesMastered =
+                            areAllEntitiesFullyMastered(letterBatches, masteryLevels) &&
+                                    areAllEntitiesFullyMastered(diphthongBatches, masteryLevels) &&
+                                    areAllEntitiesFullyMastered(improperDiphthongBatches, masteryLevels)
 
-                if (allEntitiesFullyMastered) {
-                    unlockedBatches.add(nextBatch)
-                } else {
-                    break
+                        if (allBasicEntitiesMastered) {
+                            unlockedBatches.add(nextBatch)
+                        }
+                    }
+                    "accent_mark" -> {
+                        // Unlock accent marks only when breathing marks are also mastered
+                        val breathingMarkBatches = unlockedBatches.filter { getCategoryFromBatchId(it.id) == "breathing_mark" }
+
+                        val allBreathingMarksMastered = areAllEntitiesFullyMastered(breathingMarkBatches, masteryLevels)
+
+                        if (allBreathingMarksMastered) {
+                            unlockedBatches.add(nextBatch)
+                        }
+                    }
+                    else -> {
+                        val categoryBatches = unlockedBatches.filter {
+                            getCategoryFromBatchId(it.id) == currentCategory
+                        }
+                        val allCategoryEntities = categoryBatches.flatMap { it.entities }
+
+                        val allEntitiesFullyMastered = allCategoryEntities
+                            .all { entity -> (masteryLevels[entity.id] ?: 0f) >= 1.0f }
+
+                        if (allEntitiesFullyMastered) {
+                            unlockedBatches.add(nextBatch)
+                        }
+                    }
                 }
             } else {
                 // For batches within same category, use standard criteria
@@ -139,12 +189,25 @@ class BatchManagementService @Inject constructor() {
         return newBatch
     }
 
+    // Helper method to check if all entities in a list of batches are fully mastered
+    private fun areAllEntitiesFullyMastered(
+        batches: List<AlphabetBatch>,
+        masteryLevels: Map<String, Float>
+    ): Boolean {
+        if (batches.isEmpty()) return false
+
+        val allEntities = batches.flatMap { it.entities }
+        return allEntities.all { entity -> (masteryLevels[entity.id] ?: 0f) >= 1.0f }
+    }
+
     // Helper to determine category from batch ID
     private fun getCategoryFromBatchId(batchId: String): String {
         return when {
             batchId.startsWith("letter_batch_") -> "letter"
             batchId.startsWith("diphthong_batch_") -> "diphthong"
             batchId == "improper_diphthong_batch" -> "improper_diphthong"
+            batchId == "breathing_mark_batch" -> "breathing_mark"
+            batchId == "accent_mark_batch" -> "accent_mark"
             else -> "unknown"
         }
     }
