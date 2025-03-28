@@ -79,7 +79,7 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
     /**
      * Gets currently unlocked batches based on mastery levels.
      */
-    suspend fun getUnlockedBatches(): List<AlphabetBatch> {
+    override suspend fun getUnlockedBatches(): List<AlphabetBatch> {
         ensureCacheInitialized()
 
         val batches = batchCache ?: return emptyList()
@@ -355,7 +355,7 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
 
     override suspend fun enhanceEntity(
         entity: AlphabetEntity,
-        useUppercase: Boolean
+        useUppercase: Boolean,
     ): EnhancedAlphabetEntity {
         // Get current unlocked batches
         val unlockedBatches = getUnlockedBatches()
@@ -419,7 +419,62 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
         )
     }
 
-    suspend fun getPracticeUnlockedBatches(): List<AlphabetBatch> {
+    /**
+     * Enhances an entity with specific marks, bypassing the random selection.
+     *
+     * @param entity The base entity to enhance
+     * @param useUppercase Whether to use uppercase where applicable
+     * @param forcedBreathingMark Optional breathing mark to force apply
+     * @param forcedAccentMark Optional accent mark to force apply
+     * @return An enhanced entity with the specified marks
+     */
+    fun enhanceEntityWithSpecificMarks(
+        entity: AlphabetEntity,
+        useUppercase: Boolean = false,
+        forcedBreathingMark: BreathingMark? = null,
+        forcedAccentMark: AccentMark? = null
+    ): EnhancedAlphabetEntity {
+        // Get the enhanced display text with marks (but without uppercase applied yet)
+        val baseDisplayText = variantSelectionService.selectVariant(
+            entity, forcedBreathingMark, forcedAccentMark
+        )
+
+        // Apply uppercase if needed for the display text
+        val enhancedDisplayText = if (useUppercase && entity is Letter) {
+            // For letters, we can apply uppercase
+            entity.uppercase
+        } else {
+            // Otherwise use the variant with marks
+            baseDisplayText
+        }
+
+        // Get the base transliteration
+        val baseTransliteration = when (entity) {
+            is Letter -> entity.transliteration.apply { if (useUppercase) uppercase() }
+            is Diphthong -> entity.transliteration
+            is ImproperDiphthong -> entity.transliteration
+            else -> ""
+        }
+
+        // Generate enhanced transliteration with marks
+        val enhancedTransliteration = variantSelectionService.generateTransliteration(
+            baseTransliteration,
+            forcedBreathingMark,
+            forcedAccentMark
+        ).apply { if (useUppercase && entity is Letter) uppercase() }
+
+        // Create and return the enhanced entity
+        return EnhancedAlphabetEntity(
+            baseEntity = entity,
+            breathingMark = forcedBreathingMark,
+            accentMark = forcedAccentMark,
+            enhancedDisplayText = enhancedDisplayText,
+            enhancedTransliteration = enhancedTransliteration,
+            useUppercase = useUppercase
+        )
+    }
+
+    private suspend fun getPracticeUnlockedBatches(): List<AlphabetBatch> {
         // Get all unlocked batches
         val allUnlockedBatches = getUnlockedBatches()
 
@@ -519,7 +574,7 @@ class BatchAwareAlphabetEntityProvider @Inject constructor(
      * Gets current mastery levels for all entities.
      * This is used for letter group generation based on mastery threshold.
      */
-    suspend fun getMasteryLevels(): Map<String, Float> {
+    override suspend fun getMasteryLevels(): Map<String, Float> {
         return alphabetMasteryRepository.getAllAlphabetMasteryLevels().first()
     }
 }

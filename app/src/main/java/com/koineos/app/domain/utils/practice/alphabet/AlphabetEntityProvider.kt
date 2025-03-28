@@ -3,6 +3,7 @@ package com.koineos.app.domain.utils.practice.alphabet
 import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.domain.model.AlphabetEntity
 import com.koineos.app.domain.model.EnhancedAlphabetEntity
+import com.koineos.app.domain.model.practice.alphabet.AlphabetBatch
 import com.koineos.app.domain.utils.practice.ExerciseContentProvider
 
 /**
@@ -10,6 +11,20 @@ import com.koineos.app.domain.utils.practice.ExerciseContentProvider
  * This provider can work with all entity types (Letters, Diphthongs, ImproperDiphthongs, etc.)
  */
 interface AlphabetEntityProvider : ExerciseContentProvider<AlphabetEntity> {
+
+    /**
+     * Retrieves a list of all unlocked batches.
+     *
+     * @return A list of unlocked batches
+     */
+    suspend fun getUnlockedBatches(): List<AlphabetBatch>
+
+    /**
+     * Retrieves a list of all entities' mastery levels.
+     *
+     * @return A map of entity IDs to their mastery levels
+     */
+    suspend fun getMasteryLevels(): Map<String, Float>
 
     /**
      * Retrieves an alphabet entity by its ID.

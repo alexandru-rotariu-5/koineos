@@ -1,5 +1,7 @@
 package com.koineos.app.domain.model.practice
 
+import kotlin.random.Random
+
 /**
  * Configuration parameters for generating practice sets.
  * Used to customize the type, content, and difficulty of generated practice sets.
@@ -11,7 +13,7 @@ package com.koineos.app.domain.model.practice
  * @property contentFilters Optional filters to apply to the content selection.
  */
 data class PracticeSetConfiguration(
-    val numberOfExercises: Int = DEFAULT_NUMBER_OF_EXERCISES,
+    val numberOfExercises: Int = DEFAULT_MIN_EXERCISES,
     val allowedExerciseTypes: List<ExerciseType> = emptyList(),
     val focusArea: PracticeFocusArea,
     val difficultyLevel: DifficultyLevel = DifficultyLevel.BEGINNER,
@@ -21,16 +23,18 @@ data class PracticeSetConfiguration(
         /**
          * Default number of exercises in a practice set.
          */
-        const val DEFAULT_NUMBER_OF_EXERCISES = 15
+        const val DEFAULT_MIN_EXERCISES = 16
+        private const val DEFAULT_MAX_EXERCISES = 20
 
         /**
          * Creates a configuration for alphabet practice with default settings.
          *
          * @param numberOfExercises The number of exercises to include in the practice set.
+         * If not specified, a random number between DEFAULT_MIN_EXERCISES and DEFAULT_MAX_EXERCISES will be used.
          * @return A [PracticeSetConfiguration] for alphabet practice.
          */
         fun createAlphabetConfiguration(
-            numberOfExercises: Int = DEFAULT_NUMBER_OF_EXERCISES
+            numberOfExercises: Int = Random.nextInt(DEFAULT_MIN_EXERCISES, DEFAULT_MAX_EXERCISES + 1)
         ): PracticeSetConfiguration {
             return PracticeSetConfiguration(
                 numberOfExercises = numberOfExercises,
@@ -42,15 +46,5 @@ data class PracticeSetConfiguration(
                 focusArea = PracticeFocusArea.ALPHABET
             )
         }
-    }
-
-    /**
-     * Checks if a specific exercise type is allowed by this configuration.
-     *
-     * @param exerciseType The exercise type to check.
-     * @return True if the exercise type is allowed, false otherwise.
-     */
-    fun isExerciseTypeAllowed(exerciseType: ExerciseType): Boolean {
-        return allowedExerciseTypes.isEmpty() || exerciseType in allowedExerciseTypes
     }
 }

@@ -1,6 +1,8 @@
 package com.koineos.app.domain.utils.practice.alphabet
 
+import com.koineos.app.domain.model.AccentMark
 import com.koineos.app.domain.model.AlphabetEntity
+import com.koineos.app.domain.model.BreathingMark
 import com.koineos.app.domain.model.Diphthong
 import com.koineos.app.domain.model.EnhancedAlphabetEntity
 import com.koineos.app.domain.model.ImproperDiphthong
@@ -119,6 +121,104 @@ class AlphabetExerciseGenerator @Inject constructor(
                     provider.enhanceEntity(it, useUppercase)
                 }
                 generateEntityMatchingExercise(enhancedEntities)
+            }
+
+            else -> null
+        }
+    }
+
+    /**
+     * Generates an exercise of the specified type targeting a specific entity.
+     *
+     * @param exerciseType The type of exercise to generate
+     * @param targetEntity The specific entity to target
+     * @param entityProvider Provider to supply content for the exercise
+     * @return A new exercise of the specified type targeting the specified entity
+     */
+    suspend fun generateExerciseForEntity(
+        exerciseType: ExerciseType,
+        targetEntity: AlphabetEntity,
+        entityProvider: AlphabetEntityProvider
+    ): Exercise? {
+        val provider = entityProvider as? BatchAwareAlphabetEntityProvider ?: return null
+
+        return when (exerciseType) {
+            ExerciseType.SELECT_TRANSLITERATION -> {
+                val enhancedEntity = provider.enhanceEntity(targetEntity, false)
+                generateSelectTransliterationExercise(enhancedEntity)
+            }
+
+            ExerciseType.SELECT_LEMMA -> {
+                val enhancedEntity = provider.enhanceEntity(targetEntity, false)
+                generateSelectLemmaExercise(enhancedEntity)
+            }
+
+            else -> null
+        }
+    }
+
+    /**
+     * Generates a match pairs exercise for a specific set of entities.
+     *
+     * @param entities The entities to include in the matching exercise
+     * @param exerciseContentProvider Provider to supply content for the exercise
+     * @return A matching exercise with the specified entities
+     */
+    suspend fun generateMatchPairsExerciseForEntities(
+        entities: List<AlphabetEntity>,
+        exerciseContentProvider: ExerciseContentProvider<AlphabetEntity>
+    ): Exercise? {
+        if (entities.isEmpty()) return null
+
+        val provider = exerciseContentProvider as? BatchAwareAlphabetEntityProvider ?: return null
+
+        // Limit to a maximum of 4 entities for matching exercises
+        val entitiesToUse = if (entities.size > 4) {
+            entities.shuffled().take(4)
+        } else {
+            entities
+        }
+
+        val enhancedEntities = entitiesToUse.map {
+            provider.enhanceEntity(it, false)
+        }
+
+        return generateEntityMatchingExercise(enhancedEntities)
+    }
+
+    /**
+     * Generates an exercise targeting a specific entity enhanced with a specific mark.
+     *
+     * @param exerciseType The type of exercise to generate
+     * @param targetEntity The entity to target
+     * @param breathingMark The breathing mark to apply (or null)
+     * @param accentMark The accent mark to apply (or null)
+     * @param exerciseContentProvider Provider to supply content
+     * @return A new exercise with the entity enhanced by the specified mark
+     */
+    suspend fun generateExerciseWithSpecificMark(
+        exerciseType: ExerciseType,
+        targetEntity: AlphabetEntity,
+        breathingMark: BreathingMark? = null,
+        accentMark: AccentMark? = null,
+        exerciseContentProvider: ExerciseContentProvider<AlphabetEntity>
+    ): Exercise? {
+        val provider = exerciseContentProvider as? BatchAwareAlphabetEntityProvider ?: return null
+
+        val enhancedEntity = provider.enhanceEntityWithSpecificMarks(
+            entity = targetEntity,
+            useUppercase = false,
+            forcedBreathingMark = breathingMark,
+            forcedAccentMark = accentMark
+        )
+
+        return when (exerciseType) {
+            ExerciseType.SELECT_TRANSLITERATION -> {
+                generateSelectTransliterationExercise(enhancedEntity)
+            }
+
+            ExerciseType.SELECT_LEMMA -> {
+                generateSelectLemmaExercise(enhancedEntity)
             }
 
             else -> null
