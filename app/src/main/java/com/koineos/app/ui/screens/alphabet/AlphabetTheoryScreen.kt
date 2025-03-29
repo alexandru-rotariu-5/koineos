@@ -60,6 +60,7 @@ import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
+import com.koineos.app.ui.utils.UnicodeUtils.formatMarkWithPlaceholder
 
 @Composable
 fun AlphabetTheoryScreen(
@@ -337,8 +338,8 @@ private fun TheoryEntityItem(
                     entityState.entity is Letter -> "${entityState.entity.uppercase} ${entityState.entity.lowercase}"
                     entityState.entity is Diphthong -> entityState.entity.lowercase
                     entityState.entity is ImproperDiphthong -> entityState.entity.lowercase
-                    entityState.entity is BreathingMark -> entityState.entity.symbol
-                    entityState.entity is AccentMark -> entityState.entity.symbol
+                    entityState.entity is BreathingMark -> formatMarkWithPlaceholder(entityState.entity.symbol)
+                    entityState.entity is AccentMark -> formatMarkWithPlaceholder(entityState.entity.symbol)
                     else -> ""
                 }
 

@@ -38,6 +38,7 @@ import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
+import com.koineos.app.ui.utils.UnicodeUtils.formatMarkWithPlaceholder
 
 /**
  * A dialog component for displaying detailed information about an alphabet entity.
@@ -176,7 +177,7 @@ private fun ImproperDiphthongContent(improperDiphthong: ImproperDiphthongUiState
 @Composable
 private fun BreathingMarkContent(breathingMark: BreathingMarkUiState) {
     // Main breathing mark display
-    GreekSymbol(text = breathingMark.symbol)
+    GreekSymbol(text = formatMarkWithPlaceholder(breathingMark.symbol))
 
     // Pronunciation
 //    if (breathingMark.pronunciation != "") {
@@ -204,7 +205,7 @@ private fun BreathingMarkContent(breathingMark: BreathingMarkUiState) {
 @Composable
 private fun AccentMarkContent(accentMark: AccentMarkUiState) {
     // Main accent mark display
-    GreekSymbol(text = accentMark.symbol)
+    GreekSymbol(text = formatMarkWithPlaceholder(accentMark.symbol))
 
     Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
 

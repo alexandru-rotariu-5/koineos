@@ -102,6 +102,6 @@ class AlphabetVariantGenerator {
         private const val ROUGH_BREATHING_MARK = "\u0314"  // Combining rough breathing
         private const val ACUTE_ACCENT_MARK = "\u0301"     // Combining acute accent
         private const val GRAVE_ACCENT_MARK = "\u0300"     // Combining grave accent
-        private const val CIRCUMFLEX_MARK = "\u0342"       // Combining circumflex accent
+        private const val CIRCUMFLEX_MARK = "\u0311"       // Combining circumflex accent
     }
 }

@@ -181,7 +181,7 @@ class VariantSelectionService @Inject constructor() {
                 val accentedChar = when (accentMark.name) {
                     "acute" -> baseChar + "\u0301" // Combining acute accent
                     "grave" -> baseChar + "\u0300" // Combining grave accent
-                    "circumflex" -> baseChar + "\u0302" // Combining circumflex
+                    "circumflex" -> baseChar + "\u0311" // Combining circumflex
                     else -> baseChar
                 }
 
@@ -213,7 +213,7 @@ class VariantSelectionService @Inject constructor() {
                     val accentedChar = when (accentMark.name) {
                         "acute" -> baseChar + "\u0301" // Combining acute accent
                         "grave" -> baseChar + "\u0300" // Combining grave accent
-                        "circumflex" -> baseChar + "\u0302" // Combining circumflex
+                        "circumflex" -> baseChar + "\u0311" // Combining circumflex
                         else -> baseChar
                     }
 

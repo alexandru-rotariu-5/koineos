@@ -30,6 +30,7 @@ import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.Typography
+import com.koineos.app.ui.utils.UnicodeUtils.formatMarkWithPlaceholder
 
 /**
  * A generic card component for displaying alphabet entities (letters, diphthongs, etc.)
@@ -168,7 +169,7 @@ fun BreathingMarkCard(
 ) {
     AlphabetEntityCard(
         modifier = modifier,
-        primaryText = breathingMark.symbol,
+        primaryText = formatMarkWithPlaceholder(breathingMark.symbol),
         secondaryText = breathingMark.pronunciation,
         isMastered = breathingMark.isMastered,
         masteryLevel = breathingMark.masteryLevel,
@@ -184,7 +185,7 @@ fun AccentMarkCard(
 ) {
     AlphabetEntityCard(
         modifier = modifier,
-        primaryText = accentMark.symbol,
+        primaryText = formatMarkWithPlaceholder(accentMark.symbol),
         secondaryText = "",
         isMastered = accentMark.isMastered,
         masteryLevel = accentMark.masteryLevel,
