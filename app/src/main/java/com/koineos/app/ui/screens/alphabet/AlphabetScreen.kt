@@ -131,7 +131,7 @@ private fun AlphabetScreenContent(
                 modifier = Modifier,
                 elevation = headerElevation,
                 onLearnClick = onNavigateToPractice,
-                viewModel = viewModel // for testing, remove later
+//                viewModel = viewModel // for testing, remove later
             )
             when (uiState) {
                 is AlphabetScreenUiState.Loaded -> {
@@ -169,7 +169,7 @@ private fun HeaderContent(
     modifier: Modifier = Modifier,
     elevation: Float,
     onLearnClick: () -> Unit,
-    viewModel: AlphabetViewModel // for testing, remove later
+//    viewModel: AlphabetViewModel // for testing, remove later
 ) {
     Surface(
         modifier = modifier
@@ -195,86 +195,86 @@ private fun HeaderContent(
 
             // for testing, remove later
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                // Letters toggle with state
-                var lettersToggle by remember { mutableStateOf(false) }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Letters", style = Typography.labelSmall)
-                    Switch(
-                        checked = lettersToggle,
-                        onCheckedChange = { newState ->
-                            lettersToggle = newState
-                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.LETTERS, newState)
-                        }
-                    )
-                }
-
-                // Diphthongs toggle with state
-                var diphthongsToggle by remember { mutableStateOf(false) }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Diphthongs", style = Typography.labelSmall)
-                    Switch(
-                        checked = diphthongsToggle,
-                        onCheckedChange = { newState ->
-                            diphthongsToggle = newState
-                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.DIPHTHONGS, newState)
-                        }
-                    )
-                }
-
-                // Improper Diphthongs toggle with state
-                var improperDiphthongsToggle by remember { mutableStateOf(false) }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Improper Diph.", style = Typography.labelSmall)
-                    Switch(
-                        checked = improperDiphthongsToggle,
-                        onCheckedChange = { newState ->
-                            improperDiphthongsToggle = newState
-                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.IMPROPER_DIPHTHONGS, newState)
-                        }
-                    )
-                }
-
-                // Improper Diphthongs toggle with state
-                var breathingMarksToggle by remember { mutableStateOf(false) }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Breathings", style = Typography.labelSmall)
-                    Switch(
-                        checked = breathingMarksToggle,
-                        onCheckedChange = { newState ->
-                            breathingMarksToggle = newState
-                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.BREATHING_MARKS, newState)
-                        }
-                    )
-                }
-
-                // Improper Diphthongs toggle with state
-                var accentMarksToggle by remember { mutableStateOf(false) }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text("Accents", style = Typography.labelSmall)
-                    Switch(
-                        checked = accentMarksToggle,
-                        onCheckedChange = { newState ->
-                            accentMarksToggle = newState
-                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.ACCENT_MARKS, newState)
-                        }
-                    )
-                }
-            }
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                verticalAlignment = Alignment.CenterVertically,
+//                horizontalArrangement = Arrangement.SpaceEvenly
+//            ) {
+//                // Letters toggle with state
+//                var lettersToggle by remember { mutableStateOf(false) }
+//                Column(
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text("Letters", style = Typography.labelSmall)
+//                    Switch(
+//                        checked = lettersToggle,
+//                        onCheckedChange = { newState ->
+//                            lettersToggle = newState
+//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.LETTERS, newState)
+//                        }
+//                    )
+//                }
+//
+//                // Diphthongs toggle with state
+//                var diphthongsToggle by remember { mutableStateOf(false) }
+//                Column(
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text("Diphthongs", style = Typography.labelSmall)
+//                    Switch(
+//                        checked = diphthongsToggle,
+//                        onCheckedChange = { newState ->
+//                            diphthongsToggle = newState
+//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.DIPHTHONGS, newState)
+//                        }
+//                    )
+//                }
+//
+//                // Improper Diphthongs toggle with state
+//                var improperDiphthongsToggle by remember { mutableStateOf(false) }
+//                Column(
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text("Improper Diph.", style = Typography.labelSmall)
+//                    Switch(
+//                        checked = improperDiphthongsToggle,
+//                        onCheckedChange = { newState ->
+//                            improperDiphthongsToggle = newState
+//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.IMPROPER_DIPHTHONGS, newState)
+//                        }
+//                    )
+//                }
+//
+//                // Improper Diphthongs toggle with state
+//                var breathingMarksToggle by remember { mutableStateOf(false) }
+//                Column(
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text("Breathings", style = Typography.labelSmall)
+//                    Switch(
+//                        checked = breathingMarksToggle,
+//                        onCheckedChange = { newState ->
+//                            breathingMarksToggle = newState
+//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.BREATHING_MARKS, newState)
+//                        }
+//                    )
+//                }
+//
+//                // Improper Diphthongs toggle with state
+//                var accentMarksToggle by remember { mutableStateOf(false) }
+//                Column(
+//                    horizontalAlignment = Alignment.CenterHorizontally
+//                ) {
+//                    Text("Accents", style = Typography.labelSmall)
+//                    Switch(
+//                        checked = accentMarksToggle,
+//                        onCheckedChange = { newState ->
+//                            accentMarksToggle = newState
+//                            viewModel.toggleCategoryMasteryLevel(AlphabetCategory.ACCENT_MARKS, newState)
+//                        }
+//                    )
+//                }
+//            }
         }
     }
 }

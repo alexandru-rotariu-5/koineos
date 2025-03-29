@@ -45,7 +45,7 @@ class AlphabetViewModel @Inject constructor(
     private val stringProvider: StringProvider,
     private val entityProvider: BatchAwareAlphabetEntityProvider,
     private val batchManagementService: BatchManagementService,
-    private val alphabetMasteryRepository: AlphabetMasteryRepository // for testing, remove later
+//    private val alphabetMasteryRepository: AlphabetMasteryRepository // for testing, remove later
 ) : ViewModel() {
 
     private val _uiState: MutableStateFlow<AlphabetScreenUiState> by lazy {
@@ -273,41 +273,41 @@ class AlphabetViewModel @Inject constructor(
     private fun AlphabetScreenUiState.asLoaded(): AlphabetScreenUiState.Loaded? =
         this as? AlphabetScreenUiState.Loaded
 
-    // testing functions, remove later
+    // for testing, remove later
 
-    fun toggleCategoryMasteryLevel(category: AlphabetCategory, setTo100Percent: Boolean) {
-        viewModelScope.launch {
-            updateCategoryMasteryLevels(category, if (setTo100Percent) 1.0f else 0.0f)
-        }
-    }
-
-    private suspend fun updateCategoryMasteryLevels(
-        category: AlphabetCategory,
-        masteryLevel: Float
-    ) {
-        try {
-            getAlphabetContentUseCase().fold(
-                onSuccess = { contentFlow ->
-                    val categories = contentFlow.first()
-                    val categoryEntities =
-                        categories.find { it.category == category }?.entities ?: emptyList()
-
-                    categoryEntities.forEach { entity ->
-                        alphabetMasteryRepository.updateAlphabetEntityMasteryLevel(
-                            entity.id,
-                            masteryLevel
-                        )
-                    }
-
-                    // Refresh the UI
-                    loadAlphabetContent()
-                },
-                onFailure = {
-                    // Handle error
-                }
-            )
-        } catch (e: Exception) {
-            // Handle exception
-        }
-    }
+//    fun toggleCategoryMasteryLevel(category: AlphabetCategory, setTo100Percent: Boolean) {
+//        viewModelScope.launch {
+//            updateCategoryMasteryLevels(category, if (setTo100Percent) 1.0f else 0.0f)
+//        }
+//    }
+//
+//    private suspend fun updateCategoryMasteryLevels(
+//        category: AlphabetCategory,
+//        masteryLevel: Float
+//    ) {
+//        try {
+//            getAlphabetContentUseCase().fold(
+//                onSuccess = { contentFlow ->
+//                    val categories = contentFlow.first()
+//                    val categoryEntities =
+//                        categories.find { it.category == category }?.entities ?: emptyList()
+//
+//                    categoryEntities.forEach { entity ->
+//                        alphabetMasteryRepository.updateAlphabetEntityMasteryLevel(
+//                            entity.id,
+//                            masteryLevel
+//                        )
+//                    }
+//
+//                    // Refresh the UI
+//                    loadAlphabetContent()
+//                },
+//                onFailure = {
+//                    // Handle error
+//                }
+//            )
+//        } catch (e: Exception) {
+//            // Handle exception
+//        }
+//    }
 }
