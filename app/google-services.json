@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "265911229640",
+    "project_id": "koineos",
+    "storage_bucket": "koineos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265911229640:android:d3eab5c8bd353afb3c99fd",
+        "android_client_info": {
+          "package_name": "com.koineos.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJUEtMD7Cl1uLlKOaFMOpBzUamzhXKqoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
