@@ -270,7 +270,7 @@ fun MatchLetterGroupPairsExerciseContent(
 @Composable
 private fun MatchLetterGroupPairsExercisePreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             MatchLetterGroupPairsExerciseContent(
                 exerciseState = MatchLetterGroupPairsUiState(
                     id = "exercise3",

@@ -26,7 +26,7 @@ import com.koineos.app.ui.components.cards.RegularCard
 import com.koineos.app.ui.components.cards.SelectedRegularCard
 import com.koineos.app.ui.components.cards.SuccessRegularCard
 import com.koineos.app.ui.theme.Colors
-import com.koineos.app.ui.theme.Colors.Surface
+import com.koineos.app.ui.theme.Colors.Background
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
@@ -147,7 +147,7 @@ fun SelectTransliterationExerciseContent(
 @Composable
 private fun SelectTransliterationExerciseContentPreview() {
     KoineosTheme {
-        Surface(color = Surface) {
+        Surface(color = Background) {
             SelectTransliterationExerciseContent(
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",
@@ -171,7 +171,7 @@ private fun SelectTransliterationExerciseContentPreview() {
 @Composable
 private fun SelectTransliterationExerciseWithSelectionPreview() {
     KoineosTheme {
-        Surface(color = Surface) {
+        Surface(color = Background) {
             SelectTransliterationExerciseContent(
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",
@@ -195,7 +195,7 @@ private fun SelectTransliterationExerciseWithSelectionPreview() {
 @Composable
 private fun SelectTransliterationExerciseWithCheckedCorrectPreview() {
     KoineosTheme {
-        Surface(color = Surface) {
+        Surface(color = Background) {
             SelectTransliterationExerciseContent(
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",
@@ -219,7 +219,7 @@ private fun SelectTransliterationExerciseWithCheckedCorrectPreview() {
 @Composable
 private fun SelectTransliterationExerciseWithCheckedIncorrectPreview() {
     KoineosTheme {
-        Surface(color = Surface) {
+        Surface(color = Background) {
             SelectTransliterationExerciseContent(
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",
@@ -243,7 +243,7 @@ private fun SelectTransliterationExerciseWithCheckedIncorrectPreview() {
 @Composable
 private fun SelectTransliterationExerciseWithMarksPreview() {
     KoineosTheme {
-        Surface(color = Surface) {
+        Surface(color = Background) {
             SelectTransliterationExerciseContent(
                 exerciseState = SelectTransliterationExerciseUiState(
                     id = "exercise1",

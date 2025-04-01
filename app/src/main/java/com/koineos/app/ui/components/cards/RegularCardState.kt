@@ -13,6 +13,7 @@ import com.koineos.app.ui.theme.Dimensions
  * @property backgroundColor The background color of the card
  * @property contentColor The color for content within the card
  * @property elevation The elevation of the card
+ * @property shadowColor The color of the shadow
  * @property border The border of the card
  * @property alpha The opacity to apply to the card
  */
@@ -20,6 +21,7 @@ data class RegularCardState(
     val backgroundColor: Color,
     val contentColor: Color,
     val elevation: Dp,
+    val shadowColor: Color = Color.Black,
     val border: BorderStroke?,
     val alpha: Float = 1.0f
 ) {
@@ -31,6 +33,7 @@ data class RegularCardState(
             backgroundColor = Colors.RegularCardBackground,
             contentColor = Colors.OnRegularCard,
             elevation = Dimensions.cardElevation,
+            shadowColor = Colors.Primary,
             border = BorderStroke(Dimensions.regularCardBorder, Colors.RegularCardBorder),
             alpha = 1.0f
         )
@@ -42,6 +45,7 @@ data class RegularCardState(
             backgroundColor = Colors.RegularCardBackground,
             contentColor = Colors.OnRegularCard.copy(alpha = 0.38f),
             elevation = 0.dp,
+            shadowColor = Colors.Primary,
             border = BorderStroke(Dimensions.regularCardBorder, Colors.RegularCardBorder.copy(alpha = 0.38f)),
             alpha = 0.5f
         )
@@ -53,6 +57,7 @@ data class RegularCardState(
             backgroundColor = Colors.Success,
             contentColor = Colors.OnSuccess,
             elevation = Dimensions.cardElevation,
+            shadowColor = Colors.Success,
             border = null,
             alpha = 1.0f
         )
@@ -64,6 +69,7 @@ data class RegularCardState(
             backgroundColor = Colors.Error,
             contentColor = Colors.OnError,
             elevation = Dimensions.cardElevation,
+            shadowColor = Colors.Error,
             border = null,
             alpha = 1.0f
         )
@@ -75,6 +81,7 @@ data class RegularCardState(
             backgroundColor = Colors.Primary,
             contentColor = Colors.OnPrimary,
             elevation = Dimensions.cardElevation,
+            shadowColor = Colors.Primary,
             border = null,
             alpha = 1.0f
         )

@@ -10,8 +10,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.koineos.app.presentation.model.practice.ActionButtonColorState
 import com.koineos.app.presentation.model.practice.ActionButtonType
 import com.koineos.app.presentation.model.practice.ActionButtonUiState
-import com.koineos.app.ui.components.core.RegularButtonColors
 import com.koineos.app.ui.components.core.RegularButton
+import com.koineos.app.ui.components.core.RegularButtonColors
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineosTheme
@@ -48,6 +48,7 @@ fun PracticeActionButton(
         text = buttonState.text,
         modifier = modifier.fillMaxWidth(),
         colors = RegularButtonColors(
+            containerBrush = if (buttonState.colorState == ActionButtonColorState.PRIMARY) Colors.PrimaryGradient else null,
             containerColor = buttonColor,
             contentColor = buttonContentColor
         )

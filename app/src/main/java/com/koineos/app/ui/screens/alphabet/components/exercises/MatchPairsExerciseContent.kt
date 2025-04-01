@@ -286,7 +286,7 @@ enum class PairAnimationState {
 @Composable
 private fun MatchPairsExerciseContentPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             val letterOptions = listOf(
                 MatchPairsExerciseUiState.MatchOption(
                     id = "alpha", display = "ἀ", // With smooth breathing
@@ -335,7 +335,7 @@ private fun MatchPairsExerciseContentPreview() {
 @Composable
 private fun MatchPairsExerciseCompletePreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             val letterOptions = listOf(
                 MatchPairsExerciseUiState.MatchOption(
                     id = "alpha", display = "α",
@@ -387,7 +387,7 @@ private fun MatchPairsExerciseCompletePreview() {
 @Composable
 private fun MatchPairsExerciseWithMarksPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             val letterOptions = listOf(
                 MatchPairsExerciseUiState.MatchOption(
                     id = "alpha", display = "ἄ", // With smooth breathing and acute accent

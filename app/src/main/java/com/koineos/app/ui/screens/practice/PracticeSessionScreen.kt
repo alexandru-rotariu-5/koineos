@@ -118,7 +118,7 @@ private fun PracticeSessionContent(
                 )
             }
         },
-        containerColor = Colors.Surface
+        containerColor = Colors.Background
     ) { paddingValues ->
         Box(
             modifier = Modifier

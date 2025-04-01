@@ -1,5 +1,7 @@
 package com.koineos.app.ui.components.core
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -8,6 +10,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavHostController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.koineos.app.ui.components.topbar.RootTopBar
@@ -35,36 +38,41 @@ fun RootScreenScaffold(
 
     DisposableEffect(Unit) {
         systemUiController.setStatusBarColor(
-            color = Colors.Primary,
+            color = Color.Transparent,
             darkIcons = false
         )
 
         onDispose {}
     }
 
-    Scaffold(
-        topBar = {
-            RootTopBar(
-                showLogo = showLogo,
-                title = title
-            )
-        },
-        bottomBar = {
-            BottomNavBar(navController = navController)
-        },
-        containerColor = Colors.Primary
-    ) { paddingValues ->
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            shape = RoundedCornerShape(
-                topStart = Dimensions.cornerLarge,
-                topEnd = Dimensions.cornerLarge
-            ),
-            color = Colors.Surface
-        ) {
-            content()
+    Box(
+        modifier = Modifier.fillMaxSize().background(brush = Colors.PrimaryGradient)
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                RootTopBar(
+                    showLogo = showLogo,
+                    title = title
+                )
+            },
+            bottomBar = {
+                BottomNavBar(navController = navController)
+            },
+            containerColor = Color.Transparent
+        ) { paddingValues ->
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                shape = RoundedCornerShape(
+                    topStart = Dimensions.cornerLarge,
+                    topEnd = Dimensions.cornerLarge
+                ),
+                color = Colors.Background
+            ) {
+                content()
+            }
         }
     }
 }

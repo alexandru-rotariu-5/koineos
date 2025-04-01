@@ -17,15 +17,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -37,7 +34,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.koineos.app.R
-import com.koineos.app.domain.model.AlphabetCategory
 import com.koineos.app.presentation.model.alphabet.AccentMarkUiState
 import com.koineos.app.presentation.model.alphabet.AlphabetScreenUiState
 import com.koineos.app.presentation.model.alphabet.BreathingMarkUiState
@@ -125,7 +121,7 @@ private fun AlphabetScreenContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Colors.Surface)
+                .background(Colors.Background)
         ) {
             HeaderContent(
                 modifier = Modifier,
@@ -175,7 +171,7 @@ private fun HeaderContent(
         modifier = modifier
             .fillMaxWidth()
             .zIndex(1f),
-        color = Colors.Surface,
+        color = Colors.Background,
         shadowElevation = elevation.dp
     ) {
         Column(

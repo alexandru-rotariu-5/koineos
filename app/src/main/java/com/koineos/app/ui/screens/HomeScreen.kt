@@ -24,13 +24,14 @@ fun HomeScreen(
 ) {
     RootScreenScaffold(
         navController = navController,
-        showLogo = true
+        showLogo = false,
+        title = "Hi, Alex"
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .background(Colors.Surface)
+                .background(Colors.Background)
         ) {
             Text(
                 text = "Home",

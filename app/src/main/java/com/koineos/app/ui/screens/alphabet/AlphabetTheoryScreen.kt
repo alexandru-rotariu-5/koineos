@@ -118,7 +118,7 @@ private fun AlphabetTheoryScreenContent(
                 }
             )
         },
-        containerColor = Colors.Surface
+        containerColor = Colors.Background
     ) { paddingValues ->
         when (uiState) {
             is AlphabetTheoryScreenUiState.Loading -> {
@@ -181,7 +181,7 @@ fun TheoryTopBar(
 ) {
 
     Surface(
-        color = Colors.Surface,
+        color = Colors.Background,
         shadowElevation = (dividerValue * 4).dp
     ) {
         Column(
@@ -235,7 +235,7 @@ fun TheoryBottomBar(
     Surface(
         modifier = Modifier
             .fillMaxWidth(),
-        color = Colors.Surface,
+        color = Colors.Background,
         shadowElevation = 4.dp
     ) {
         Column(
@@ -418,7 +418,7 @@ fun TheoryScreenFullPreview() {
                     onStartPractice = {}
                 )
             },
-            containerColor = Colors.Surface
+            containerColor = Colors.Background
         ) { paddingValues ->
             TheoryContent(
                 titleResId = R.string.theory_title_letters_batch_1,
@@ -567,7 +567,7 @@ fun TheoryScreenLettersBatch1Preview() {
     )
 
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             TheoryContent(
                 titleResId = R.string.theory_title_letters_batch_1,
                 introTextResId = R.string.theory_intro_letters_batch_1,
@@ -641,7 +641,7 @@ fun TheoryScreenDiphthongsBatch1Preview() {
     )
 
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             TheoryContent(
                 titleResId = R.string.theory_title_diphthongs_batch_1,
                 introTextResId = R.string.theory_intro_diphthongs_batch_1,
@@ -701,7 +701,7 @@ fun TheoryScreenImproperDiphthongsPreview() {
     )
 
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             TheoryContent(
                 titleResId = R.string.theory_title_improper_diphthongs,
                 introTextResId = R.string.theory_intro_improper_diphthongs,
@@ -747,7 +747,7 @@ fun TheoryScreenBreathingMarksPreview() {
     )
 
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             TheoryContent(
                 titleResId = R.string.theory_title_breathing_marks,
                 introTextResId = R.string.theory_intro_breathing_marks,
@@ -791,7 +791,7 @@ fun TheoryScreenAccentMarksPreview() {
     )
 
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             TheoryContent(
                 titleResId = R.string.theory_title_accent_marks,
                 introTextResId = R.string.theory_intro_accent_marks,
@@ -806,7 +806,7 @@ fun TheoryScreenAccentMarksPreview() {
 @Composable
 fun TheoryEntityItemPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             TheoryEntityItem(
                 entityState = TheoryEntityUiState(
                     entity = Letter(

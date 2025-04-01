@@ -1,5 +1,6 @@
 package com.koineos.app.ui.components.core
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,23 +38,75 @@ fun RegularButton(
     colors: RegularButtonColors = RegularButtonColors(),
     content: @Composable RowScope.() -> Unit
 ) {
-    Button(
-        onClick = onClick,
-        modifier = modifier.defaultMinSize(minHeight = 48.dp),
-        enabled = enabled,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colors.containerColor,
-            contentColor = colors.contentColor,
-            disabledContainerColor = colors.disabledContainerColor,
-            disabledContentColor = colors.disabledContentColor
-        ),
-        shape = RoundedCornerShape(size = 16.dp),
-        contentPadding = PaddingValues(
-            horizontal = 24.dp,
-            vertical = 16.dp
-        ),
-        content = content
-    )
+    val buttonModifier = modifier.defaultMinSize(minHeight = 48.dp)
+
+    // For gradient background (enabled case)
+    if (enabled && colors.containerBrush != null) {
+        Button(
+            onClick = onClick,
+            modifier = buttonModifier
+                .background(
+                    brush = colors.containerBrush,
+                    shape = RoundedCornerShape(size = 16.dp)
+                ),
+            enabled = true,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = colors.contentColor
+            ),
+            shape = RoundedCornerShape(size = 16.dp),
+            contentPadding = PaddingValues(
+                horizontal = 24.dp,
+                vertical = 16.dp
+            ),
+            content = content
+        )
+    }
+    // For gradient background (disabled case)
+    else if (!enabled && colors.containerBrush != null) {
+        Button(
+            onClick = { /* disabled */ },
+            modifier = buttonModifier
+                .background(
+                    brush = colors.containerBrush,
+                    shape = RoundedCornerShape(size = 16.dp),
+                    alpha = 0.3f
+                ),
+            enabled = false,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color.Transparent,
+                contentColor = colors.contentColor,
+                disabledContainerColor = Color.Transparent,
+                disabledContentColor = colors.disabledContentColor
+            ),
+            shape = RoundedCornerShape(size = 16.dp),
+            contentPadding = PaddingValues(
+                horizontal = 24.dp,
+                vertical = 16.dp
+            ),
+            content = content
+        )
+    }
+    // For solid color background (both enabled and disabled)
+    else {
+        Button(
+            onClick = onClick,
+            modifier = buttonModifier,
+            enabled = enabled,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.containerColor,
+                contentColor = colors.contentColor,
+                disabledContainerColor = colors.containerColor.copy(alpha = 0.3f),
+                disabledContentColor = colors.disabledContentColor
+            ),
+            shape = RoundedCornerShape(size = 16.dp),
+            contentPadding = PaddingValues(
+                horizontal = 24.dp,
+                vertical = 16.dp
+            ),
+            content = content
+        )
+    }
 }
 
 /**

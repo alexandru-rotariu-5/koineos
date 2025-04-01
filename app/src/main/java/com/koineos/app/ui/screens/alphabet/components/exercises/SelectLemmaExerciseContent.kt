@@ -132,7 +132,7 @@ fun SelectLemmaExerciseContent(
 @Composable
 private fun SelectLemmaExerciseContentPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             SelectLemmaExerciseContent(
                 exerciseState = SelectLemmaExerciseUiState(
                     id = "exercise1",
@@ -172,7 +172,7 @@ private fun SelectLemmaExerciseContentPreview() {
 @Composable
 private fun SelectLemmaExerciseWithSelectionPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             SelectLemmaExerciseContent(
                 exerciseState = SelectLemmaExerciseUiState(
                     id = "exercise1",
@@ -212,7 +212,7 @@ private fun SelectLemmaExerciseWithSelectionPreview() {
 @Composable
 private fun SelectLemmaExerciseWithCheckedCorrectPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             SelectLemmaExerciseContent(
                 exerciseState = SelectLemmaExerciseUiState(
                     id = "exercise1",
@@ -254,7 +254,7 @@ private fun SelectLemmaExerciseWithCheckedCorrectPreview() {
 @Composable
 private fun SelectLemmaExerciseWithCheckedIncorrectPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             SelectLemmaExerciseContent(
                 exerciseState = SelectLemmaExerciseUiState(
                     id = "exercise1",
@@ -296,7 +296,7 @@ private fun SelectLemmaExerciseWithCheckedIncorrectPreview() {
 @Composable
 private fun SelectLemmaExerciseWithAccentPreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             SelectLemmaExerciseContent(
                 exerciseState = SelectLemmaExerciseUiState(
                     id = "exercise1",

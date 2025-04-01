@@ -55,7 +55,7 @@ private fun LearnScreenContent(
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .padding(Dimensions.paddingLarge)
-            .background(Colors.Surface)
+            .background(Colors.Background)
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),

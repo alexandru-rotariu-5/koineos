@@ -25,7 +25,7 @@ fun NestedScreenScaffold(
 
     DisposableEffect(Unit) {
         systemUiController.setStatusBarColor(
-            color = Colors.Surface,
+            color = Colors.Background,
             darkIcons = true
         )
 
@@ -34,11 +34,11 @@ fun NestedScreenScaffold(
 
     Scaffold(
         topBar = topBar,
-        containerColor = Colors.Surface
+        containerColor = Colors.Background
     ) { paddingValues ->
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = Colors.Surface
+            color = Colors.Background
         ) {
             content(paddingValues)
         }

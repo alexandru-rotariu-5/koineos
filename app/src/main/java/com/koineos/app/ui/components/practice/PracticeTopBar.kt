@@ -36,7 +36,7 @@ fun PracticeTopBar(
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = Colors.Surface
+        color = Colors.Background
     ) {
         Row(
             modifier = Modifier

@@ -25,7 +25,7 @@ import com.koineos.app.ui.components.cards.RegularCard
 import com.koineos.app.ui.components.cards.SelectedRegularCard
 import com.koineos.app.ui.components.cards.SuccessRegularCard
 import com.koineos.app.ui.theme.Colors
-import com.koineos.app.ui.theme.Colors.Surface
+import com.koineos.app.ui.theme.Colors.Background
 import com.koineos.app.ui.theme.Dimensions
 import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
@@ -134,7 +134,7 @@ fun SelectLetterGroupTransliterationExerciseContent(
 @Composable
 private fun SelectLetterGroupTransliterationExercisePreview() {
     KoineosTheme {
-        Surface(color = Surface) {
+        Surface(color = Background) {
             SelectLetterGroupTransliterationExerciseContent(
                 exerciseState = SelectLetterGroupTransliterationUiState(
                     id = "exercise1",

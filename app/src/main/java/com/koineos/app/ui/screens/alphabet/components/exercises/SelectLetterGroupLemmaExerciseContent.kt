@@ -122,7 +122,7 @@ fun SelectLetterGroupLemmaExerciseContent(
 @Composable
 private fun SelectLetterGroupLemmaExercisePreview() {
     KoineosTheme {
-        Surface(color = Colors.Surface) {
+        Surface(color = Colors.Background) {
             SelectLetterGroupLemmaExerciseContent(
                 exerciseState = SelectLetterGroupLemmaUiState(
                     id = "exercise2",

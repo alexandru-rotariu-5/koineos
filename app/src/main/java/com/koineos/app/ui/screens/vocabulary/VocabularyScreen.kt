@@ -31,7 +31,7 @@ fun VocabularyScreen(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .background(Colors.Surface)
+                .background(Colors.Background)
         ) {
             Text(
                 text = "Vocabulary",
