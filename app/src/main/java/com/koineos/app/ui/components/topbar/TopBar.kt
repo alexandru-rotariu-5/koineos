@@ -1,11 +1,12 @@
 package com.koineos.app.ui.components.topbar
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
@@ -18,16 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.koineos.app.R
 import com.koineos.app.ui.components.core.AppIcon
 import com.koineos.app.ui.components.core.IconComponent
 import com.koineos.app.ui.theme.Colors
 import com.koineos.app.ui.theme.Dimensions
-import com.koineos.app.ui.theme.KoineFont
 import com.koineos.app.ui.theme.KoineosTheme
 
 /**
@@ -69,14 +70,11 @@ fun TopBar(
         TopAppBar(
             title = {
                 if (showLogo) {
-                    Text(
-                        text = "κoineos",
-                        color = titleColor,
-                        fontFamily = KoineFont,
-                        fontWeight = FontWeight.Bold,
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 28.sp,
-                        modifier = Modifier.offset(y = (-3).dp)
+                    Image(
+                        painter = painterResource(R.drawable.wordmark_white),
+                        contentDescription = "LexiKoine",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.width(100.dp)
                     )
                 } else {
                     title?.let {
