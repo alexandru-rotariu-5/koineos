@@ -12,7 +12,20 @@
           "package_name": "com.koineos.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "265911229640-tml3sb3fgmrsd31jgbrks8r233jng79e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.koineos.app",
+            "certificate_hash": "b4f3ff1f70060640aa45fb436e3ef293aec776e2"
+          }
+        },
+        {
+          "client_id": "265911229640-f04s1hgtpp6rng7cpt5t0qfrvunvjhhf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDJUEtMD7Cl1uLlKOaFMOpBzUamzhXKqoo"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "265911229640-f04s1hgtpp6rng7cpt5t0qfrvunvjhhf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

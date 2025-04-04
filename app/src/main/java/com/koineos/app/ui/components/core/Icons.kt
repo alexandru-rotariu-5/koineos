@@ -35,6 +35,9 @@ sealed class AppIcon(val unselectedDrawableId: Int, val selectedDrawableId: Int)
 
     data object Profile : AppIcon(R.drawable.ic_profile, R.drawable.ic_profile_filled)
 
+    // Auth
+    data object Google : AppIcon(R.drawable.ic_google, R.drawable.ic_google)
+
     // Learn
     data object Path : AppIcon(R.drawable.ic_path, R.drawable.ic_path)
     data object Vocabulary : AppIcon(R.drawable.ic_vocabulary, R.drawable.ic_vocabulary_filled)
@@ -46,7 +49,7 @@ sealed class AppIcon(val unselectedDrawableId: Int, val selectedDrawableId: Int)
     data object Alphabet3 : AppIcon(R.drawable.ic_alphabet_3, R.drawable.ic_alphabet_3)
 
     // Practice
-    data object Correct: AppIcon(R.drawable.ic_check_circle, R.drawable.ic_check_circle)
+    data object Correct: AppIcon(R.drawable.ic_check_circle, R.drawable.ic_check_circle_filled)
     data object Incorrect: AppIcon(R.drawable.ic_x_circle, R.drawable.ic_x_circle)
     data object Timer: AppIcon(R.drawable.ic_timer, R.drawable.ic_timer_filled)
 }

@@ -83,6 +83,7 @@ fun FeedbackPanel(
                 ) {
                     IconComponent(
                         icon = if (feedback.isCorrect) AppIcon.Correct else AppIcon.Incorrect,
+                        isSelected = true,
                         contentDescription = if (feedback.isCorrect) "Correct" else "Incorrect",
                         tint = textColor
                     )

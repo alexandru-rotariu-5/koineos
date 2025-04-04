@@ -71,9 +71,9 @@ fun TopBar(
             title = {
                 if (showLogo) {
                     Image(
-                        painter = painterResource(R.drawable.wordmark_white),
+                        painter = painterResource(R.drawable.img_wordmark_white),
                         contentDescription = "LexiKoine",
-                        contentScale = ContentScale.Crop,
+                        contentScale = ContentScale.Fit,
                         modifier = Modifier.width(100.dp)
                     )
                 } else {
