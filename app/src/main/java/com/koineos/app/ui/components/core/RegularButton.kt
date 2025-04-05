@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -26,11 +28,12 @@ import com.koineos.app.ui.theme.KoineosTheme
 import com.koineos.app.ui.theme.MainFont
 
 /**
- * A regular button with customizable content.
+ * A regular button with customizable content and loading state.
  *
  * @param modifier The modifier to be applied to the button.
  * @param onClick The action to perform when the button is clicked.
  * @param enabled Whether the button is enabled or disabled.
+ * @param isLoading Whether the button is in loading state.
  * @param colors The button colors.
  * @param content The content of the button.
  */
@@ -39,13 +42,15 @@ fun RegularButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
     colors: RegularButtonColors = RegularButtonColors(),
     content: @Composable RowScope.() -> Unit
 ) {
     val buttonModifier = modifier.defaultMinSize(minHeight = 48.dp)
+    val buttonEnabled = enabled && !isLoading
 
     // For gradient background (enabled case)
-    if (enabled && colors.containerBrush != null) {
+    if (buttonEnabled && colors.containerBrush != null) {
         Button(
             onClick = onClick,
             modifier = buttonModifier
@@ -67,7 +72,7 @@ fun RegularButton(
         )
     }
     // For gradient background (disabled case)
-    else if (!enabled && colors.containerBrush != null) {
+    else if (!buttonEnabled && colors.containerBrush != null) {
         Button(
             onClick = { /* disabled */ },
             modifier = buttonModifier
@@ -88,7 +93,11 @@ fun RegularButton(
                 horizontal = Dimensions.paddingLarge,
                 vertical = Dimensions.paddingLarge
             ),
-            content = content
+            content = if (isLoading) {
+                { LoadingIndicator(color = colors.disabledContentColor) }
+            } else {
+                content
+            }
         )
     }
     // For solid color background (both enabled and disabled)
@@ -96,7 +105,7 @@ fun RegularButton(
         Button(
             onClick = onClick,
             modifier = buttonModifier,
-            enabled = enabled,
+            enabled = buttonEnabled,
             colors = ButtonDefaults.buttonColors(
                 containerColor = colors.containerColor,
                 contentColor = colors.contentColor,
@@ -108,7 +117,11 @@ fun RegularButton(
                 horizontal = Dimensions.paddingLarge,
                 vertical = Dimensions.paddingLarge
             ),
-            content = content
+            content = if (isLoading) {
+                { LoadingIndicator(color = colors.disabledContentColor) }
+            } else {
+                content
+            }
         )
     }
 }
@@ -122,12 +135,14 @@ fun RegularButton(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
     colors: RegularButtonColors = RegularButtonColors()
 ) {
     RegularButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
+        isLoading = isLoading,
         colors = colors
     ) {
         Text(
@@ -149,12 +164,14 @@ fun IconRegularButton(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    isLoading: Boolean = false,
     colors: RegularButtonColors = RegularButtonColors()
 ) {
     RegularButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
+        isLoading = isLoading,
         colors = colors
     ) {
         IconComponent(
@@ -174,6 +191,7 @@ fun SocialLoginButton(
     onClick: () -> Unit,
     icon: AppIcon,
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     enabled: Boolean = true
 ) {
     val colors = RegularButtonColors(
@@ -188,9 +206,22 @@ fun SocialLoginButton(
         onClick = onClick,
         icon = icon,
         enabled = enabled,
+        isLoading = isLoading,
         colors = colors,
         modifier = modifier.height(48.dp),
         contentDescription = null,
+    )
+}
+
+/**
+ * Loading indicator for the button's loading state
+ */
+@Composable
+private fun LoadingIndicator(color: Color) {
+    CircularProgressIndicator(
+        modifier = Modifier.size(24.dp),
+        color = color,
+        strokeWidth = 2.dp
     )
 }
 
@@ -253,5 +284,25 @@ private fun RegularButtonDisabledPreview() {
             text = "Disabled Button",
             enabled = false
         )
+    }
+}
+
+@Preview
+@Composable
+private fun RegularButtonLoadingPreview() {
+    KoineosTheme {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            RegularButton(
+                onClick = {},
+                text = "Loading button",
+                isLoading = true,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }

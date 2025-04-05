@@ -16,6 +16,9 @@
       <SelectionState runConfigName="SuccessRegularCardPreview - Regular Card - Success">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="StartScreenPreview">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

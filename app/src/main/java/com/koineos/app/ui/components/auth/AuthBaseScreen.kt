@@ -20,7 +20,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -51,7 +50,7 @@ import com.koineos.app.ui.theme.Typography
  * @param primaryButtonText The text for the primary action button
  * @param onPrimaryButtonClick Action to perform when primary button is clicked
  * @param bottomContent Optional content to display below the card
- * @param isLoading Whether to show loading indicator
+ * @param isLoading Whether to show loading indicator in the button
  */
 @Composable
 fun AuthBaseScreen(
@@ -144,11 +143,11 @@ fun AuthBaseScreen(
 
                         Spacer(modifier = Modifier.height(Dimensions.spacingXLarge))
 
-                        // Primary action button
                         RegularButton(
                             onClick = onPrimaryButtonClick,
                             text = primaryButtonText,
-                            enabled = !isLoading,
+                            enabled = true,
+                            isLoading = isLoading,
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -158,18 +157,6 @@ fun AuthBaseScreen(
 
                 // Bottom content (e.g., navigation link)
                 bottomContent?.invoke()
-            }
-        }
-
-        // Loading overlay
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.4f)),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(color = Colors.Primary)
             }
         }
     }

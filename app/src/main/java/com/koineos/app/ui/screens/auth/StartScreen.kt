@@ -102,7 +102,8 @@ fun StartScreen(
                 RegularButton(
                     onClick = onStartLearning,
                     text = "Start learning now",
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                 )
 
                 Spacer(modifier = Modifier.height(Dimensions.spacingXLarge))
